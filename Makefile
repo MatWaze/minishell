@@ -1,7 +1,7 @@
 name = minishell
 cc = cc
 build_dir = build
-src = minishell my_split helper_functions1 helper_functions2
+src = pipex minishell my_split helper_functions1 helper_functions2
 obj = $(addprefix $(build_dir)/, $(addsuffix .o, $(src)))
 readline_dir = readline-8.2
 libft_dir = libft
@@ -30,7 +30,7 @@ $(build_dir):
 clean :
 	make -C $(readline_dir) clean
 	make -C $(libft_dir) clean
-	rm -f $(obj)
+	rm -rf $(build_dir)
 
 fclean : clean
 	make -C $(readline_dir) uninstall

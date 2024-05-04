@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 18:44:22 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/04 15:10:07 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/04 18:00:24 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,10 @@ typedef struct s_args
 {
 	char	**argv;
 	char	**envp;
-	int		argc;
+	int		p_count;
 }		t_args;
 
+void	pipex(t_args args, int fd[]);
 void	do_execve_first(t_args args, int fd[]);
 void	do_execve_fd(t_args args, int fd[], int *i, int *j);
 void	do_execve_last(t_args args, int fd[], int *i);

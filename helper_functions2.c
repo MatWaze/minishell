@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 15:13:06 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/04 15:19:11 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/04 17:29:53 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void	close_all(int fd[], int argc)
 	int	i;
 
 	i = 0;
-	while (i < (argc - 2))
+	while (i <= argc * 2)
 	{
 		close(fd[i]);
 		i++;
@@ -71,10 +71,10 @@ void	do_execve_first(t_args args, int fd[])
 
 	if (fork() == 0)
 	{
-		av = ft_split(args.argv[1], ' ');
+		av = ft_split(args.argv[0], ' ');
 		command = search_path(av[0], args.envp);
 		dup2(fd[1], 1);
-		close_all(fd, args.argc);
+		close_all(fd, args.p_count);
 		if (execve(command, av, args.envp) == -1)
 		{
 			perror("execve");
@@ -92,7 +92,7 @@ void	do_execve_fd(t_args args, int fd[], int *i, int *j)
 	command = search_path(av[0], args.envp);
 	dup2(fd[*i], 0);
 	dup2(fd[*i + 3], 1);
-	close_all(fd, args.argc);
+	close_all(fd, args.p_count);
 	if (execve(command, av, args.envp) == -1)
 	{
 		perror("execve");
@@ -109,10 +109,10 @@ void	do_execve_last(t_args args, int fd[], int *i)
 	p = fork();
 	if (p == 0)
 	{
-		av = ft_split(args.argv[args.argc - 1], ' ');
+		av = ft_split(args.argv[args.p_count], ' ');
 		command = search_path(av[0], args.envp);
 		dup2(fd[*i], 0);
-		close_all(fd, args.argc);
+		close_all(fd, args.p_count);
 		if (execve(command, av, args.envp) == -1)
 		{
 			perror("execve");

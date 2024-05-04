@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/04 15:45:29 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/04 17:52:33 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,18 +62,6 @@ void	do_execve_red(char *strs, char **envp, int file)
 	}
 }
 
-void	do_execve(char *command, char **splitted, char **envp)
-{
-	if (fork() == 0)
-	{
-		if (execve(command, splitted, envp) == -1)
-		{
-			perror("execve");
-			exit(1);
-		}
-	}
-}
-
 int	create_fd(char *name)
 {
 	int	fd;
@@ -81,6 +69,7 @@ int	create_fd(char *name)
 	fd = open(name, O_RDWR | O_CREAT | O_TRUNC, 0644);
 	return (fd);
 }
+
 int	pipe_count(char *str)
 {
 	int	i;
@@ -104,16 +93,40 @@ int	main(int argc, char **argv, char **envp)
 	char	*command;
 	char	**splitted;
 	int		j;
+	int		i;
 	int		p_count;
+	t_args	args;
+	int		*fd;
 	
-	
+	args.envp = envp;
 	while (1)
 	{
+		
 		str = readline("minishell$ ");
 		if (ft_strlen(str) > 0)
 			add_history(str);
 		j = 0;
 		words1 = my_split(str, "|");
+		args.argv = words1;
 		p_count = pipe_count(str);
+		args.p_count = p_count;
+		if (args.p_count != 0)
+		{
+			fd = (int *) malloc(sizeof(int) * (p_count * 2));
+			j = 0;
+			i = 0;
+			while (i < p_count * 2)
+			{
+				pipe(fd + j);
+				j += 2;
+				i++;
+			}
+			pipex(args, fd);
+			close_all(fd, args.p_count);
+			leave_children();
+			free(fd);
+		}
+		free_arr(words1);
+		free(str);
 	}
 }

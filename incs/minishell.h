@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 18:44:22 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/04 15:10:07 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/04 17:42:07 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@
 # include <signal.h>
 # include <sys/stat.h>
 # include <sys/wait.h>
-# include "../local/include/readline/history.h"
-# include "../local/include/readline/readline.h"
-# include "../libft/libft.h"
+# include "readline/history.h"
+# include "readline/readline.h"
+# include "libft.h"
 # include <dirent.h>
 # include <termios.h>
 # include <curses.h>

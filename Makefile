@@ -1,27 +1,42 @@
 name = minishell
 cc = cc
-src = minishell.c my_split.c helper_functions1.c helper_functions2.c
-obj = $(src:.c=.o)
-dir = /Users/mamazari/Desktop/42-cursus/minishell/local
-libft_dir = /Users/mamazari/Desktop/42-cursus/minishell/libft
-libft = -L libft -lft
-flags = -Iincs -I $(libft_dir)/libft.h#-g3 -fsanitize=address
+build_dir = build
+src = minishell my_split helper_functions1 helper_functions2
+obj = $(addprefix $(build_dir)/, $(addsuffix .o, $(src)))
+readline_dir = readline-8.2
+libft_dir = libft
+lflags = -Llibft -L$(readline_dir)/lib
+iflags = -Iincs -I$(libft_dir) -I$(readline_dir)/include
+cflags = #-Wall -Wextra -Werror #-g3 -fsanitize=address
 
 all : $(name)
 
-$(name) : $(obj) Makefile
+$(name) : $(build_dir) $(obj) $(libft_dir)/libft.a $(readline_dir)/lib/libreadline.a
+	$(cc) $(cflags) $(lflags) -o $(name) $(obj) -lreadline -lcurses -lft
+
+$(build_dir)/%.o: %.c Makefile incs/minishell.h
+	$(cc) $(cflags) $(iflags) -c $< -o $@
+
+$(libft_dir)/libft.a:
 	make -C $(libft_dir)
-	$(cc) $(flags) -o $(name) $(obj) $(libft) -L$(dir)/lib/ -lreadline -lcurses
-%.o: %.c
-	$(cc) $(flags) -c $< -o $@
+
+$(readline_dir)/lib/libreadline.a:
+	cd $(readline_dir); ./configure --prefix=$(shell pwd)/$(readline_dir) --enable-shared=no
+	make -C $(readline_dir) install
+
+$(build_dir):
+	mkdir $@
 
 clean :
+	make -C $(readline_dir) clean
 	make -C $(libft_dir) clean
 	rm -f $(obj)
 
 fclean : clean
+	make -C $(readline_dir) uninstall
+	make -C $(readline_dir) distclean
+	make -C $(libft_dir) fclean
 	rm -f $(name)
-	rm -f libft/libft.a
 
 re : fclean all
 

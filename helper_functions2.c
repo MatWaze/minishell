@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 15:13:06 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/04 17:29:53 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/04 18:36:00 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void	close_all(int fd[], int argc)
 	int	i;
 
 	i = 0;
-	while (i <= argc * 2)
+	while (i < argc * 2)
 	{
 		close(fd[i]);
 		i++;

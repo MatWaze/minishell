@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/04 17:52:33 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/04 18:28:52 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,6 @@ int	main(int argc, char **argv, char **envp)
 	args.envp = envp;
 	while (1)
 	{
-		
 		str = readline("minishell$ ");
 		if (ft_strlen(str) > 0)
 			add_history(str);

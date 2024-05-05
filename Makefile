@@ -7,7 +7,7 @@ readline_dir = readline-8.2
 libft_dir = libft
 lflags = -Llibft -L$(readline_dir)/lib
 iflags = -Iincs -I$(libft_dir) -I$(readline_dir)/include
-cflags = #-g3 -fsanitize=address#-Wall -Wextra -Werror 
+cflags = -g3 -fsanitize=address#-Wall -Wextra -Werror 
 
 all : $(name)
 

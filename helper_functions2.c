@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 15:13:06 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/04 18:36:00 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/05 15:05:26 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ void	do_execve_first(t_args args, int fd[])
 		close_all(fd, args.p_count);
 		if (execve(command, av, args.envp) == -1)
 		{
-			perror("execve");
+			perror(command);
 			exit(0);
 		}
 	}
@@ -95,7 +95,7 @@ void	do_execve_fd(t_args args, int fd[], int *i, int *j)
 	close_all(fd, args.p_count);
 	if (execve(command, av, args.envp) == -1)
 	{
-		perror("execve");
+		perror(command);
 		exit(0);
 	}
 }
@@ -115,7 +115,7 @@ void	do_execve_last(t_args args, int fd[], int *i)
 		close_all(fd, args.p_count);
 		if (execve(command, av, args.envp) == -1)
 		{
-			perror("execve");
+			perror(command);
 			exit(0);
 		}
 	}

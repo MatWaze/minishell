@@ -97,7 +97,7 @@ int	main(int argc, char **argv, char **envp)
 	int		p_count;
 	t_args	args;
 	int		*fd;
-	
+
 	args.envp = envp;
 	while (1)
 	{
@@ -114,10 +114,9 @@ int	main(int argc, char **argv, char **envp)
 			fd = (int *) malloc(sizeof(int) * (p_count * 2));
 			j = 0;
 			i = 0;
-			while (i < p_count * 2)
+			while (i < p_count)
 			{
-				pipe(fd + j);
-				j += 2;
+				pipe(fd + i * 2);
 				i++;
 			}
 			pipex(args, fd);

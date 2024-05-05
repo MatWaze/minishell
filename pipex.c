@@ -22,7 +22,7 @@ void	pipex(t_args args, int fd[])
 	j = 1;
 	i = 0;
 	while (j < args.p_count)
-	{ 
+	{
 		p = fork();
 		if (p == 0)
 			do_execve_fd(args, fd, &i, &j);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
+/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 18:44:22 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/04 18:04:40 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/05/09 15:12:11 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,9 @@
 # include <curses.h>
 # include <term.h>
 # include <fcntl.h>
+# include <limits.h>
+# include <errno.h>
+# include <string.h>
 
 char	**my_split(char *str, char *charset);
 char	*search_path(char *cmd, char **path);
@@ -34,17 +37,19 @@ char	*get_str(char **strs2, char *cmd);
 void	free_arr(char **av);
 void	leave_children(void);
 void	close_all(int fd[], int argc);
+t_list		*my_export(t_list *l, char **envp, char *s);
 
 typedef struct s_args
 {
 	char	**argv;
 	char	**envp;
 	int		p_count;
+	int		exit_code;
 }		t_args;
 
-void	pipex(t_args args, int fd[]);
-void	do_execve_first(t_args args, int fd[]);
+int		pipex(t_args args, int fd[]);
+int		do_execve_first(t_args args, int fd[]);
 void	do_execve_fd(t_args args, int fd[], int *i, int *j);
-void	do_execve_last(t_args args, int fd[], int *i);
+int		do_execve_last(t_args args, int fd[], int *i);
 
 #endif

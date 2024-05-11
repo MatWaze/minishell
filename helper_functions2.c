@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 15:13:06 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/09 16:56:17 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/11 16:23:17 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ char	*search_path(char *cmd, char **path)
 	strs1 = get_path(path);
 	if (!strs1)
 		return (NULL);
-	cmd = ft_strjoin("/", cmd);
 	strs2 = ft_split(strs1[1], ':');
 	free_arr(strs1);
 	return (get_str(strs2, cmd));
@@ -64,6 +63,60 @@ void	close_all(int fd[], int argc)
 	}
 }
 
+int	quotes_closed(char *str)
+{
+	t_list	*list;
+	int		i;
+	int		flag;
+	int		flag2;
+	
+	i = 0;
+	flag = 0;
+	flag2 = 0;
+	while (str[i])
+	{
+		// printf("char: [%c]\n", str[i]);
+		if (str[i] == '\'' && flag == 0 && flag2 == 0)
+			flag++;
+		else if (str[i] == '\'' && flag != 0)
+			flag--;
+		if (str[i] == '\"' && flag2 == 0 && flag == 0)
+			flag2++;
+		else if (str[i] == '\"' && flag2 != 0)
+			flag2--;
+		// printf("flag: %d\nflag2: %d\n", flag, flag2);
+		i++;
+	}
+	return (flag2 == 0 && flag == 0);
+}
+
+char	*get_command(char *str)
+{
+	int		count;
+	char	*ans;
+	int		i;
+	
+	if (quotes_closed(str) == 0)
+		return (NULL);
+	i = -1;
+	count = 0;
+	while (str[++i])
+	{
+		if (!(str[i] == '\'' || str[i] == '\"'))
+			count++;
+	}
+	ans = malloc(count + 1);
+	i = -1;
+	count = 0;
+	while (str[++i])
+	{
+		if (!(str[i] == '\'' || str[i] == '\"'))
+			ans[count++] = str[i];
+	}
+	ans[count] = '\0';
+	return (ans);
+}
+
 int	do_execve_first(t_args args, int fd[])
 {
 	char	**av;
@@ -79,6 +132,8 @@ int	do_execve_first(t_args args, int fd[])
 		av = ft_split(args.argv[0], ' ');
 		if (av[0][0] == '/' || (av[0][0] == '.' && av[0][1] == '/'))
 		{
+			for (int i = 0; av[i]; i++)
+				av[i] = get_command(av[i]);
 			command = av[0];
 			execve(command, av, args.envp);
 			ft_putstr_fd("minishell: ", 2);
@@ -87,6 +142,8 @@ int	do_execve_first(t_args args, int fd[])
 		}
 		else
 		{
+			for (int i = 0; av[i]; i++)
+				av[i] = get_command(av[i]);
 			command = search_path(av[0], args.envp);
 			execve(command, av, args.envp);
 			ft_putstr_fd("minishell: ", 2);
@@ -95,8 +152,12 @@ int	do_execve_first(t_args args, int fd[])
 		}
 		exit(127);
 	}
-	wait(&status);
-	exit_status = WEXITSTATUS(status);
+	if (args.p_count == 0)
+	{
+		wait(&status);
+		exit_status = WEXITSTATUS(status);
+	}
+
 	return (exit_status);
 }
 
@@ -111,7 +172,9 @@ void	do_execve_fd(t_args args, int fd[], int *i, int *j)
 	close_all(fd, args.p_count);
 	if (av[0][0] == '/' || (av[0][0] == '.' && av[0][1] == '/'))
 	{
-		command = av[0];
+		for (int i = 0; av[i]; i++)
+			av[i] = get_command(av[i]);
+		command = get_command(av[0]);
 		execve(command, av, args.envp);
 		ft_putstr_fd("minishell: ", 2);
 		ft_putstr_fd(command, 2);
@@ -119,6 +182,8 @@ void	do_execve_fd(t_args args, int fd[], int *i, int *j)
 	}
 	else
 	{
+		for (int i = 0; av[i]; i++)
+			av[i] = get_command(av[i]);
 		command = search_path(av[0], args.envp);
 		execve(command, av, args.envp);
 		ft_putstr_fd("minishell: ", 2);
@@ -147,7 +212,11 @@ int	do_execve_last(t_args args, int fd[], int *i)
 		av = ft_split(args.argv[args.p_count], ' ');
 		if (av[0][0] == '/' || (av[0][0] == '.' && av[0][1] == '/'))
 		{
+			for (int i = 0; av[i]; i++)
+				av[i] = get_command(av[i]);
 			command = av[0];
+			for (int i = 0; av[i]; i++)
+				av[i] = get_command(av[i]);
 			ret = execve(command, av, args.envp);
 			ft_putstr_fd("minishell: ", 2);
 			ft_putstr_fd(command, 2);
@@ -156,6 +225,8 @@ int	do_execve_last(t_args args, int fd[], int *i)
 		}
 		else
 		{
+			for (int i = 0; av[i]; i++)
+				av[i] = get_command(av[i]);
 			command = search_path(av[0], args.envp);
 			ret = execve(command, av, args.envp);
 			ft_putstr_fd("minishell: ", 2);
@@ -168,3 +239,13 @@ int	do_execve_last(t_args args, int fd[], int *i)
 	exit_status = WEXITSTATUS(status);
 	return (exit_status);
 }
+
+// int	main(int argc, char **argv)
+// {
+// 	char	*str;
+	
+// 	if (get_command(str) == 1)
+// 		printf("%s is correct\n", str);
+// 	else
+// 		printf("%s is incorrect\n", str);
+// }

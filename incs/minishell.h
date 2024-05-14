@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 18:44:22 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/09 15:12:11 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/13 14:32:18 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@
 # include <limits.h>
 # include <errno.h>
 # include <string.h>
+# include "builtins.h"
 
 char	**my_split(char *str, char *charset);
 char	*search_path(char *cmd, char **path);
@@ -37,7 +38,6 @@ char	*get_str(char **strs2, char *cmd);
 void	free_arr(char **av);
 void	leave_children(void);
 void	close_all(int fd[], int argc);
-t_list		*my_export(t_list *l, char **envp, char *s);
 
 typedef struct s_args
 {

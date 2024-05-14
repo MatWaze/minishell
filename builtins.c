@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/05 16:20:42 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/08 17:07:32 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/14 16:13:18 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,16 +105,6 @@ int	contains(char *s1, char *s2)
 	return (ans);
 }
 
-void	print_list(t_list **list)
-{
-	t_list *temp = *list;
-	while (temp != NULL)
-	{
-		printf("%s", (char*)temp->content);
-		temp = temp->next;
-	}
-}
-
 char	*my_env(char *str, char **envp, char *s)
 {
 	int		i;
@@ -140,6 +130,7 @@ char	*my_env(char *str, char **envp, char *s)
 	}
 	return (str);
 }
+
 int	split_len(char **split)
 {
 	int	i;
@@ -150,44 +141,24 @@ int	split_len(char **split)
 	return (i);
 }
 
-char	*add_brackets(char **split, char *env)
+void	populate(t_export **l, char **split)
 {
-	char	*s1;
-	
-	if (env != NULL)
-	{
-		s1 = ft_strjoin("=\"", env);
-		env = ft_strjoin(s1, "\"\n");
-		free(s1);
-	}
-	else
-	{
-		env = (char *) malloc(sizeof(char) * 4);
-		if (!env)
-			env = NULL;
-		else
-		{
-			env[0] = '\"';
-			env[1] = '\"';
-			env[2] = '\n';
-			env[3] = '\0';
-		}
-		
-	}
-	return (env);
+	char		*env_val;
+	int			len;
+	t_export	*new;
+	t_content	*cont;
+
+	len = split_len(split);
+	env_val = getenv(split[0]);
+	cont = ft_content_new(split[0], env_val);
+	new = (t_export *) ft_lstnew(cont);
+	new->next = *l;
+	*l = new;
 }
 
-t_list	*my_export(t_list *l, char **envp, char *s)
+t_export	*my_export(t_export *l, char **envp, char *s)
 {
 	int		i;
-	int		c;
-	int		len;
-	char	*str;
-	char	*s1;
-	char	*s2;
-	t_list	*new;
-	t_list	*l1;
-	t_list	*l2;
 	char	*temp;
 	char	**split;
 	
@@ -197,105 +168,36 @@ t_list	*my_export(t_list *l, char **envp, char *s)
 		while (envp[i] != NULL)
 		{
 			split = ft_split(envp[i], '=');
-			len = split_len(split);
-			s2 = getenv(split[0]);
-			s2 = add_brackets(split, s2);
-			s1 = ft_strjoin("declare -x ", split[0]);
-			str = ft_strjoin(s1, s2);
-			free(s1);
-			new = ft_lstnew(str);
-			ft_lstadd_back(&l, new);
-			free_arr(split);
-			free(s2);
+			populate(&l, split);
 			i++;
 		}
-		l1 = l;
-		while (l1)
-		{
-			l2 = l1->next;
-			while (l2)
-			{
-				if (ft_strncmp(l1->content, l2->content, \
-					ft_strlen(l1->content) > ft_strlen(l2->content) ? ft_strlen(l2->content) : ft_strlen(l1->content)) > 1)
-				{
-					temp = l2->content;
-					l2->content = l1->content;
-					l1->content = temp;
-				}
-				l2 = l2->next;
-			}
-			l1 = l1->next;
-		}
+		sort_list(&l);
 	}
-	// if (ft_strlen(s) > 1)
-	// {
-	// 	l1 = l;
-	// 	if (ft_strncmp(s, l1->content, s))
-	// 	while (l1)
-	// 	{
-
-	// 	}
-	// }
+	split = ft_split(s, '=');
+	if (ft_strlen(split[0]) >= 1 && is_inside(s, split[0], &l) == 0)
+		append(s, split, &l);
 	print_list(&l);
 	return (l);
 }
 
-// int	main2(int argc, char **argv, char **envp)
-// {
-// 	t_list	*list = NULL;
-
-// 	list = my_export(list, envp, "");
-// 	ft_lstclear(&list, free);
-// 	return (0);
-// }
+int	main2(int argc, char **argv, char **envp)
+{
+	t_export	*list = NULL;
+	char	*str;
+	
+	while (1)
+	{
+		str = readline("minishell$ ");
+		list = my_export(list, envp, str);
+	}
+	// ft_lstclear(&list, free);
+	// system("leaks minishell");
+	return (0);
+}
 
 // int	main(int argc, char **argv, char **envp)
 // {
 // 	main2(argc, argv, envp);
-// 	system("leaks minishell");
+// 	// system("leaks minishell");
 // 	return (0);
-// }
-
-// typedef struct s_simple_cmd
-// {
-// 	char	*command;
-// 	char	*args;
-// }				t_simple_cmd;
-
-// typedef struct s_cmd
-// {
-// 	int				cmd_count;
-// 	t_simple_cmd	*simple_cmds;
-// 	char			*outfile;
-// 	char			*infile;
-// }				t_cmd;
-
-// int	command_count(char **cmd_line)
-// {
-// 	int	i;
-// 	int	count;
-
-// 	i = 0;
-// 	count = 0;
-// 	while (cmd_line[i])
-// 	{
-// 		if (access(cmd_line[i], F_OK | R_OK) == 0)
-// 			count++;
-// 		i++;
-// 	}
-// 	return (count);
-// }
-
-// int	type(char *str)
-// {
-// 	int	type;
-
-// 	type = 0; // 0 for word
-// 	if (ft_strncmp(str, "<", 1) == 0)
-// 		type = 1; // 1 for <
-// 	else if (ft_strncmp(str, ">", 1) == 0)
-// 		type = 2; // 2 for >
-// 	else if (ft_strncmp(str, "|", 1) == 0)
-// 		type = 3; // 3 for |
-// 	return (type);
 // }

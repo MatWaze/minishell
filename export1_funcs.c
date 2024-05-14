@@ -83,9 +83,9 @@ void	sort_list(t_export **l)
 		while (l2)
 		{
 			if (ft_strlen(l1->pair->key) > ft_strlen(l2->pair->key))
-				count = ft_strlen(l2->pair->key);
-			else
 				count = ft_strlen(l1->pair->key);
+			else
+				count = ft_strlen(l2->pair->key);
 			if (ft_strncmp(l1->pair->key, l2->pair->key, count) > 0)
 				ft_swap(&l1, &l2);
 			l2 = l2->next;

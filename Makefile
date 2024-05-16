@@ -1,7 +1,7 @@
 name = minishell
 cc = cc
 build_dir = build
-src = builtins pipex minishell my_split helper_functions1 helper_functions2
+src = export1_funcs export2_funcs builtins pipex minishell my_split helper_functions1 helper_functions2
 obj = $(addprefix $(build_dir)/, $(addsuffix .o, $(src)))
 readline_dir = readline-8.2
 libft_dir = libft

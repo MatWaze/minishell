@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 18:44:22 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/13 14:32:18 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/16 13:12:29 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,15 +41,13 @@ void	close_all(int fd[], int argc);
 
 typedef struct s_args
 {
-	char	**argv;
-	char	**envp;
-	int		p_count;
-	int		exit_code;
+	char		**argv;
+	char		**envp;
+	int			p_count;
+	int			exit_code;
+	t_export	*list;
 }		t_args;
 
-int		pipex(t_args args, int fd[]);
-int		do_execve_first(t_args args, int fd[]);
-void	do_execve_fd(t_args args, int fd[], int *i, int *j);
-int		do_execve_last(t_args args, int fd[], int *i);
+int		pipex(t_args *args);
 
 #endif

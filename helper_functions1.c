@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:01 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/11 16:23:07 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/14 16:12:27 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,4 +54,26 @@ char	*get_str(char **strs2, char *cmd)
 	free_arr(strs2);
 	free(s);
 	return (cmd);
+}
+
+void	leave_children(void)
+{
+	int	i;
+	int	status;
+
+	i = wait(&status);
+	while (i != -1)
+		i = wait(&status);
+}
+
+void	close_all(int fd[], int argc)
+{
+	int	i;
+
+	i = 0;
+	while (i < argc * 2)
+	{
+		close(fd[i]);
+		i++;
+	}
 }

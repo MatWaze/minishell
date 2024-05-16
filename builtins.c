@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/05 16:20:42 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/14 16:13:18 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/16 13:13:57 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,44 +156,45 @@ void	populate(t_export **l, char **split)
 	*l = new;
 }
 
+int	check_key(char *key)
+{
+	int	ans;
+
+	ans = 0;
+	if (ft_isalpha(*key) == 1 || *key == '_')
+		ans = 1;
+	return (ans);
+}
+
 t_export	*my_export(t_export *l, char **envp, char *s)
 {
-	int		i;
-	char	*temp;
 	char	**split;
 	
-	i = 0;
-	if (l == NULL)
-	{
-		while (envp[i] != NULL)
-		{
-			split = ft_split(envp[i], '=');
-			populate(&l, split);
-			i++;
-		}
-		sort_list(&l);
-	}
 	split = ft_split(s, '=');
-	if (ft_strlen(split[0]) >= 1 && is_inside(s, split[0], &l) == 0)
-		append(s, split, &l);
-	print_list(&l);
+	if (check_key(split[0]) == 1)
+	{
+		if (ft_strlen(split[0]) >= 1 && is_inside(s, split[0], &l) == 0)
+			append(s, split, &l);
+	}
+	// else
+	// 	printf("bash: export: `%s': not a valid identifier\n", s);
 	return (l);
 }
 
-int	main2(int argc, char **argv, char **envp)
-{
-	t_export	*list = NULL;
-	char	*str;
+// int	main2(int argc, char **argv, char **envp)
+// {
+	// t_export	*list = NULL;
+	// char	*str;
 	
-	while (1)
-	{
-		str = readline("minishell$ ");
-		list = my_export(list, envp, str);
-	}
+	// while (1)
+	// {
+	// 	str = readline("minishell$ ");
+	// 	list = my_export(list, envp, str);
+	// }
 	// ft_lstclear(&list, free);
 	// system("leaks minishell");
-	return (0);
-}
+// 	return (0);
+// }
 
 // int	main(int argc, char **argv, char **envp)
 // {

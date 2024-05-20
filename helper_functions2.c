@@ -6,39 +6,45 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 15:13:06 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/16 13:12:44 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/17 15:56:28 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "incs/minishell.h"
 
-char	**get_path(char **path)
+char	*get_path(t_export **env)
 {
-	char	**strs1;
-	int		i;
+	t_export	*temp;
+	char		*key;
+	char		*val;
+	int			count;
 
-	i = 0;
-	while (path[i] != NULL)
+	temp = *env;
+	val = NULL;
+	while (temp)
 	{
-		strs1 = ft_split(path[i], '=');
-		if (ft_strncmp(strs1[0], "PATH", 4) == 0)
-			return (strs1);
-		free_arr(strs1);
-		i++;
+		key = temp->pair->key;
+		count = ft_strlen(key);
+		if (ft_strncmp("PATH", key, count) == 0)
+		{
+			if (temp->pair->val)
+				val = temp->pair->val;
+			break ;
+		}
+		temp = temp->next;
 	}
-	return (NULL);
+	return (val);
 }
 
-char	*search_path(char *cmd, char **path)
+char	*search_path(char *cmd, t_export **env)
 {
-	char	**strs1;
+	char	*strs1;
 	char	**strs2;
 
-	strs1 = get_path(path);
+	strs1 = get_path(env);
 	if (!strs1)
 		return (NULL);
-	strs2 = ft_split(strs1[1], ':');
-	free_arr(strs1);
+	strs2 = ft_split(strs1, ':');
 	return (get_str(strs2, cmd));
 }
 

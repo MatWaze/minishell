@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   export1_funcs.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/05/16 17:55:21 by mamazari          #+#    #+#             */
+/*   Updated: 2024/05/17 15:20:01 by mamazari         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "incs/minishell.h"
 
 t_content	*ft_content_new(char *key, char *val)
@@ -14,21 +26,31 @@ t_content	*ft_content_new(char *key, char *val)
 	return (result);
 }
 
-void	print_list(t_export **list)
+void	print_list(t_export **list, int i)
 {
 	t_export	*temp;
 	char		*val;
-	
+
 	temp = *list;
 	while (temp != NULL)
 	{
 		val = temp->pair->val;
-		if (val == NULL)
-			printf("declare -x %s\n", temp->pair->key);
-		else if (ft_strlen(val) == 0)
-			printf("declare -x %s=\"\"\n", temp->pair->key);
+		if (i == 1)
+		{
+			if (val == NULL)
+				printf("declare -x %s\n", temp->pair->key);
+			else if (ft_strlen(val) == 0)
+				printf("declare -x %s=\"\"\n", temp->pair->key);
+			else
+				printf("declare -x %s=\"%s\"\n", temp->pair->key, \
+					temp->pair->val);
+		}
 		else
-			printf("declare -x %s=\"%s\"\n", temp->pair->key, temp->pair->val);
+		{
+			if (val != NULL)
+				printf("%s=%s\n", temp->pair->key, \
+					temp->pair->val);
+		}
 		temp = temp->next;
 	}
 }
@@ -38,7 +60,7 @@ char	*get_val(char *s)
 	int		i;
 	int		size;
 	char	*str;
-	
+
 	i = 0;
 	size = 0;
 	if (ft_strchr(s, '=') == NULL)
@@ -75,7 +97,7 @@ void	sort_list(t_export **l)
 	t_export	*l1;
 	t_export	*l2;
 	int			count;
-	
+
 	l1 = *l;
 	while (l1)
 	{
@@ -93,10 +115,11 @@ void	sort_list(t_export **l)
 		l1 = l1->next;
 	}
 }
+
 // char	*add_brackets(char *env)
 // {
 // 	char	*s1;
-	
+
 // 	if (env != NULL)
 // 	{
 // 		s1 = ft_strjoin("=\"", env);

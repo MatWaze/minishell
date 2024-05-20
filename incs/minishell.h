@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 18:44:22 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/16 13:12:29 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/19 15:41:18 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,21 +33,11 @@
 # include "builtins.h"
 
 char	**my_split(char *str, char *charset);
-char	*search_path(char *cmd, char **path);
+char	*search_path(char *cmd, t_export **env);
 char	*get_str(char **strs2, char *cmd);
 void	free_arr(char **av);
 void	leave_children(void);
 void	close_all(int fd[], int argc);
-
-typedef struct s_args
-{
-	char		**argv;
-	char		**envp;
-	int			p_count;
-	int			exit_code;
-	t_export	*list;
-}		t_args;
-
 int		pipex(t_args *args);
 
 #endif

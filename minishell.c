@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/16 13:13:21 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/19 16:56:05 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,8 @@ char	*env_expansion(char *s, t_export *l)
 
 int	main(int argc, char **argv, char **envp)
 {
-	t_export	*l;
+	t_export	*export_list;
+	t_export	*env_list;
 	t_args		*args;
 	char		*str;
 	char		*crin;
@@ -91,18 +92,25 @@ int	main(int argc, char **argv, char **envp)
 	int			*fd;
 	int			exit_status;
 	
+	t_list		*pids;
 	args = (t_args *) malloc(sizeof(t_args));
+	
 	args->envp = envp;
 	i = 0;
-	l = NULL;
+	export_list = NULL;
+	env_list = NULL;
+	pids = NULL;
+	args->pids = pids;
 	while (args->envp[i] != NULL)
 	{
 		split = ft_split(args->envp[i], '=');
-		populate(&l, split);
+		populate(&export_list, split);
+		populate(&env_list, split);
 		i++;
 	}
-	sort_list(&l);
-	args->list = l;
+	args->env_list = env_list;
+	sort_list(&export_list);
+	args->export_list = export_list;
 	while (1)
 	{
 		str = readline("minishell$ ");

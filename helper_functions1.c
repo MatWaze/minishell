@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:01 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/14 16:12:27 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/18 19:35:41 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,10 @@ char	*get_str(char **strs2, char *cmd)
 	int		i;
 	int		errnum;
 	char	*s;
-	
+
 	i = 0;
+	// if (!cmd)
+	// 	return (NULL);
 	s = ft_strjoin("/", cmd);
 	while (strs2[i] != NULL)
 	{

@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 16:04:54 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/15 12:34:09 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/16 17:57:08 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	append_list(char *s, char **split, t_export *l1, t_export *l2)
 	char		*val;
 	int			count;
 	int			count2;
-	
+
 	if (ft_strlen(l1->pair->key) > ft_strlen(split[0]))
 		count = ft_strlen(l1->pair->key);
 	else
@@ -47,7 +47,7 @@ int	append_last(char *s, char **split, t_export *last)
 	t_content	*cont;
 	int			count;
 	int			ans;
-		
+
 	ans = 0;
 	if (ft_strlen(split[0]) > ft_strlen(last->pair->key))
 		count = ft_strlen(split[0]);
@@ -70,7 +70,7 @@ int	append_first(char *s, char **split, t_export **first)
 	t_content	*cont;
 	int			count;
 	int			ans;
-		
+
 	ans = 0;
 	if (ft_strlen(split[0]) >= ft_strlen((*first)->pair->key))
 		count = ft_strlen(split[0]);
@@ -93,7 +93,7 @@ int	is_inside(char *s, char *key, t_export **l)
 	int			count;
 	char		*str;
 	t_export	*temp;
-	
+
 	ans = 0;
 	temp = *l;
 	while (temp)
@@ -120,7 +120,7 @@ void	append(char *s, char **split, t_export **l)
 	t_export	*l1;
 	t_export	*l2;
 
-	if  (append_first(s, split, l) == 0)
+	if (append_first(s, split, l) == 0)
 	{
 		l2 = *l;
 		l1 = *l;
@@ -138,5 +138,5 @@ void	append(char *s, char **split, t_export **l)
 				l2 = l1->next;
 			}
 		}
-	}	
+	}
 }

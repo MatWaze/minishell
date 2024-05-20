@@ -12,7 +12,7 @@ cflags = #-g3 -fsanitize=address#-Wall -Wextra -Werror
 all : $(name)
 
 $(name) : $(build_dir) $(readline_dir)/lib/libreadline.a $(libft_dir)/libft.a $(obj)
-	$(cc) $(cflags) $(lflags) -o $(name) $(obj) -lreadline -lcurses -lft
+	$(cc) $(cflags) $(lflags) -o $(name) $(obj) -lreadline -lft -lcurses
 
 $(build_dir)/%.o: %.c Makefile incs/minishell.h
 	$(cc) $(cflags) $(iflags) -c $< -o $@

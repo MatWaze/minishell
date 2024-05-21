@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/19 16:56:05 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/20 20:35:37 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,31 @@ char	*env_expansion(char *s, t_export *l)
 	return (ans);
 }
 
+// char	**change_envp(t_export **env_list)
+// {
+// 	t_export	*temp;
+// 	char		*str;
+// 	char		*joined_str;
+// 	char		**new_envp;
+// 	int			len;
+
+// 	len = ft_lstsize((t_list *) *env_list);
+// 	printf("len: %d\n", len);
+// 	new_envp = (char **) malloc(sizeof(char *) * (len + 1));
+// 	len = 0;
+// 	temp = *env_list;
+// 	while (temp)
+// 	{
+// 		joined_str = ft_strjoin(temp->pair->key, "=");
+// 		str = ft_strjoin(joined_str, temp->pair->val);
+// 		free(joined_str);
+// 		new_envp[len++] = str;
+// 		temp = temp->next;
+// 	}
+// 	new_envp[len] = NULL;
+// 	return (new_envp);
+// }
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_export	*export_list;
@@ -91,26 +116,27 @@ int	main(int argc, char **argv, char **envp)
 	int			p_count;
 	int			*fd;
 	int			exit_status;
-	
 	t_list		*pids;
-	args = (t_args *) malloc(sizeof(t_args));
 	
+	args = (t_args *) malloc(sizeof(t_args));
 	args->envp = envp;
 	i = 0;
 	export_list = NULL;
 	env_list = NULL;
 	pids = NULL;
 	args->pids = pids;
-	while (args->envp[i] != NULL)
+	while (envp[i] != NULL)
 	{
-		split = ft_split(args->envp[i], '=');
+		split = ft_split(envp[i], '=');
 		populate(&export_list, split);
 		populate(&env_list, split);
 		i++;
 	}
+	args->envp = envp;
 	args->env_list = env_list;
 	sort_list(&export_list);
 	args->export_list = export_list;
+	// args->my_envp = change_envp(&args->env_list);
 	while (1)
 	{
 		str = readline("minishell$ ");

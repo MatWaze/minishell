@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 14:29:25 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/20 18:13:04 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/21 16:19:16 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ typedef struct s_args
 	char		**argv;
 	char		**envp;
 	int			p_count;
+	char		**my_envp;
 	int			exit_code;
 	t_list		*pids;
 	t_export	*export_list;
@@ -57,7 +58,9 @@ void		sort_list(t_export **l);
 void		my_unset(t_export **l, char *str);
 void		my_echo(char **strs);
 void		my_pwd(void);
+char		**change_envp(t_export **env_list);
 char		*get_val(char *s);
+char		*tilde_exp(char *str, t_export **list);
 char		*get_value_from_key(t_export **list, char *key);
 int			my_cd(char *path, t_export **list);
 int			my_export(t_args *args, char *s);

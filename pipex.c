@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/20 18:16:06 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/21 18:28:31 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,10 @@ void	restore_fds(t_temp *p)
 
 void	handle_builtin(char **av, t_args *args)
 {
-	int	i;
-	int	p;
-	int	ans;
+	int		i;
+	int		p;
+	int		ans;
+	char	*str;
 
 	if (ft_strlen(av[0]) == 6 && ft_strncmp("export", av[0], 6) == 0)
 	{
@@ -61,7 +62,10 @@ void	handle_builtin(char **av, t_args *args)
 		if (!av[1])
 			ans = my_cd("HOME", &args->export_list);
 		else
-			ans = my_cd(av[1], &args->export_list);
+		{
+			str = tilde_exp(av[1], &args->export_list);
+			ans = my_cd(str, &args->export_list);
+		}
 	}
 	// p = fork();
 	// if (p == 0)
@@ -196,20 +200,28 @@ void	handle_command(char **av, t_args *args)
 	int		val_int;
 	int		exit_code;
 	
-	if (ft_strchr(av[0], '~') != NULL)
+	p = fork();
+	if (p == 0)
 	{
-		first = tilde_exp(av[0], &args->export_list);
-		if (!first)
+		if (ft_strchr(av[0], '~') != NULL)
+		{
+			first = tilde_exp(av[0], &args->export_list);
+			if (!first)
+				first = av[0];
+		}
+		else
 			first = av[0];
+		printf("%s\n", first);
+		if (is_dir(first) != 0)
+		{
+			printf("minishell: %s: is a directory\n", first);
+			exit(126);
+		}
+		command = search_path(first, &args->export_list);
+		execve(command, av, args->envp);
+		exit(1);
 	}
-	else
-		first = av[0];
-	if (is_dir(first) != 0)
-	{
-		printf("minishell: %s: is a directory\n", first);
-		exit(126);
-	}
-	command = search_path(first, &args->export_list);
+
 	// if (ft_strlen(command) == 11 && ft_strncmp(command, "./minishell", 11) == 0)
 	// {
 	// 	val_str = get_value_from_key(&args->export_list, "SHLVL");
@@ -220,9 +232,6 @@ void	handle_command(char **av, t_args *args)
 	// 	else
 	// 		my_export(args, "SHLVL=1");
 	// }
-	p = fork();
-	if (p == 0)
-		execve(command, av, args->envp);
 	// else		
 	// err = strerror(errno);
 	// if (ft_strncmp(err, "No such file or directory", 25) == 0 || \

@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/05 16:20:42 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/20 16:42:37 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/21 18:38:57 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,9 +44,12 @@ int	is_cmd(char *str)
 
 int	my_cd(char *path, t_export **list)
 {
-	int	ans;
-
+	int		ans;
+	char	*str;
+	int		i;
 	ans = 0;
+
+	i = 0;
 	if (ft_strlen(path) == 4 && ft_strncmp(path, "HOME", 4) == 0)
 		path = get_value_from_key(list, "HOME");
 	if (!path)

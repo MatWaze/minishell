@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 15:13:06 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/17 15:56:28 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/20 20:34:51 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ char	*search_path(char *cmd, t_export **env)
 
 	strs1 = get_path(env);
 	if (!strs1)
-		return (NULL);
+		return (cmd);
 	strs2 = ft_split(strs1, ':');
 	return (get_str(strs2, cmd));
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 18:44:22 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/19 15:41:18 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/22 19:24:08 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@
 # include <string.h>
 # include "builtins.h"
 
-char	**my_split(char *str, char *charset);
+char	**quoted_split(char *str, char c);
 char	*search_path(char *cmd, t_export **env);
 char	*get_str(char **strs2, char *cmd);
 void	free_arr(char **av);

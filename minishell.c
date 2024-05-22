@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/20 20:35:37 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/22 20:07:01 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ int	main(int argc, char **argv, char **envp)
 	int			*fd;
 	int			exit_status;
 	t_list		*pids;
-	
+
 	args = (t_args *) malloc(sizeof(t_args));
 	args->envp = envp;
 	i = 0;
@@ -144,7 +144,7 @@ int	main(int argc, char **argv, char **envp)
 			add_history(str);
 		if (*str != 0)
 		{
-			words1 = my_split(str, "|");
+			words1 = quoted_split(str, '|');
 			args->argv = words1;
 			args->exit_code = 0;
 			p_count = pipe_count(str);

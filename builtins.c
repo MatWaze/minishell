@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/05 16:20:42 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/21 18:38:57 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/23 16:19:17 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,25 +47,26 @@ int	my_cd(char *path, t_export **list)
 	int		ans;
 	char	*str;
 	int		i;
-	ans = 0;
 
+	ans = 0;
 	i = 0;
 	if (ft_strlen(path) == 4 && ft_strncmp(path, "HOME", 4) == 0)
 		path = get_value_from_key(list, "HOME");
 	if (!path)
 	{
-		printf("minishell: HOME not set\n");
+		// printf("minishell: HOME not set\n");
 		ans = 1;
 	}
 	else if (chdir(path) == -1)
 	{
+		printf("path: %s\n", path);
 		perror(path);
 		ans = 1;
 	}
 	return (ans);
 }
 
-void	my_pwd(void)
+char	*my_pwd(void)
 {
 	char	*buf;
 	char	*res;
@@ -75,14 +76,10 @@ void	my_pwd(void)
 		exit(0);
 	res = getcwd(buf, PATH_MAX);
 	if (res != NULL)
-	{
 		res[PATH_MAX] = '\0';
-		ft_putstr_fd(res, 1);
-		ft_putchar_fd('\n', 1);
-		free(res);
-	}
-	else
-		exit(0);
+	// else
+		// exit(0);
+	return (res);
 }
 
 int	split_len(char **split)
@@ -95,20 +92,38 @@ int	split_len(char **split)
 	return (i);
 }
 
+void	set_flag(char **strs, int *i, int *flag)
+{
+	char	*trimmed;
+
+	while (strs[*i] && strs[*i][0] == '-')
+	{
+		trimmed = ft_strtrim(strs[*i], "n");
+		if (!(ft_strlen(trimmed) == 1 && ft_strncmp(trimmed, "-", 1) == 0))
+		{
+			free(trimmed);
+			break ;
+		}
+		else
+		{
+			*flag = 1;
+			free(trimmed);
+		}
+		(*i)++;
+	}
+}
+
 void	my_echo(char **strs)
 {
-	int	i;
-	int	flag;
+	int		i;
+	int		flag;
+	char	*trimmed;
 
 	flag = 0;
+	i = 1;
 	if (split_len(strs) > 1)
 	{
-		i = 1;
-		if (ft_strncmp("-n", strs[i], ft_strlen(strs[i])) == 0)
-		{
-			flag = 1;
-			i++;
-		}
+		set_flag(strs, &i, &flag);
 		while (strs[i] != NULL)
 		{
 			printf("%s", strs[i]);
@@ -121,17 +136,33 @@ void	my_echo(char **strs)
 		printf("\n");
 }
 
+char	*my_strdup(char *dest)
+{
+	int		i;
+	char	*str;
+
+	i = 0;
+	str = (char *) malloc(sizeof(1) * (ft_strlen(dest) + 1));
+	while (dest[i])
+	{
+		str[i] = dest[i];
+		i++;
+	}
+	str[i] = '\0';
+	return (str);
+}
+
 void	populate(t_export **l, char **split)
 {
-	char		*env_val;
-	int			len;
+	char		*key;
+	char		*val;
 	t_export	*new;
 	t_content	*cont;
 	t_export	*last;
 
-	len = split_len(split);
-	env_val = getenv(split[0]);
-	cont = ft_content_new(split[0], env_val);
+	key = my_strdup(split[0]);
+	val = my_strdup(getenv(key));
+	cont = ft_content_new(key, val);
 	new = (t_export *) ft_lstnew(cont);
 	if (*l == NULL)
 		*l = new;
@@ -207,17 +238,34 @@ void	my_unset(t_export **l, char *str)
 int	my_export(t_args *args, char *s)
 {
 	char	**split;
+	char	*key;
+	char	*key2;
+	char	*val;
+	char	*val2;
 	int		exit_code;
-	
+
 	split = ft_split(s, '=');
-	if (check_key(split[0]) == 1)
+	key = my_strdup(split[0]);
+	key2 = my_strdup(split[0]);
+	val = get_val(s);
+	val2 = get_val(s);
+	free_arr(split);
+	if (check_key(key) == 1)
 	{
-		if (ft_strlen(split[0]) >= 1 && \
-			(is_inside(s, split[0], &args->env_list) == 0 || \
-			is_inside(s, split[0], &args->export_list) == 0))
+		if ((ft_strlen(key) >= 1 && is_inside(val2, key2, &args->env_list) \
+			== 0) || is_inside(val, key, &args->export_list) == 0)
 		{
-			append(s, split, &args->export_list);
-			append(s, split, &args->env_list);
+			append(val, key, &args->export_list);
+			append(val2, key2, &args->env_list);
+		}
+		else
+		{
+			free(key);
+			// if (val)
+			// 	free(val);
+			free(key2);
+			// if (val2)
+			// 	free(val2);
 		}
 		exit_code = 0;
 	}

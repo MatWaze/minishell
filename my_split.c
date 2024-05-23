@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 13:17:38 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/14 16:18:42 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/23 14:07:55 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ char	*ft_strdup(char *dest, int len)
 
 	i = 0;
 	str = (char *) malloc(sizeof(1) * (len + 1));
-	while (i < len)
+	while (dest[i])
 	{
 		str[i] = dest[i];
 		i++;

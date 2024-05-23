@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/20 20:35:37 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/23 16:43:59 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,40 +103,65 @@ char	*env_expansion(char *s, t_export *l)
 // 	return (new_envp);
 // }
 
-int	main(int argc, char **argv, char **envp)
+t_args	*init_minishell(int argc, char **argv, char **envp)
 {
 	t_export	*export_list;
 	t_export	*env_list;
 	t_args		*args;
-	char		*str;
-	char		*crin;
 	char		**split;
-	char		**words1;
 	int			i;
-	int			p_count;
-	int			*fd;
-	int			exit_status;
-	t_list		*pids;
 	
+	i = 0;
 	args = (t_args *) malloc(sizeof(t_args));
 	args->envp = envp;
-	i = 0;
 	export_list = NULL;
 	env_list = NULL;
-	pids = NULL;
-	args->pids = pids;
 	while (envp[i] != NULL)
 	{
 		split = ft_split(envp[i], '=');
 		populate(&export_list, split);
 		populate(&env_list, split);
+		free_arr(split);
 		i++;
 	}
-	args->envp = envp;
 	args->env_list = env_list;
-	sort_list(&export_list);
 	args->export_list = export_list;
-	// args->my_envp = change_envp(&args->env_list);
+	sort_list(&export_list);
+	my_export(args, "OLDPWD=");
+	return (args);
+}
+
+void	clear_export(t_export **exp)
+{
+	t_export	*temp;
+	t_export	*to_free;
+	
+	temp = *exp;
+	while (temp)
+	{
+		to_free = temp;
+		temp = temp->next;
+		if (to_free->pair->key)
+			free(to_free->pair->key);
+		if (to_free->pair->val)
+			free(to_free->pair->val);
+		free(to_free->pair);
+		free(to_free);
+	}
+}
+
+int	main(int argc, char **argv, char **envp)
+{
+	t_args		*args;
+	char		*str;
+	char		**words1;
+	int			i;
+	int			p_count;
+	int			exit_status;
+	// t_list		*pids;
+	
+	i = 0;
+	args = init_minishell(argc, argv, envp);
 	while (1)
 	{
 		str = readline("minishell$ ");
@@ -150,10 +175,12 @@ int	main(int argc, char **argv, char **envp)
 			p_count = pipe_count(str);
 			args->p_count = p_count;
 			exit_status = pipex(args);
-			// printf("exit_status: %d\n", exit_status);
 			leave_children();
-			free_arr(words1);
+			free_arr(args->argv);
 		}
 		free(str);
 	}
+	clear_export(&args->export_list);
+	clear_export(&args->env_list);
+	free(args);
 }

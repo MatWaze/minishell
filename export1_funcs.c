@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/16 17:55:21 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/17 15:20:01 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/23 15:53:31 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,9 +72,9 @@ char	*get_val(char *s)
 		if (s[i] == '=')
 			i++;
 		if (s[i] == '\0')
-			str = "";
+			str = my_strdup("");
 		else
-			str = &s[i];
+			str = my_strdup(&s[i]);
 	}
 	return (str);
 }

@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/23 16:43:59 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/23 16:51:14 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,7 +169,7 @@ int	main(int argc, char **argv, char **envp)
 			add_history(str);
 		if (*str != 0)
 		{
-			words1 = my_split(str, "|");
+			words1 = quoted_split(str, '|');
 			args->argv = words1;
 			args->exit_code = 0;
 			p_count = pipe_count(str);

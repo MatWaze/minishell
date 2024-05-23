@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 18:44:22 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/23 13:36:17 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/23 16:51:31 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@
 # include <string.h>
 # include "builtins.h"
 
-char	**my_split(char *str, char *charset);
+char	**quoted_split(char *str, char c);
 char	*search_path(char *cmd, t_export **env);
 char	*get_str(char **strs2, char *cmd);
 void	free_arr(char **av);

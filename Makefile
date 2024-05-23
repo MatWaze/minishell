@@ -1,7 +1,7 @@
 name = minishell
 cc = cc
 build_dir = build
-src = export1_funcs export2_funcs builtins pipex minishell my_split helper_functions1 helper_functions2
+src = export1_funcs export2_funcs builtins pipex minishell quoted_split quotes helper_functions1 helper_functions2
 obj = $(addprefix $(build_dir)/, $(addsuffix .o, $(src)))
 readline_dir = readline-8.2
 libft_dir = libft
@@ -20,14 +20,16 @@ $(build_dir)/%.o: %.c Makefile incs/minishell.h
 $(libft_dir)/libft.a:
 	make -C $(libft_dir)
 
-$(readline_dir)/lib/libreadline.a:
-	cd $(readline_dir); ./configure --prefix=$(shell pwd)/$(readline_dir) --enable-shared=no
+$(readline_dir)/lib/libreadline.a: $(readline_dir)/Makefile
 	make -C $(readline_dir) install
 
 $(build_dir):
 	mkdir $@
 
-clean :
+$(readline_dir)/Makefile:
+	cd $(readline_dir); ./configure --prefix=$(shell pwd)/$(readline_dir) --enable-shared=no
+
+clean : $(readline_dir)/Makefile
 	rm -rf $(build_dir)
 	make -C $(libft_dir) clean
 	make -C $(readline_dir) clean

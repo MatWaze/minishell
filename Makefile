@@ -40,6 +40,9 @@ fclean : clean
 	make -C $(readline_dir) uninstall
 	make -C $(readline_dir) distclean
 
-re : fclean all
+re : fclean configure all
 
-.PHONY: all clean fclean re
+configure:
+	cd $(readline_dir); ./configure --prefix=$(shell pwd)/$(readline_dir) --enable-shared=no
+
+.PHONY: all clean fclean re configure

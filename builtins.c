@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/05 16:20:42 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/24 18:35:00 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/24 19:41:43 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,8 @@ int	is_builtin(char *str)
 
 int	is_cmd(char *str)
 {
-	int	i;
 	int	ans;
 
-	i = 0;
 	ans = 0;
 	if (access(str, F_OK | R_OK) == 0 || is_builtin(str) == 1)
 		ans = 1;
@@ -60,8 +58,7 @@ char	*my_pwd(void)
 	char	*res;
 
 	res = getcwd(buf, PATH_MAX);
-	if (res != NULL)
-		res[PATH_MAX] = '\0';
+	res[PATH_MAX] = '\0';
 	// else
 		// exit(0);
 	return (res);
@@ -226,7 +223,6 @@ int	my_export(t_args *args, char *s)
 	char	*key2;
 	char	*val;
 	char	*val2;
-	int		exit_code;
 
 	split = ft_split(s, '=');
 	key = my_strdup(split[0]);
@@ -242,16 +238,13 @@ int	my_export(t_args *args, char *s)
 			append(val, key, &args->export_list);
 			append(val2, key2, &args->env_list);
 		}
-		exit_code = 0;
 	}
 	else
-	{
 		printf("minishell: export: `%s': not a valid identifier\n", s);
-		exit_code = 1;
-	}
 	free(key);
 	free(key2);
-	return (exit_code);
+	// return (exit_code);
+	return (1);
 }
 
 // int	main2(int argc, char **argv, char **envp)

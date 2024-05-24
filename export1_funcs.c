@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export1_funcs.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/16 17:55:21 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/23 15:53:31 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/24 13:20:56 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,11 +58,11 @@ void	print_list(t_export **list, int i)
 char	*get_val(char *s)
 {
 	int		i;
-	int		size;
+	//int		size;
 	char	*str;
 
 	i = 0;
-	size = 0;
+	//size = 0;
 	if (ft_strchr(s, '=') == NULL)
 		str = NULL;
 	else

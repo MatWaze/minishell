@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 14:29:25 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/24 18:34:44 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/24 18:59:12 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,14 @@ typedef struct s_export
 	struct s_export		*next;
 }	t_export;
 
-typedef struct	s_temp
+typedef struct s_fd
 {
 	int	tempin;
 	int	tempout;
 	int	fdout;
 	int	fdin;
 	int	fd[2];
-}	t_temp;
+}	t_fd;
 
 typedef struct s_args
 {

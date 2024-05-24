@@ -6,11 +6,11 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/24 18:45:15 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/24 19:38:28 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "incs/minishell.h"
+#include "minishell.h"
 
 // prompt; history; run executables; redirections; ' and ";
 // pipes; env vars; $? ; ctrl-C; ctrl-D; ctrl-\; built-ins
@@ -24,7 +24,7 @@ int	pipe_count(char *str)
 	c = 0;
 	while (str[i])
 	{
-		if (str[i] == '|')
+		if (str[i] == '|' && !quotes_type(str, str + i))
 			c++;
 		i++;
 	}
@@ -102,16 +102,14 @@ char	*env_expansion(char *s, t_export *l)
 // 	return (new_envp);
 // }
 
-t_args	*init_minishell(char **envp)
+void	init_minishell(char **envp, t_args *args)
 {
 	t_export	*export_list;
 	t_export	*env_list;
-	t_args		*args;
 	char		**split;
 	int			i;
 
 	i = 0;
-	args = (t_args *) malloc(sizeof(t_args));
 	args->envp = envp;
 	export_list = NULL;
 	env_list = NULL;
@@ -127,7 +125,6 @@ t_args	*init_minishell(char **envp)
 	args->export_list = export_list;
 	sort_list(&export_list);
 	my_export(args, "OLDPWD=");
-	return (args);
 }
 
 void	clear_export(t_export **exp)
@@ -148,18 +145,33 @@ void	clear_export(t_export **exp)
 		free(to_free);
 	}
 }
+void	set_params(t_args *args, char **words, char *str)
+{
+	int	p_count;
+	
+	args->exit_code = 0;
+	args->argv = words;
+	p_count = pipe_count(str);
+	args->p_count = p_count;
+	pipex(args);
+	free_arr(args->argv);
+}
+
+void	free_lists(t_args *args)
+{
+	clear_export(&args->export_list);
+	clear_export(&args->env_list);
+}
 
 int	main2(int argc, char **argv, char **envp)
 {
-	t_args		*args;
+	t_args		args;
 	char		*str;
-	char		**words1;
-	int			p_count;
-	int			exit_status;
+	char		**words;
 
 	(void)argc;
 	(void)argv;
-	args = init_minishell(envp);
+	init_minishell(envp, &args);
 	while (1)
 	{
 		str = readline("minishell$ ");
@@ -169,20 +181,13 @@ int	main2(int argc, char **argv, char **envp)
 			break ;
 		if (*str != 0)
 		{
-			words1 = ft_split(str, '|');
-			args->exit_code = 0;
-			args->argv = words1;
-			p_count = pipe_count(str);
-			args->p_count = p_count;
-			exit_status = pipex(args);
+			words = quoted_split(str, '|');
+			set_params(&args, words, str);
 			leave_children();
-			free_arr(args->argv);
 		}
 		free(str);
 	}
-	clear_export(&args->export_list);
-	clear_export(&args->env_list);
-	free(args);
+	free_lists(&args);
 	return (0);
 }
 
@@ -192,4 +197,5 @@ int	main(int argc, char **argv, char **envp)
 	(void)argv;
 	main2(argc, argv, envp);
 	system("leaks minishell");
+	return (0);
 }

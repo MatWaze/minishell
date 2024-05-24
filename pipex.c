@@ -6,20 +6,20 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/24 18:47:34 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/24 19:43:05 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "incs/minishell.h"
 
-void	setup_fds(t_temp *p)
+void	setup_fds(t_fd *p)
 {
 	p->tempin = dup(0);
 	p->tempout = dup(1);
 	p->fdin = dup(p->tempin);
 }
 
-void	restore_fds(t_temp *p)
+void	restore_fds(t_fd *p)
 {
 	dup2(p->tempin, 0);
 	dup2(p->tempout, 1);
@@ -76,7 +76,7 @@ void	handle_cd(t_args *args, char **av)
 	char	*prev_pwd;
 	char	*cur_pwd;
 
-	prev_pwd = my_pwd();
+	prev_pwd = my_strdup(my_pwd());
 	if (!av[1])
 	{
 		str = get_value_from_key(&args->export_list, "HOME");
@@ -89,8 +89,10 @@ void	handle_cd(t_args *args, char **av)
 			ans = my_cd(str);
 		free(str);
 	}
-	cur_pwd = my_pwd();
+	cur_pwd = my_strdup(my_pwd());
 	update_pwd(args, prev_pwd, cur_pwd);
+	free(cur_pwd);
+	free(prev_pwd);
 }
 
 void	handle_builtin(char **av, t_args *args)
@@ -302,13 +304,13 @@ void	handle_command(char **av, t_args *args)
 	// exit(exit_code);
 	// 	ft_lstadd_back(&args->pids, ft_lstnew(p));
 
-void	handle_pipe(int j, t_args *args, t_temp *p)
+void	handle_pipe(int j, t_args *args, t_fd *p)
 {
 	char	**av;
 
 	dup2(p->fdin, 0);
 	close(p->fdin);
-	av = ft_split(args->argv[j], ' ');
+	av = quoted_split(args->argv[j], ' ');
 	if (j == args->p_count)
 		p->fdout = dup(p->tempout);
 	else
@@ -326,14 +328,12 @@ void	handle_pipe(int j, t_args *args, t_temp *p)
 	free_arr(av);
 }
 
-int	pipex(t_args *args)
+void	pipex(t_args *args)
 {
-	t_temp	p;
+	t_fd	p;
 	int		j;
-	int		exit_status;
 	int		status;
 
-	exit_status = 0;
 	setup_fds(&p);
 	j = 0;
 	while (j < args->p_count + 1)
@@ -341,8 +341,7 @@ int	pipex(t_args *args)
 	restore_fds(&p);
 	while (j != -1)
 		j = wait(&status);
-	exit_status = WEXITSTATUS(status);
-	return (exit_status);
+	args->exit_code = WEXITSTATUS(status);
 }
 
 // int	main(int argc, char **argv, char **envp)

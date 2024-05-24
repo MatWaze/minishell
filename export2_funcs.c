@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export2_funcs.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 16:04:54 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/23 15:56:57 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/24 13:21:14 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ int	is_inside(char *s, char *key, t_export **l)
 {
 	int			ans;
 	int			count;
-	char		*str;
+	//char		*str;
 	t_export	*temp;
 
 	ans = 0;
@@ -113,7 +113,7 @@ int	is_inside(char *s, char *key, t_export **l)
 
 void	append(char *s, char *key, t_export **l)
 {
-	t_export	*new;
+	//t_export	*new;
 	t_export	*l1;
 	t_export	*l2;
 

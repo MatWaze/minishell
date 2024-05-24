@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   helper_functions1.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:01 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/18 19:35:41 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/24 18:04:05 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ char	*get_str(char **strs2, char *cmd)
 {
 	char	*str;
 	int		i;
-	int		errnum;
+	//int		errnum;
 	char	*s;
 
 	i = 0;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 14:29:25 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/23 14:31:49 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/23 18:06:08 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,14 @@ typedef struct s_export
 	struct s_export		*next;
 }	t_export;
 
-typedef struct	s_temp
+typedef struct s_fd
 {
 	int	tempin;
 	int	tempout;
 	int	fdout;
 	int	fdin;
 	int	fd[2];
-}	t_temp;
+}	t_fd;
 
 typedef struct s_args
 {

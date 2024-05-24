@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 17:37:29 by zanikin           #+#    #+#             */
-/*   Updated: 2024/05/22 20:09:51 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/05/24 18:07:05 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ char	quotes_type(const char *str, const char *const pc)
 			else if (type == *str)
 				type = 0;
 		}
+		str++;
 	}
 	return (type);
 }
@@ -42,6 +43,7 @@ int	are_quotes_closed(const char *str)
 			else if (type == *str)
 				type = 0;
 		}
+		str++;
 	}
 	return (!type);
 }

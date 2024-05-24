@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/23 16:51:14 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/24 18:21:43 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "incs/minishell.h"
+#include "minishell.h"
 
 // prompt; history; run executables; redirections; ' and ";
 // pipes; env vars; $? ; ctrl-C; ctrl-D; ctrl-\; built-ins
@@ -24,7 +24,7 @@ int	pipe_count(char *str)
 	c = 0;
 	while (str[i])
 	{
-		if (str[i] == '|')
+		if (str[i] == '|' && !quotes_type(str, str + i))
 			c++;
 		i++;
 	}
@@ -58,7 +58,7 @@ char	*find_val(t_export *l, char *to_find)
 char	*env_expansion(char *s, t_export *l)
 {
 	int		i;
-	int		j;
+	//int		j;
 	char	*ans;
 
 	i = 0;
@@ -103,16 +103,16 @@ char	*env_expansion(char *s, t_export *l)
 // 	return (new_envp);
 // }
 
-t_args	*init_minishell(int argc, char **argv, char **envp)
+void	init_minishell(int argc, char **argv, char **envp, t_args *args)
 {
 	t_export	*export_list;
 	t_export	*env_list;
-	t_args		*args;
 	char		**split;
 	int			i;
-	
+
+	(void)argc;
+	(void)argv;
 	i = 0;
-	args = (t_args *) malloc(sizeof(t_args));
 	args->envp = envp;
 	export_list = NULL;
 	env_list = NULL;
@@ -128,14 +128,13 @@ t_args	*init_minishell(int argc, char **argv, char **envp)
 	args->export_list = export_list;
 	sort_list(&export_list);
 	my_export(args, "OLDPWD=");
-	return (args);
 }
 
 void	clear_export(t_export **exp)
 {
 	t_export	*temp;
 	t_export	*to_free;
-	
+
 	temp = *exp;
 	while (temp)
 	{
@@ -152,16 +151,12 @@ void	clear_export(t_export **exp)
 
 int	main(int argc, char **argv, char **envp)
 {
-	t_args		*args;
+	t_args		args;
 	char		*str;
 	char		**words1;
-	int			i;
 	int			p_count;
-	int			exit_status;
-	// t_list		*pids;
-	
-	i = 0;
-	args = init_minishell(argc, argv, envp);
+
+	init_minishell(argc, argv, envp, &args);
 	while (1)
 	{
 		str = readline("minishell$ ");
@@ -170,17 +165,17 @@ int	main(int argc, char **argv, char **envp)
 		if (*str != 0)
 		{
 			words1 = quoted_split(str, '|');
-			args->argv = words1;
-			args->exit_code = 0;
+			args.argv = words1;
+			args.exit_code = 0;
 			p_count = pipe_count(str);
-			args->p_count = p_count;
-			exit_status = pipex(args);
+			args.p_count = p_count;
+			pipex(&args);
 			leave_children();
-			free_arr(args->argv);
+			free_arr(args.argv);
 		}
 		free(str);
 	}
-	clear_export(&args->export_list);
-	clear_export(&args->env_list);
-	free(args);
+	clear_export(&args.export_list);
+	clear_export(&args.env_list);
+	return (args.exit_code);
 }

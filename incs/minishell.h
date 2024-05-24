@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 18:44:22 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/23 16:51:31 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/24 18:21:13 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ char	*get_str(char **strs2, char *cmd);
 void	free_arr(char **av);
 void	leave_children(void);
 void	close_all(int fd[], int argc);
-int		pipex(t_args *args);
+void	pipex(t_args *args);
+char	quotes_type(const char *str, const char *const pc);
 
 #endif

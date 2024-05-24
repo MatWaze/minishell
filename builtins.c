@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/05 16:20:42 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/23 16:19:17 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/24 13:22:01 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,10 @@ int	is_builtin(char *str)
 
 int	is_cmd(char *str)
 {
-	int	i;
+	//int	i;
 	int	ans;
 
-	i = 0;
+	//i = 0;
 	ans = 0;
 	if (access(str, F_OK | R_OK) == 0 || is_builtin(str) == 1)
 		ans = 1;
@@ -45,11 +45,11 @@ int	is_cmd(char *str)
 int	my_cd(char *path, t_export **list)
 {
 	int		ans;
-	char	*str;
-	int		i;
+	//char	*str;
+	//int		i;
 
 	ans = 0;
-	i = 0;
+	//i = 0;
 	if (ft_strlen(path) == 4 && ft_strncmp(path, "HOME", 4) == 0)
 		path = get_value_from_key(list, "HOME");
 	if (!path)
@@ -117,7 +117,7 @@ void	my_echo(char **strs)
 {
 	int		i;
 	int		flag;
-	char	*trimmed;
+	//char	*trimmed;
 
 	flag = 0;
 	i = 1;

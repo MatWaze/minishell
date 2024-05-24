@@ -3,23 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/23 16:06:43 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/24 13:44:38 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "incs/minishell.h"
 
-void	setup_fds(t_temp *p)
+void	setup_fds(t_fd *p)
 {
 	p->tempin = dup(0);
 	p->tempout = dup(1);
 	p->fdin = dup(p->tempin);
 }
 
-void	restore_fds(t_temp *p)
+void	restore_fds(t_fd *p)
 {
 	dup2(p->tempin, 0);
 	dup2(p->tempout, 1);
@@ -30,11 +30,12 @@ void	restore_fds(t_temp *p)
 void	handle_export(t_args *args, char **av)
 {
 	int	i;
-	int	ans;
+	//int	ans;
 
+	(void)av;
 	i = 1;
-	while (av[i])
-		ans = my_export(args, av[i++]);
+	//while (av[i])
+	//	ans = my_export(args, av[i++]);
 	if (i == 1)
 		print_list(&args->export_list, 1);
 }
@@ -53,21 +54,22 @@ void	handle_unset(t_args *args, char **av)
 
 void	handle_cd(t_args *args, char **av)
 {
-	int		ans;
-	char	*str;
+	//int		ans;
+	//char	*str;
 	char	*str2;
 	char	*cur_pwd;
 	char	*prev_pwd;
 
+	(void)av;
 	prev_pwd = my_pwd();
-	if (!av[1])
-		ans = my_cd("HOME", &args->export_list);
-	else
-	{
-		str = tilde_exp(av[1], &args->export_list);
-		if (str)
-			ans = my_cd(str, &args->export_list);
-	}
+	//if (!av[1])
+	//	ans = my_cd("HOME", &args->export_list);
+	//else
+	//{
+	//	str = tilde_exp(av[1], &args->export_list);
+	//	if (str)
+	//		ans = my_cd(str, &args->export_list);
+	//}
 	if (get_value_from_key(&args->export_list, "PWD") != NULL)
 	{
 		str2 = ft_strjoin("PWD=", my_pwd());
@@ -82,11 +84,11 @@ void	handle_cd(t_args *args, char **av)
 
 void	handle_builtin(char **av, t_args *args)
 {
-	int		i;
-	int		p;
-	int		ans;
-	char	*str;
-	char	*str2;
+	//int		i;
+	//int		p;
+	//int		ans;
+	//char	*str;
+	//char	*str2;
 	
 	if (ft_strlen(av[0]) == 6 && ft_strncmp("export", av[0], 6) == 0)
 		handle_export(args, av);
@@ -169,7 +171,7 @@ char	*get_ans(char *str, char *ans, char *home_dir)
 char	*tilde_exp(char *str, t_export **list)
 {
 	int		i;
-	int		j;
+	//int		j;
 	int		count;
 	char	*ans;
 	char	*home_dir;
@@ -232,6 +234,7 @@ int	error_exit(t_args *args, char *command)
 	char	*err;
 	int		exit_code;
 	
+	(void)args;
 	err = strerror(errno);
 	if (ft_strncmp(err, "No such file or directory", 25) == 0 || \
 		ft_strncmp(err, "command not found", 17) == 0)
@@ -258,7 +261,7 @@ void	handle_command(char **av, t_args *args)
 	int		p;
 	char	*command;
 	char	*first;
-	int		exit_code;
+	//int		exit_code;
 
 	p = fork();
 	if (p == 0)
@@ -278,36 +281,36 @@ void	handle_command(char **av, t_args *args)
 	}
 }
 
-// if (ft_strlen(command) == 11 && ft_strncmp(command, "./minishell", 11) == 0)
-	// {
-	// 	val_str = get_value_from_key(&args->export_list, "SHLVL");
-	// 	if (val_str && ft_str_is_numeric(val_str) == 1)
-	// 	{
-	// 		val_int = ft_atoi(val_str);
-	// 	}
-	// 	else
-	// 		my_export(args, "SHLVL=1");
-	// }
-	// else		
-	// err = strerror(errno);
-	// if (ft_strncmp(err, "No such file or directory", 25) == 0 || \
-	// 	ft_strncmp(err, "command not found", 17) == 0)
-	// 	exit_code = 127;
-	// else if (ft_strncmp(err, "Permission denied", 17) == 0)
-	// 	exit_code = 126;
-	// else	
-	// 	exit_code = 1;
-	// perror(command);
-	// exit(exit_code);
-	// 	ft_lstadd_back(&args->pids, ft_lstnew(p));
+/*if (ft_strlen(command) == 11 && ft_strncmp(command, "./minishell", 11) == 0)
+{
+	val_str = get_value_from_key(&args->export_list, "SHLVL");
+	if (val_str && ft_str_is_numeric(val_str) == 1)
+	{
+		val_int = ft_atoi(val_str);
+	}
+	else
+		my_export(args, "SHLVL=1");
+}
+else		
+err = strerror(errno);
+if (ft_strncmp(err, "No such file or directory", 25) == 0 || \
+	ft_strncmp(err, "command not found", 17) == 0)
+	exit_code = 127;
+else if (ft_strncmp(err, "Permission denied", 17) == 0)
+	exit_code = 126;
+else	
+	exit_code = 1;
+perror(command);
+exit(exit_code);
+	ft_lstadd_back(&args->pids, ft_lstnew(p));*/
 
-void	handle_pipe(int j, t_args *args, t_temp *p)
+void	handle_pipe(int j, t_args *args, t_fd *p)
 {
 	char	**av;
 
 	dup2(p->fdin, 0);
 	close(p->fdin);
-	av = ft_split(args->argv[j], ' ');
+	av = quoted_split(args->argv[j], ' ');
 	if (j == args->p_count)
 		p->fdout = dup(p->tempout);
 	else
@@ -325,14 +328,12 @@ void	handle_pipe(int j, t_args *args, t_temp *p)
 	free_arr(av);
 }
 
-int	pipex(t_args *args)
+void	pipex(t_args *args)
 {
-	t_temp	p;
+	t_fd	p;
 	int		j;
-	int		exit_status;
 	int		status;
 
-	exit_status = 0;
 	setup_fds(&p);
 	j = 0;
 	while (j < args->p_count + 1)
@@ -341,8 +342,7 @@ int	pipex(t_args *args)
 	j = 0;
 	while (j != -1)
 		j = wait(&status);
-	exit_status = WEXITSTATUS(status);
-	return (exit_status);
+	args->exit_code = WEXITSTATUS(status);
 }
 
 // int	main(int argc, char **argv, char **envp)

@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 14:29:25 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/23 14:31:49 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/24 18:34:44 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,9 +62,10 @@ char		**change_envp(t_export **env_list);
 char		*get_val(char *s);
 char		*my_strdup(char *dest);
 char		*tilde_exp(char *str, t_export **list);
+char		**my_split(char *str, char *charset);
 char		*get_value_from_key(t_export **list, char *key);
 int			my_strncpy(char *dest, char *src, int size);
-int			my_cd(char *path, t_export **list);
+int			my_cd(char *path);
 int			my_export(t_args *args, char *s);
 int			append_list(char *s, char *key, t_export *l1, t_export *l2);
 int			append_last(char *s, char *key, t_export *last);

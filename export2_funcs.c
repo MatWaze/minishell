@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 16:04:54 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/23 15:56:57 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/24 18:47:53 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ int	append_first(char *s, char *key, t_export **first)
 		cont = ft_content_new(key, s);
 		new = (t_export *) ft_lstnew(cont);
 		new->next = *first;
-		*first = new; 
+		*first = new;
 		ans = 1;
 	}
 	return (ans);
@@ -89,7 +89,6 @@ int	is_inside(char *s, char *key, t_export **l)
 {
 	int			ans;
 	int			count;
-	char		*str;
 	t_export	*temp;
 
 	ans = 0;
@@ -113,7 +112,6 @@ int	is_inside(char *s, char *key, t_export **l)
 
 void	append(char *s, char *key, t_export **l)
 {
-	t_export	*new;
 	t_export	*l1;
 	t_export	*l2;
 

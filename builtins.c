@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/05 16:20:42 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/23 16:19:17 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/24 18:35:00 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,38 +42,23 @@ int	is_cmd(char *str)
 	return (ans);
 }
 
-int	my_cd(char *path, t_export **list)
+int	my_cd(char *path)
 {
 	int		ans;
-	char	*str;
 	int		i;
 
 	ans = 0;
 	i = 0;
-	if (ft_strlen(path) == 4 && ft_strncmp(path, "HOME", 4) == 0)
-		path = get_value_from_key(list, "HOME");
-	if (!path)
-	{
-		// printf("minishell: HOME not set\n");
+	if (chdir(path) == -1)
 		ans = 1;
-	}
-	else if (chdir(path) == -1)
-	{
-		printf("path: %s\n", path);
-		perror(path);
-		ans = 1;
-	}
 	return (ans);
 }
 
 char	*my_pwd(void)
 {
-	char	*buf;
+	char	buf[1024 + 1];
 	char	*res;
 
-	buf = (char *) malloc(sizeof(char) * (PATH_MAX + 1));
-	if (!buf)
-		exit(0);
 	res = getcwd(buf, PATH_MAX);
 	if (res != NULL)
 		res[PATH_MAX] = '\0';
@@ -117,7 +102,6 @@ void	my_echo(char **strs)
 {
 	int		i;
 	int		flag;
-	char	*trimmed;
 
 	flag = 0;
 	i = 1;
@@ -258,15 +242,6 @@ int	my_export(t_args *args, char *s)
 			append(val, key, &args->export_list);
 			append(val2, key2, &args->env_list);
 		}
-		else
-		{
-			free(key);
-			// if (val)
-			// 	free(val);
-			free(key2);
-			// if (val2)
-			// 	free(val2);
-		}
 		exit_code = 0;
 	}
 	else
@@ -274,6 +249,8 @@ int	my_export(t_args *args, char *s)
 		printf("minishell: export: `%s': not a valid identifier\n", s);
 		exit_code = 1;
 	}
+	free(key);
+	free(key2);
 	return (exit_code);
 }
 

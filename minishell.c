@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/23 16:51:14 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/24 18:45:15 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,6 @@ char	*find_val(t_export *l, char *to_find)
 char	*env_expansion(char *s, t_export *l)
 {
 	int		i;
-	int		j;
 	char	*ans;
 
 	i = 0;
@@ -103,14 +102,14 @@ char	*env_expansion(char *s, t_export *l)
 // 	return (new_envp);
 // }
 
-t_args	*init_minishell(int argc, char **argv, char **envp)
+t_args	*init_minishell(char **envp)
 {
 	t_export	*export_list;
 	t_export	*env_list;
 	t_args		*args;
 	char		**split;
 	int			i;
-	
+
 	i = 0;
 	args = (t_args *) malloc(sizeof(t_args));
 	args->envp = envp;
@@ -135,7 +134,7 @@ void	clear_export(t_export **exp)
 {
 	t_export	*temp;
 	t_export	*to_free;
-	
+
 	temp = *exp;
 	while (temp)
 	{
@@ -150,28 +149,29 @@ void	clear_export(t_export **exp)
 	}
 }
 
-int	main(int argc, char **argv, char **envp)
+int	main2(int argc, char **argv, char **envp)
 {
 	t_args		*args;
 	char		*str;
 	char		**words1;
-	int			i;
 	int			p_count;
 	int			exit_status;
-	// t_list		*pids;
-	
-	i = 0;
-	args = init_minishell(argc, argv, envp);
+
+	(void)argc;
+	(void)argv;
+	args = init_minishell(envp);
 	while (1)
 	{
 		str = readline("minishell$ ");
 		if (ft_strlen(str) > 0)
 			add_history(str);
+		if (*str == 'y')
+			break ;
 		if (*str != 0)
 		{
-			words1 = quoted_split(str, '|');
-			args->argv = words1;
+			words1 = ft_split(str, '|');
 			args->exit_code = 0;
+			args->argv = words1;
 			p_count = pipe_count(str);
 			args->p_count = p_count;
 			exit_status = pipex(args);
@@ -183,4 +183,13 @@ int	main(int argc, char **argv, char **envp)
 	clear_export(&args->export_list);
 	clear_export(&args->env_list);
 	free(args);
+	return (0);
+}
+
+int	main(int argc, char **argv, char **envp)
+{
+	(void)argc;
+	(void)argv;
+	main2(argc, argv, envp);
+	system("leaks minishell");
 }

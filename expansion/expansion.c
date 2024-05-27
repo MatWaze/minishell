@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:49:32 by zanikin           #+#    #+#             */
-/*   Updated: 2024/05/27 19:55:47 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/05/27 20:52:17 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,27 @@ static void	expand_envvar(const char **pstr, char **exp_str,
 				t_export **evlist, int error);
 static void	insert_envvar_val(const char **pstr, char **exp_str,
 				t_export **evlist);
+
+char	**expand_list(const char **strs, t_export **evlist, int error)
+{
+	char	**exp_strs;
+	size_t	count;
+
+	count = 0;
+	while (strs[count])
+		count++;
+	exp_strs = (char **)malloc(sizeof(char *) * (count + 1));
+	exp_strs[count] = NULL;
+	count = 0;
+	if (strs[0])
+		exp_strs[count++] = expand(strs[0], evlist, error);
+	while (strs[count] && strs[count - 1])
+	{
+		exp_strs[count] = expand(strs[count], evlist, error);
+		count++;
+	}
+	return (exp_strs);
+}
 
 char	*expand(const char *str, t_export **evlist, int error)
 {

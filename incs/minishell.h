@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 18:44:22 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/24 18:21:13 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/05/27 20:13:44 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@
 # include <errno.h>
 # include <string.h>
 # include "builtins.h"
+# include "expansion/expansion.h"
 
 char	**quoted_split(char *str, char c);
 char	*search_path(char *cmd, t_export **env);

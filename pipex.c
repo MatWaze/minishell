@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/24 19:43:05 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/28 17:43:32 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "incs/minishell.h"
+#include "minishell.h"
 
 void	setup_fds(t_fd *p)
 {
@@ -83,12 +83,7 @@ void	handle_cd(t_args *args, char **av)
 		ans = my_cd(str);
 	}
 	else
-	{
-		str = tilde_exp(av[1], &args->export_list);
-		if (str)
-			ans = my_cd(str);
-		free(str);
-	}
+		ans = my_cd(str);
 	cur_pwd = my_strdup(my_pwd());
 	update_pwd(args, prev_pwd, cur_pwd);
 	free(cur_pwd);
@@ -174,35 +169,6 @@ char	*get_ans(char *str, char *ans, char *home_dir)
 	return (ans);
 }
 
-char	*tilde_exp(char *str, t_export **list)
-{
-	int		i;
-	int		count;
-	char	*ans;
-	char	*home_dir;
-
-	i = 0;
-	count = 0;
-	home_dir = get_value_from_key(list, "HOME");
-	if (!home_dir)
-		return (str);
-	while (str[i])
-	{
-		if (str[i++] == '~')
-			count++;
-	}
-	i = 0;
-	count = ft_strlen(home_dir) * count;
-	while (str[i])
-	{
-		if (str[i++] != '~')
-			count++;
-	}
-	ans = (char *) malloc(sizeof(char) * (count + 1));
-	ans = get_ans(str, ans, home_dir);
-	return (ans);
-}
-
 int	is_dir(char *path)
 {
 	struct stat	file_info;
@@ -262,21 +228,12 @@ void	handle_command(char **av, t_args *args)
 {
 	int		p;
 	char	*command;
-	char	*first;
 
-	if (ft_strchr(av[0], '~') != NULL)
-	{
-		first = tilde_exp(av[0], &args->export_list);
-		if (!first)
-			first = av[0];
-	}
-	else
-		first = av[0];
-	dir_error(first);
+	dir_error(av[0]);
 	p = fork();
 	if (p == 0)
 	{
-		command = search_path(first, &args->export_list);
+		command = search_path(av[0], &args->export_list);
 		execve(command, av, args->envp);
 		exit(error_exit(args, command));
 	}
@@ -291,14 +248,14 @@ void	handle_command(char **av, t_args *args)
 	// 	else
 	// 		my_export(args, "SHLVL=1");
 	// }
-	// else		
+	// else
 	// err = strerror(errno);
 	// if (ft_strncmp(err, "No such file or directory", 25) == 0 || \
 	// 	ft_strncmp(err, "command not found", 17) == 0)
 	// 	exit_code = 127;
 	// else if (ft_strncmp(err, "Permission denied", 17) == 0)
 	// 	exit_code = 126;
-	// else	
+	// else
 	// 	exit_code = 1;
 	// perror(command);
 	// exit(exit_code);
@@ -311,20 +268,23 @@ void	handle_pipe(int j, t_args *args, t_fd *p)
 	dup2(p->fdin, 0);
 	close(p->fdin);
 	av = quoted_split(args->argv[j], ' ');
-	if (j == args->p_count)
-		p->fdout = dup(p->tempout);
-	else
+	if (expand_list(av, &args->env_list, args->exit_code))
 	{
-		pipe(p->fd);
-		p->fdout = p->fd[1];
-		p->fdin = p->fd[0];
+		if (j == args->p_count)
+			p->fdout = dup(p->tempout);
+		else
+		{
+			pipe(p->fd);
+			p->fdout = p->fd[1];
+			p->fdin = p->fd[0];
+		}
+		dup2(p->fdout, 1);
+		close(p->fdout);
+		if (is_builtin(av[0]) == 1)
+			handle_builtin(av, args);
+		else
+			handle_command(av, args);
 	}
-	dup2(p->fdout, 1);
-	close(p->fdout);
-	if (is_builtin(av[0]) == 1)
-		handle_builtin(av, args);
-	else
-		handle_command(av, args);
 	free_arr(av);
 }
 

@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:49:32 by zanikin           #+#    #+#             */
-/*   Updated: 2024/05/27 20:52:17 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/05/28 17:06:18 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,25 +21,26 @@ static void	expand_envvar(const char **pstr, char **exp_str,
 static void	insert_envvar_val(const char **pstr, char **exp_str,
 				t_export **evlist);
 
-char	**expand_list(const char **strs, t_export **evlist, int error)
+int	expand_list(const char **strs, t_export **evlist, int error)
 {
-	char	**exp_strs;
-	size_t	count;
+	int		expanded;
+	size_t	i;
+	char	*str;
 
-	count = 0;
-	while (strs[count])
-		count++;
-	exp_strs = (char **)malloc(sizeof(char *) * (count + 1));
-	exp_strs[count] = NULL;
-	count = 0;
-	if (strs[0])
-		exp_strs[count++] = expand(strs[0], evlist, error);
-	while (strs[count] && strs[count - 1])
+	i = 0;
+	expanded = 1;
+	while (strs[i] && expanded)
 	{
-		exp_strs[count] = expand(strs[count], evlist, error);
-		count++;
+		str = expand(strs[i], evlist, error);
+		if (str)
+		{
+			free(strs[i]);
+			strs[i++] = str;
+		}
+		else
+			expanded = 0;
 	}
-	return (exp_strs);
+	return (expanded);
 }
 
 char	*expand(const char *str, t_export **evlist, int error)

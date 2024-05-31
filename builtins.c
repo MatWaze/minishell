@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/05 16:20:42 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/24 19:41:43 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/30 16:17:15 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,10 +43,10 @@ int	is_cmd(char *str)
 int	my_cd(char *path)
 {
 	int		ans;
-	int		i;
+	//int		i;
 
 	ans = 0;
-	i = 0;
+	//i = 0;
 	if (chdir(path) == -1)
 		ans = 1;
 	return (ans);

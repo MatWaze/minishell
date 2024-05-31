@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/28 17:43:32 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/05/30 16:45:10 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,11 @@ void	restore_fds(t_fd *p)
 void	handle_export(t_args *args, char **av)
 {
 	int	i;
-	int	ans;
+	//int	ans;
 
 	i = 1;
 	while (av[i])
-		ans = my_export(args, av[i++]);
+		my_export(args, av[i++]);
 	if (i == 1)
 		print_list(&args->export_list, 1);
 }
@@ -71,7 +71,7 @@ void	update_pwd(t_args *args, char *prev_pwd, char *cur_pwd)
 
 void	handle_cd(t_args *args, char **av)
 {
-	int		ans;
+	//int		ans;
 	char	*str;
 	char	*prev_pwd;
 	char	*cur_pwd;
@@ -80,10 +80,10 @@ void	handle_cd(t_args *args, char **av)
 	if (!av[1])
 	{
 		str = get_value_from_key(&args->export_list, "HOME");
-		ans = my_cd(str);
+		my_cd(str);
 	}
 	else
-		ans = my_cd(str);
+		my_cd(av[1]);
 	cur_pwd = my_strdup(my_pwd());
 	update_pwd(args, prev_pwd, cur_pwd);
 	free(cur_pwd);
@@ -238,28 +238,28 @@ void	handle_command(char **av, t_args *args)
 		exit(error_exit(args, command));
 	}
 }
-// if (ft_strlen(command) == 11 && ft_strncmp(command, "./minishell", 11) == 0)
-	// {
-	// 	val_str = get_value_from_key(&args->export_list, "SHLVL");
-	// 	if (val_str && ft_str_is_numeric(val_str) == 1)
-	// 	{
-	// 		val_int = ft_atoi(val_str);
-	// 	}
-	// 	else
-	// 		my_export(args, "SHLVL=1");
-	// }
-	// else
-	// err = strerror(errno);
-	// if (ft_strncmp(err, "No such file or directory", 25) == 0 || \
-	// 	ft_strncmp(err, "command not found", 17) == 0)
-	// 	exit_code = 127;
-	// else if (ft_strncmp(err, "Permission denied", 17) == 0)
-	// 	exit_code = 126;
-	// else
-	// 	exit_code = 1;
-	// perror(command);
-	// exit(exit_code);
-	// 	ft_lstadd_back(&args->pids, ft_lstnew(p));
+/*if (ft_strlen(command) == 11 && ft_strncmp(command, "./minishell", 11) == 0)
+{
+	val_str = get_value_from_key(&args->export_list, "SHLVL");
+	if (val_str && ft_str_is_numeric(val_str) == 1)
+	{
+		val_int = ft_atoi(val_str);
+	}
+	else
+		my_export(args, "SHLVL=1");
+}
+else
+err = strerror(errno);
+if (ft_strncmp(err, "No such file or directory", 25) == 0 || \
+	ft_strncmp(err, "command not found", 17) == 0)
+	exit_code = 127;
+else if (ft_strncmp(err, "Permission denied", 17) == 0)
+	exit_code = 126;
+else
+	exit_code = 1;
+perror(command);
+exit(exit_code);
+	ft_lstadd_back(&args->pids, ft_lstnew(p));*/
 
 void	handle_pipe(int j, t_args *args, t_fd *p)
 {

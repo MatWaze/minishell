@@ -6,16 +6,20 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 21:06:16 by zanikin           #+#    #+#             */
-/*   Updated: 2024/05/27 14:45:48 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/05/31 15:19:08 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "expansion.h"
+#include <stdlib.h>
 
+size_t			ft_strlen(const char *s);
 char			*extract_ev(const char **str);
 int				is_inside_quotes(char type, char *qtype);
 static size_t	ev_size(const char **str, t_export **ev, int error);
-static size_t	count_evv_size(const char *str, t_export **evlist);
+static size_t	count_evv_size(const char **str, t_export **evlist);
+char			*get_value_from_key(t_export **list, char *key);
+int				digits_count(int n);
 
 size_t	count_expanded_string(const char *str, t_export **ev, int error)
 {
@@ -24,13 +28,15 @@ size_t	count_expanded_string(const char *str, t_export **ev, int error)
 
 	esize = 0;
 	qtype = 0;
+	if (*str == '~' && (!str[1] || str[1] == '/'))
+	{
+		esize += ft_strlen(get_value_from_key(ev, "HOME"));
+		str++;
+	}
 	while (*str)
 	{
 		if (*str == '\'' || *str == '"')
 			esize += is_inside_quotes(*str, &qtype);
-		else if (!qtype && *str == '~' && (str[1] == ' ' || str[1] == '/'
-				|| !str[1]))
-			esize += ft_strlen(get_value_from_key(ev, "HOME"));
 		else if (*str == '$' && (!qtype || qtype == '"'))
 			esize += ev_size(&str, ev, error);
 		else
@@ -46,12 +52,12 @@ int	is_inside_quotes(char type, char *qtype)
 
 	if (!*qtype)
 	{
-		qtype = type;
+		*qtype = type;
 		is = 0;
 	}
-	else if (qtype == type)
+	else if (*qtype == type)
 	{
-		qtype = 0;
+		*qtype = 0;
 		is = 0;
 	}
 	else
@@ -74,27 +80,52 @@ static size_t	ev_size(const char **str, t_export **ev, int error)
 	else if (str[0][1] == '?')
 	{
 		str[0]++;
-		size = error <= 0;
-		while (error)
-		{
-			error /= 10;
-			size++;
-		}
+		size = digits_count(error);
 	}
-	else if (!str[0][0] || str[0][0] == ' ' || str[0][0] == '$')
+	else if (!str[0][1] || str[0][1] == ' ' || str[0][1] == '$')
 		size = 1;
 	else
 		size = count_evv_size(str, ev);
 	return (size);
 }
 
-static size_t	count_evv_size(const char *str, t_export **evlist)
+static size_t	count_evv_size(const char **str, t_export **evlist)
 {
 	size_t	size;
 	char	*ev_name;
+	char	*ev_val;
 
 	ev_name = extract_ev(str);
-	size = ft_strlen(get_value_from_key(evlist, ev_name));
+	ev_val = get_value_from_key(evlist, ev_name);
 	free(ev_name);
+	if (ev_val)
+		size = ft_strlen(ev_val);
+	else
+		size = 0;
 	return (size);
+}
+
+char	*extract_ev(const char **pstr)
+{
+	const char	*str;
+	size_t		size;
+	char		*ev_name;
+
+	size = 0;
+	str = pstr[0] + 1;
+	while (*str && *str != '\'' && *str != '"' && *str != ' ' && *str != '$')
+	{
+		size++;
+		str++;
+	}
+	ev_name = (char *)malloc(sizeof(char) * (size + 1));
+	if (ev_name)
+	{
+		str = pstr[0] + 1;
+		pstr[0] = str + size - 1;
+		ev_name[size] = '\0';
+		while (size--)
+			ev_name[size] = str[size];
+	}
+	return (ev_name);
 }

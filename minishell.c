@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/25 21:08:20 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/05/31 09:20:20 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,7 +149,7 @@ void	set_params(t_args *args, char **words, char *str)
 {
 	int	p_count;
 	
-	args->exit_code = 0;
+	//args->exit_code = 0;
 	args->argv = words;
 	p_count = pipe_count(str);
 	args->p_count = p_count;
@@ -172,6 +172,7 @@ int	main2(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 	init_minishell(envp, &args);
+	args.exit_code = 0;
 	while (1)
 	{
 		str = readline("minishell$ ");

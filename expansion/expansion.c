@@ -6,12 +6,12 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:49:32 by zanikin           #+#    #+#             */
-/*   Updated: 2024/05/28 17:06:18 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/05/31 15:54:33 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
 #include "expansion.h"
+#include <stdlib.h>
 
 size_t		count_expanded_string(const char *str, t_export **ev,
 				int error);
@@ -20,8 +20,16 @@ static void	expand_envvar(const char **pstr, char **exp_str,
 				t_export **evlist, int error);
 static void	insert_envvar_val(const char **pstr, char **exp_str,
 				t_export **evlist);
+static void	expand_loop(const char *str, char *exp_str, t_export **evlist,
+				int error);
+char		*get_value_from_key(t_export **list, char *key);
+char		*extract_ev(const char **pstr);
+size_t		ft_strlcpy(char *dest, const char *src, size_t size);
+size_t		ft_strlen(const char *s);
+void		insert_number(char *dst, int n);
+int			digits_count(int n);
 
-int	expand_list(const char **strs, t_export **evlist, int error)
+int	expand_list(char **strs, t_export **evlist, int error)
 {
 	int		expanded;
 	size_t	i;
@@ -45,23 +53,38 @@ int	expand_list(const char **strs, t_export **evlist, int error)
 
 char	*expand(const char *str, t_export **evlist, int error)
 {
-	char	qtype;
 	char	*exp_str;
+	char	*home;
 	size_t	exp_str_size;
-	char	*tmp;
 
 	exp_str_size = count_expanded_string(str, evlist, error);
 	exp_str = (char *)malloc(sizeof(char) * (exp_str_size + 1));
+	if (exp_str)
+	{
+		if (*str == '~' && (!str[1] || str[1] == '/'))
+		{
+			home = get_value_from_key(evlist, "HOME");
+			expand_loop(str + 1, exp_str + ft_strlcpy(exp_str, home,
+					ft_strlen(home) + 1), evlist, error);
+		}
+		else
+			expand_loop(str, exp_str, evlist, error);
+	}
+	return (exp_str);
+}
+
+static void	expand_loop(const char *str, char *exp_str, t_export **evlist,
+				int error)
+{
+	char	qtype;
+
 	qtype = 0;
 	while (*str)
 	{
-		if ((*str == '\'' || *str == '"') && is_inside_quotes(*str, &qtype))
-			*exp_str++ = *str;
-		else if (!qtype && *str == '~' && (str[1] == ' ' || str[1] == '/'
-				|| !str[1]))
+		if (*str == '\'' || *str == '"')
 		{
-			tmp = get_value_from_key(evlist, "HOME");
-			exp_str += ft_strlcpy(exp_str, tmp, ft_strlen(tmp) + 1);
+			if (is_inside_quotes(*str, &qtype))
+				*exp_str++ = *str;
 		}
 		else if (*str == '$' && (!qtype || qtype == '"'))
 			expand_envvar(&str, &exp_str, evlist, error);
@@ -69,13 +92,12 @@ char	*expand(const char *str, t_export **evlist, int error)
 			*exp_str++ = *str;
 		str++;
 	}
-	return (exp_str);
+	*exp_str = '\0';
 }
 
 static void	expand_envvar(const char **pstr, char **exp_str,
 					t_export **evlist, int error)
 {
-	char	*tmp;
 	char	type;
 
 	if (pstr[0][1] == '\'' || pstr[0][1] == '"')
@@ -87,15 +109,10 @@ static void	expand_envvar(const char **pstr, char **exp_str,
 	else if (pstr[0][1] == '?')
 	{
 		pstr[0]++;
-		if (error <= 0)
-			exp_str[0]++[0] = '0' * (!error) + '-' * (error < 0);
-		while (error)
-		{
-			exp_str[0]++[0] = (error % 10) * (1 - 2 * (error < 0)) + '0';
-			error /= 10;
-		}
+		insert_number(exp_str[0], error);
+		exp_str[0] += digits_count(error);
 	}
-	else if (!pstr[0][0] || pstr[0][0] == ' ' || pstr[0][0] == '$')
+	else if (!pstr[0][1] || pstr[0][1] == ' ' || pstr[0][1] == '$')
 		exp_str[0]++[0] = '$';
 	else
 		insert_envvar_val(pstr, exp_str, evlist);
@@ -105,34 +122,11 @@ static void	insert_envvar_val(const char **pstr, char **exp_str,
 				t_export **evlist)
 {
 	char	*name;
+	char	*env;
 
 	name = extract_ev(pstr);
-	exp_str[0] += ft_strlcpy(exp_str[0], name,
-			ft_strlen(get_value_from_key(evlist, name)) + 1);
+	env = get_value_from_key(evlist, name);
 	free(name);
-}
-
-char	*extract_ev(const char **pstr)
-{
-	char	*str;
-	size_t	size;
-	char	*ev_name;
-
-	size = 0;
-	str = pstr[0];
-	while (*str && *str != '\'' && *str != '"' && *str != ' ' && *str != '$')
-	{
-		size++;
-		str++;
-	}
-	ev_name = (char *)malloc(sizeof(char) * (size + 1));
-	if (ev_name)
-	{
-		str = pstr[0];
-		while (size--)
-			*ev_name++ = *str++;
-		ev_name = '\0';
-		pstr[0] = str;
-	}
-	return (ev_name);
+	if (env)
+		exp_str[0] += ft_strlcpy(exp_str[0], env, ft_strlen(env) + 1);
 }

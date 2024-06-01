@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/05 16:20:42 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/01 14:30:20 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/01 19:47:31 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,16 +111,16 @@ int	my_echo(char **strs)
 	if (split_len(strs) > 1)
 	{
 		set_flag(strs, &i, &flag);
-		while (strs[i] != NULL)
+		while (strs[i])
 		{
-			printf("%s", strs[i]);
-			if (strs[i + 1] != NULL)
-				printf(" ");
+			ft_putstr_fd(strs[i], 1);
+			if (strs[i + 1])
+				ft_putchar_fd(' ', 1);
 			i++;
 		}
 	}
 	if (flag == 0)
-		printf("\n");
+		ft_putchar_fd('\n', 1);
 	return (0);
 }
 

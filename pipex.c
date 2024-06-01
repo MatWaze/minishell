@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/01 14:52:50 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/01 19:46:09 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,7 +165,9 @@ void	handle_builtin(char **av, t_args *args)
 	else if (ft_strlen(av[0]) == 5 && ft_strncmp("unset", av[0], 5) == 0)
 		ans = handle_unset(args, av);
 	else if (ft_strlen(av[0]) == 4 && ft_strncmp("echo", av[0], 4) == 0)
-		ans = my_echo(&av[0]);
+	{
+		my_echo(&av[0]);
+	}
 	else if (ft_strlen(av[0]) == 3 && ft_strncmp("pwd", av[0], 3) == 0)
 	{
 		pwd = my_pwd(1);

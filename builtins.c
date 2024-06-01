@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
+/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/05 16:20:42 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/31 16:48:26 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/01 15:09:17 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,10 +190,13 @@ void	my_exit(char *num_str)
 	long long			num;
 	unsigned int		exit_status;
 
+	if (!num_str)
+	{
+		ft_putstr_fd("exit\n", 1);
+		exit(0);
+	}
 	num = ft_atoi(num_str);
 	unum = (unsigned long long) num;
-	if (!num_str)
-		exit(0);
 	if (ft_str_is_numeric(num_str) == 0 || \
 		(ft_strlen(num_str) > 19 || unum > LONG_MAX))
 	{

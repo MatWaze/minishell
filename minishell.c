@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/31 13:30:19 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/01 13:48:35 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,7 +198,6 @@ void	run_pipex(t_args *args, char **words, char *str)
 	int	p_count;
 	int	status;
 
-	args->exit_code = 0;
 	args->argv = words;
 	p_count = pipe_count(str);
 	args->p_count = p_count;

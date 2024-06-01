@@ -1,20 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expansion.h                                        :+:      :+:    :+:   */
+/*   t_fd.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/26 15:12:50 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/01 10:44:12 by zanikin          ###   ########.fr       */
+/*   Created: 2024/06/01 10:16:28 by zanikin           #+#    #+#             */
+/*   Updated: 2024/06/01 10:17:34 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef EXPANSION_H
-# define EXPANSION_H
-# include "export/t_export.h"
+#ifndef T_FD_H
+# define T_FD_H
 
-char	*expand(const char *str, t_export **evlist, int error);
-int		expand_list(char **strs, t_export **evlist, int error);
-
+typedef struct s_fd
+{
+	int	tempin;
+	int	tempout;
+	int	fdout;
+	int	fdin;
+	int	fd[2];
+}	t_fd;
 #endif

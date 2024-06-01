@@ -1,20 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expansion.h                                        :+:      :+:    :+:   */
+/*   t_export.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/26 15:12:50 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/01 10:44:12 by zanikin          ###   ########.fr       */
+/*   Created: 2024/06/01 10:13:04 by zanikin           #+#    #+#             */
+/*   Updated: 2024/06/01 10:50:57 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef EXPANSION_H
-# define EXPANSION_H
-# include "export/t_export.h"
+#ifndef T_EXPORT_H
+# define T_EXPORT_H
+# include "t_content.h"
 
-char	*expand(const char *str, t_export **evlist, int error);
-int		expand_list(char **strs, t_export **evlist, int error);
-
+typedef struct s_export
+{
+	t_content		*pair;
+	struct s_export	*next;
+}	t_export;
 #endif

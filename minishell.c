@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/01 09:00:39 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/01 10:58:19 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 
 // prompt; history; run executables; redirections; ' and ";
 // pipes; env vars; $? ; ctrl-C; ctrl-D; ctrl-\; built-ins
-
-void	print_linked_list(t_list *l);
 
 int	pipe_count(char *str)
 {
@@ -31,30 +29,6 @@ int	pipe_count(char *str)
 		i++;
 	}
 	return (c);
-}
-
-char	*find_val(t_export *l, char *to_find)
-{
-	t_export	*temp;
-	char		*ans;
-	int			count;
-
-	ans = NULL;
-	temp = l;
-	while (temp)
-	{
-		if (ft_strlen(temp->pair->key) > ft_strlen(to_find))
-			count = ft_strlen(temp->pair->key);
-		else
-			count = ft_strlen(to_find);
-		if (ft_strncmp(temp->pair->key, to_find, count) == 0)
-		{
-			ans = temp->pair->val;
-			break ;
-		}
-		temp = temp->next;
-	}
-	return (ans);
 }
 
 char	*env_expansion(char *s, t_export *l)
@@ -190,16 +164,7 @@ void	free_lists(t_args *args)
 	clear_list(&args->pids);
 }
 
-void	print_linked_list(t_list *l)
-{
-	while (l)
-	{
-		printf("pid: %d\n", *(int *)(l->content));
-		l = l->next;
-	}
-}
-
-int	main2(int argc, char **argv, char **envp)
+int	main(int argc, char **argv, char **envp)
 {
 	t_args		args;
 	char		*str;
@@ -226,11 +191,4 @@ int	main2(int argc, char **argv, char **envp)
 	free_lists(&args);
 	free(args.pids);
 	return (args.exit_code);
-}
-
-int	main(int argc, char **argv, char **envp)
-{
-	main2(argc, argv, envp);
-	system("leaks minishell");
-	return (0);
 }

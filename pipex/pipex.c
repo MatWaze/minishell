@@ -6,28 +6,17 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/01 09:16:09 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/01 10:53:13 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include <unistd.h>
+#include <sys/stat.h>
+
+#include "t_args.h"
+#include "t_fd.h"
 
 void	append_pid(int p, t_args *args);
-
-void	setup_fds(t_fd *p)
-{
-	p->tempin = dup(0);
-	p->tempout = dup(1);
-	p->fdin = dup(p->tempin);
-}
-
-void	restore_fds(t_fd *p)
-{
-	dup2(p->tempin, 0);
-	dup2(p->tempout, 1);
-	close(p->tempin);
-	close(p->tempout);
-}
 
 int	handle_export(t_args *args, char **av)
 {
@@ -371,9 +360,14 @@ void	pipex(t_args *args)
 	t_fd	p;
 	int		j;
 
-	setup_fds(&p);
+	p.tempin = dup(0);
+	p.tempout = dup(1);
+	p.fdin = dup(p.tempin);
 	j = 0;
 	while (j < args->p_count + 1)
 		handle_pipe(j++, args, &p);
-	restore_fds(&p);
+	dup2(p.tempin, 0);
+	dup2(p.tempout, 1);
+	close(p.tempin);
+	close(p.tempout);
 }

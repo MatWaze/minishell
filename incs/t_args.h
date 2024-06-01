@@ -1,20 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expansion.h                                        :+:      :+:    :+:   */
+/*   t_args.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/26 15:12:50 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/01 10:44:12 by zanikin          ###   ########.fr       */
+/*   Created: 2024/06/01 10:18:31 by zanikin           #+#    #+#             */
+/*   Updated: 2024/06/01 10:40:05 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef EXPANSION_H
-# define EXPANSION_H
+#ifndef T_ARGS_H
+# define T_ARGS_H
 # include "export/t_export.h"
+# include "libft/libft.h"
 
-char	*expand(const char *str, t_export **evlist, int error);
-int		expand_list(char **strs, t_export **evlist, int error);
-
+typedef struct s_args
+{
+	char		**argv;
+	char		**envp;
+	int			p_count;
+	char		**my_envp;
+	int			exit_code;
+	t_list		*pids;
+	int			*last_cmd; // not needed?
+	t_export	*export_list;
+	t_export	*env_list;
+}		t_args;
 #endif

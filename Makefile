@@ -22,7 +22,7 @@ all : $(name)
 $(name) : $(readline_dir)/lib/libreadline.a $(libft_dir)/libft.a $(obj)
 	$(cc) $(lflags) -o $(name) $(obj) -lreadline -lft -lcurses
 
-$(build_dir)/%.o: %.c Makefile $(include_dir)/minishell.h
+$(build_dir)/%.o: %.c Makefile $(include_dir)/minishell.h | $(build_dir)
 	$(cc) $(cflags) $(iflags) -c $< -o $@
 
 $(EXPANSION_BUILD_DIR)/%.o: $(EXPANSION_DIR)/%.c Makefile $(EXPANSION_DIR)/expansion.h | $(EXPANSION_BUILD_DIR)

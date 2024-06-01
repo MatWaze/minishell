@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/01 15:09:20 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/01 17:20:40 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,15 +137,20 @@ int	handle_cd(t_args *args, char **av)
 	return (ans);
 }
 
-void	builtin_exit_code(int exit_code, t_args *args)
+int	builtin_exit_code(int exit_code, t_args *args)
 {
 	int	pid;
+	int	ans;
 
+	ans = 0;
 	pid = fork();
 	if (pid == 0)
 		exit(exit_code);
+	else if (pid == -1)
+		ans = 1;
 	else
 		append_pid(pid, args);
+	return (ans);
 }
 
 void	handle_exit(char **av)
@@ -153,7 +158,7 @@ void	handle_exit(char **av)
 	my_exit(av[1]);
 }
 
-void	handle_builtin(char **av, t_args *args)
+int	handle_builtin(char **av, t_args *args)
 {
 	char	*pwd;
 	int		ans;
@@ -176,7 +181,7 @@ void	handle_builtin(char **av, t_args *args)
 		ans = handle_cd(args, av);
 	else if (ft_strlen(av[0]) == 4 && ft_strncmp("exit", av[0], 4) == 0)
 		handle_exit(av);
-	builtin_exit_code(ans, args);
+	return (builtin_exit_code(ans, args));
 }
 
 char	*get_value_from_key(t_export **list, char *key)
@@ -322,10 +327,13 @@ void	handle_command(char **av, t_args *args)
 	execute_command(av[0], av, args->envp, args);
 }
 
-void	run_command(t_args *args, t_fd *p, char **av)
+int	run_command(t_args *args, t_fd *p, char **av)
 {
 	int		pid;
+	pid_t	svi;
+	int		ans;
 
+	ans = 0;
 	pid = fork();
 	if (pid == 0)
 	{
@@ -334,15 +342,30 @@ void	run_command(t_args *args, t_fd *p, char **av)
 		handle_command(av, args);
 	}
 	else if (pid == -1)
-		print_error_msg("failed: Resource temporarily unavailable\n", "fork");
+	{
+		t_list	*temp;
+		temp = args->pids;
+		kill(pid, 0);
+		while (temp)
+		{
+			svi = *(int *) temp->content;
+			kill(svi, 0);
+			temp = temp->next;
+		}
+		ans = 1;
+		// print_error_msg("failed: Resource temporarily unavailable\n", "fork");
+	}
 	else if (pid > 0)
 		append_pid(pid, args);
+	return (ans);
 }
 
-void	handle_pipe(int j, t_args *args, t_fd *p)
+int	handle_pipe(int j, t_args *args, t_fd *p)
 {
 	char	**av;
+	int		ans;
 
+	ans = 0;
 	dup2(p->fdin, 0);
 	close(p->fdin);
 	av = quoted_split(args->argv[j], ' ');
@@ -359,11 +382,12 @@ void	handle_pipe(int j, t_args *args, t_fd *p)
 		dup2(p->fdout, 1);
 		close(p->fdout);
 		if (is_builtin(av[0]) == 1)
-			handle_builtin(av, args);
+			ans = handle_builtin(av, args);
 		else
-			run_command(args, p, av);
+			ans = run_command(args, p, av);
 	}
 	free_arr(av);
+	return (ans);
 }
 
 void	pipex(t_args *args)
@@ -374,6 +398,21 @@ void	pipex(t_args *args)
 	setup_fds(&p);
 	j = 0;
 	while (j < args->p_count + 1)
-		handle_pipe(j++, args, &p);
+	{
+		if (handle_pipe(j++, args, &p) == 1)
+		{
+			t_list	*temp;
+
+			temp = args->pids;
+			while (temp)
+			{
+				int	svi = *(int *) temp->content;
+				kill(svi, 0);
+				temp = temp->next;
+			}
+			print_error_msg("failed: Resource temporarily unavailable\n", "fork");
+			break ;
+		}
+	}
 	restore_fds(&p);
 }

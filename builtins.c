@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/05 16:20:42 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/01 13:44:41 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/01 14:30:20 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,7 +191,10 @@ void	my_exit(char *num_str)
 	unsigned int		exit_status;
 
 	if (!num_str)
+	{
+		ft_putstr_fd("exit\n", 1);
 		exit(0);
+	}
 	num = ft_atoi(num_str);
 	unum = (unsigned long long) num;
 	if (ft_str_is_numeric(num_str) == 0 || \

@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/01 14:29:08 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/01 14:52:50 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -372,7 +372,7 @@ void	run_command(t_args *args, t_fd *p, char **av)
 		handle_command(av, args);
 	}
 	else if (pid == -1)
-		print_error_msg("failed\n", "fork");
+		print_error_msg("failed: Resource temporarily unavailable\n", "fork");
 	else if (pid > 0)
 		append_pid(pid, args);
 }

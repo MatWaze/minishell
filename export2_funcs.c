@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 16:04:54 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/24 18:58:38 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/31 15:31:39 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,17 @@ int	append_last(char *s, char *key, t_export *last)
 	return (ans);
 }
 
+void	append_to_empty(char *s, char *key, t_export **first)
+{
+	t_export	*new;
+	t_content	*cont;
+
+	cont = ft_content_new(key, s);
+	new = (t_export *) ft_lstnew(cont);
+	*first = new;
+	new->next = NULL;
+}
+
 int	append_first(char *s, char *key, t_export **first)
 {
 	t_export	*new;
@@ -70,17 +81,22 @@ int	append_first(char *s, char *key, t_export **first)
 	int			ans;
 
 	ans = 0;
-	if (ft_strlen(key) >= ft_strlen((*first)->pair->key))
-		count = ft_strlen(key);
+	if (*first == NULL)
+		append_to_empty(s, key, first);
 	else
-		count = ft_strlen((*first)->pair->key);
-	if (ft_strncmp((*first)->pair->key, key, count) > 0)
 	{
-		cont = ft_content_new(key, s);
-		new = (t_export *) ft_lstnew(cont);
-		new->next = *first;
-		*first = new;
-		ans = 1;
+		if (ft_strlen(key) >= ft_strlen((*first)->pair->key))
+			count = ft_strlen(key);
+		else
+			count = ft_strlen((*first)->pair->key);
+		if (ft_strncmp((*first)->pair->key, key, count) > 0)
+		{
+			cont = ft_content_new(key, s);
+			new = (t_export *) ft_lstnew(cont);
+			new->next = *first;
+			*first = new;
+			ans = 1;
+		}
 	}
 	return (ans);
 }
@@ -101,8 +117,8 @@ int	is_inside(char *s, char *key, t_export **l)
 			count = ft_strlen(key);
 		if (ft_strncmp(key, temp->pair->key, count) == 0)
 		{
-			// if (str)
-			temp->pair->val = s;
+			free(temp->pair->val);
+			temp->pair->val = my_strdup(s);
 			ans = 1;
 		}
 		temp = temp->next;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export1_funcs.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
+/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/16 17:55:21 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/24 13:20:56 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/05/31 10:49:18 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@ t_content	*ft_content_new(char *key, char *val)
 	result = (t_content *) malloc(sizeof(t_content));
 	if (result)
 	{
-		result->key = key;
-		result->val = val;
+		result->key = my_strdup(key);
+		result->val = my_strdup(val);
 		result->next = NULL;
 	}
 	return (result);
@@ -58,11 +58,9 @@ void	print_list(t_export **list, int i)
 char	*get_val(char *s)
 {
 	int		i;
-	//int		size;
 	char	*str;
 
 	i = 0;
-	//size = 0;
 	if (ft_strchr(s, '=') == NULL)
 		str = NULL;
 	else
@@ -115,28 +113,3 @@ void	sort_list(t_export **l)
 		l1 = l1->next;
 	}
 }
-
-// char	*add_brackets(char *env)
-// {
-// 	char	*s1;
-
-// 	if (env != NULL)
-// 	{
-// 		s1 = ft_strjoin("=\"", env);
-// 		env = ft_strjoin(s1, "\"");
-// 		free(s1);
-// 	}
-// 	else
-// 	{
-// 		env = (char *) malloc(sizeof(char) * 3);
-// 		if (!env)
-// 			env = NULL;
-// 		else
-// 		{
-// 			env[0] = '\"';
-// 			env[1] = '\"';
-// 			env[2] = '\0';
-// 		}
-// 	}
-// 	return (env);
-// }

@@ -6,11 +6,19 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/05 16:20:42 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/30 16:17:15 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/05/31 16:48:26 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "incs/minishell.h"
+
+void	print_error_msg(char *msg, char *cmd)
+{
+	ft_putstr_fd("minishell: ", 2);
+	ft_putstr_fd(cmd, 2);
+	ft_putstr_fd(": ", 2);
+	ft_putstr_fd(msg, 2);
+}
 
 int	is_builtin(char *str)
 {
@@ -30,37 +38,35 @@ int	is_builtin(char *str)
 	return (ans);
 }
 
-int	is_cmd(char *str)
-{
-	int	ans;
-
-	ans = 0;
-	if (access(str, F_OK | R_OK) == 0 || is_builtin(str) == 1)
-		ans = 1;
-	return (ans);
-}
-
 int	my_cd(char *path)
 {
 	int		ans;
-	//int		i;
 
 	ans = 0;
-	//i = 0;
-	if (chdir(path) == -1)
+	if (!path || chdir(path) == -1)
+	{
+		if (!path)
+			print_error_msg("HOME is not set\n", "cd");
+		else
+			perror(path);
 		ans = 1;
+	}
 	return (ans);
 }
 
-char	*my_pwd(void)
+char	*my_pwd(int i)
 {
-	char	buf[1024 + 1];
+	char	*buf;
 	char	*res;
 
-	res = getcwd(buf, PATH_MAX);
-	res[PATH_MAX] = '\0';
-	// else
-		// exit(0);
+	buf = (char *) malloc(sizeof(char) * 1025);
+	res = getcwd(buf, 1024);
+	res[1024] = '\0';
+	if (i == 1)
+	{
+		ft_putstr_fd(res, 1);
+		ft_putchar_fd('\n', 1);
+	}
 	return (res);
 }
 
@@ -95,10 +101,10 @@ void	set_flag(char **strs, int *i, int *flag)
 	}
 }
 
-void	my_echo(char **strs)
+int	my_echo(char **strs)
 {
-	int		i;
 	int		flag;
+	int		i;
 
 	flag = 0;
 	i = 1;
@@ -115,34 +121,37 @@ void	my_echo(char **strs)
 	}
 	if (flag == 0)
 		printf("\n");
+	return (0);
 }
 
-char	*my_strdup(char *dest)
+char	*my_strdup(char *src)
 {
 	int		i;
-	char	*str;
+	char	*dup;
 
 	i = 0;
-	str = (char *) malloc(sizeof(1) * (ft_strlen(dest) + 1));
-	while (dest[i])
+	if (!src)
+		return (NULL);
+	dup = (char *) malloc(sizeof(char) * (ft_strlen(src) + 1));
+	if (!dup)
+		return (NULL);
+	while (src[i])
 	{
-		str[i] = dest[i];
+		dup[i] = src[i];
 		i++;
 	}
-	str[i] = '\0';
-	return (str);
+	dup[i] = '\0';
+	return (dup);
 }
 
-void	populate(t_export **l, char **split)
+void	populate(t_export **l, char *key)
 {
-	char		*key;
 	char		*val;
 	t_export	*new;
 	t_content	*cont;
 	t_export	*last;
 
-	key = my_strdup(split[0]);
-	val = my_strdup(getenv(key));
+	val = getenv(key);
 	cont = ft_content_new(key, val);
 	new = (t_export *) ft_lstnew(cont);
 	if (*l == NULL)
@@ -167,26 +176,37 @@ int	check_key(char *key)
 	return (ans);
 }
 
-// int	remove_first(t_export **list, char *str)
-// {
-// 	t_export	*temp;
-// 	int			count;
-// 	int			ans;
+void	free_content(t_export *l)
+{
+	free(l->pair->key);
+	free(l->pair->val);
+	free(l->pair);
+	free(l);
+}
 
-// 	ans = 0;
-// 	temp = *list;
-// 	if (ft_strlen(temp->pair->key) == ft_strlen(str))
-// 	{
-// 		count = ft_strlen(str);
-// 		if (ft_strncmp(str, temp->pair->key, count) == 0)
-// 		{
-// 			*list = temp->next;
-// 			free(temp);
-// 			ans = 1;
-// 		}
-// 	}
-// 	return (ans);
-// }
+void	my_exit(char *num_str)
+{
+	unsigned long long	unum;
+	long long			num;
+	unsigned int		exit_status;
+
+	num = ft_atoi(num_str);
+	unum = (unsigned long long) num;
+	if (!num_str)
+		exit(0);
+	if (ft_str_is_numeric(num_str) == 0 || \
+		(ft_strlen(num_str) > 19 || unum > LONG_MAX))
+	{
+		print_error_msg("numeric argument required\n", "exit");
+		exit_status = 255;
+	}
+	else if (num < 0)
+		exit_status = unum % 256;
+	else
+		exit_status = num % 256;
+	ft_putstr_fd("exit\n", 1);
+	exit(exit_status);
+}
 
 void	my_unset(t_export **l, char *str)
 {
@@ -207,7 +227,7 @@ void	my_unset(t_export **l, char *str)
 					*l = temp->next;
 				else
 					prev->next = temp->next;
-				free(temp);
+				free_content(temp);
 				break ;
 			}
 		}
@@ -216,54 +236,43 @@ void	my_unset(t_export **l, char *str)
 	}
 }
 
+void	free_values(char *val, char *val2, char **split)
+{
+	free_arr(split);
+	free(val);
+	free(val2);
+}
+
+void	append_to_lists(char *val, char *val2, char *key, t_args *args)
+{
+	append(val, key, &args->export_list);
+	append(val2, key, &args->env_list);
+}
+
 int	my_export(t_args *args, char *s)
 {
 	char	**split;
 	char	*key;
-	char	*key2;
 	char	*val;
 	char	*val2;
+	int		ans;
 
 	split = ft_split(s, '=');
-	key = my_strdup(split[0]);
-	key2 = my_strdup(split[0]);
+	key = split[0];
 	val = get_val(s);
 	val2 = get_val(s);
-	free_arr(split);
 	if (check_key(key) == 1)
 	{
-		if ((ft_strlen(key) >= 1 && is_inside(val2, key2, &args->env_list) \
+		if ((ft_strlen(key) >= 1 && is_inside(val2, key, &args->env_list) \
 			== 0) || is_inside(val, key, &args->export_list) == 0)
-		{
-			append(val, key, &args->export_list);
-			append(val2, key2, &args->env_list);
-		}
+			append_to_lists(val, val2, key, args);
+		ans = 0;
 	}
 	else
-		printf("minishell: export: `%s': not a valid identifier\n", s);
-	free(key);
-	free(key2);
-	// return (exit_code);
-	return (1);
+	{
+		print_error_msg("not a valid identifier\n", key);
+		ans = 1;
+	}
+	free_values(val, val2, split);
+	return (ans);
 }
-
-// int	main2(int argc, char **argv, char **envp)
-// {
-// 	t_export	*list = NULL;
-// 	char	*str;
-
-// 	while (1)
-// 	{
-// 		str = readline("minishell$ ");
-// 		list = my_export(list, envp, str);
-// 	}
-// 	// ft_lstclear(&list, free);
-// 	return (0);
-// }
-
-// int	main(int argc, char **argv, char **envp)
-// {
-// 	main2(argc, argv, envp);
-// 	// system("leaks minishell");
-// 	return (0);
-// }

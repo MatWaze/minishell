@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 14:29:25 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/24 18:59:12 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/05/31 15:19:59 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,27 +44,30 @@ typedef struct s_args
 	char		**my_envp;
 	int			exit_code;
 	t_list		*pids;
+	int			*last_cmd; // not needed?
 	t_export	*export_list;
 	t_export	*env_list;
 }		t_args;
 
 t_content	*ft_content_new(char *key, char *val);
 void		print_list(t_export **list, int i);
-void		print_env_list(t_export *list);
 void		ft_swap(t_export **l1, t_export **l2);
 void		append(char *s, char *key, t_export **l);
-void		populate(t_export **l, char **split);
+void		populate(t_export **l, char *key);
 void		sort_list(t_export **l);
+void		print_linked_list(t_list *l);
+void		my_exit(char *num_str);
+void		print_error_msg(char *msg, char *cmd);
 void		my_unset(t_export **l, char *str);
-void		my_echo(char **strs);
-char		*my_pwd(void);
+char		*my_pwd(int i);
 char		**change_envp(t_export **env_list);
 char		*get_val(char *s);
-char		*my_strdup(char *dest);
+char		*my_strdup(char *src);
 char		*tilde_exp(char *str, t_export **list);
 char		**my_split(char *str, char *charset);
 char		*get_value_from_key(t_export **list, char *key);
 int			my_strncpy(char *dest, char *src, int size);
+int			ft_str_is_numeric(char *str);
 int			my_cd(char *path);
 int			my_export(t_args *args, char *s);
 int			append_list(char *s, char *key, t_export *l1, t_export *l2);
@@ -72,5 +75,7 @@ int			append_last(char *s, char *key, t_export *last);
 int			append_first(char *s, char *key, t_export **first);
 int			is_inside(char *s, char *key, t_export **l);
 int			is_builtin(char *str);
+int			my_echo(char **strs);
+int			check_key(char *key);
 
 #endif

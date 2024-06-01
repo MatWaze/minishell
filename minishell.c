@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/31 09:20:20 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/01 09:00:39 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 // prompt; history; run executables; redirections; ' and ";
 // pipes; env vars; $? ; ctrl-C; ctrl-D; ctrl-\; built-ins
+
+void	print_linked_list(t_list *l);
 
 int	pipe_count(char *str)
 {
@@ -77,30 +79,18 @@ char	*env_expansion(char *s, t_export *l)
 	return (ans);
 }
 
-// char	**change_envp(t_export **env_list)
-// {
-// 	t_export	*temp;
-// 	char		*str;
-// 	char		*joined_str;
-// 	char		**new_envp;
-// 	int			len;
+void	set_pwds(t_args *args)
+{
+	char	*pwd;
+	char	*joined_str;
 
-// 	len = ft_lstsize((t_list *) *env_list);
-// 	printf("len: %d\n", len);
-// 	new_envp = (char **) malloc(sizeof(char *) * (len + 1));
-// 	len = 0;
-// 	temp = *env_list;
-// 	while (temp)
-// 	{
-// 		joined_str = ft_strjoin(temp->pair->key, "=");
-// 		str = ft_strjoin(joined_str, temp->pair->val);
-// 		free(joined_str);
-// 		new_envp[len++] = str;
-// 		temp = temp->next;
-// 	}
-// 	new_envp[len] = NULL;
-// 	return (new_envp);
-// }
+	pwd = my_pwd(0);
+	my_export(args, "OLDPWD");
+	joined_str = ft_strjoin("PWD=", pwd);
+	free(pwd);
+	my_export(args, joined_str);
+	free(joined_str);
+}
 
 void	init_minishell(char **envp, t_args *args)
 {
@@ -116,15 +106,17 @@ void	init_minishell(char **envp, t_args *args)
 	while (envp[i] != NULL)
 	{
 		split = ft_split(envp[i], '=');
-		populate(&export_list, split);
-		populate(&env_list, split);
+		populate(&export_list, split[0]);
+		populate(&env_list, split[0]);
 		free_arr(split);
 		i++;
 	}
 	args->env_list = env_list;
 	args->export_list = export_list;
+	args->pids = NULL;
+	args->exit_code = 0;
 	sort_list(&export_list);
-	my_export(args, "OLDPWD=");
+	set_pwds(args);
 }
 
 void	clear_export(t_export **exp)
@@ -137,30 +129,74 @@ void	clear_export(t_export **exp)
 	{
 		to_free = temp;
 		temp = temp->next;
-		if (to_free->pair->key)
-			free(to_free->pair->key);
-		if (to_free->pair->val)
-			free(to_free->pair->val);
+		free(to_free->pair->key);
+		free(to_free->pair->val);
 		free(to_free->pair);
 		free(to_free);
 	}
+	*exp = NULL;
 }
-void	set_params(t_args *args, char **words, char *str)
+
+void	clear_list(t_list **l)
+{
+	t_list	*temp;
+	t_list	*to_free;
+
+	temp = *l;
+	while (temp)
+	{
+		to_free = temp;
+		temp = temp->next;
+		free(to_free->content);
+		free(to_free);
+	}
+	*l = NULL;
+}
+
+int	wait_for_children(t_args *args)
+{
+	pid_t	pid;
+	t_list	*list;
+
+	list = args->pids;
+	while (list)
+	{
+		pid = *(int *) list->content;
+		waitpid(pid, &args->exit_code, 0);
+		list = list->next;
+	}
+	return (args->exit_code);
+}
+
+void	run_pipex(t_args *args, char **words, char *str)
 {
 	int	p_count;
-	
-	//args->exit_code = 0;
+	int	status;
+
 	args->argv = words;
 	p_count = pipe_count(str);
 	args->p_count = p_count;
 	pipex(args);
+	status = wait_for_children(args);
+	args->exit_code = WEXITSTATUS(status);
 	free_arr(args->argv);
+	clear_list(&args->pids);
 }
 
 void	free_lists(t_args *args)
 {
 	clear_export(&args->export_list);
 	clear_export(&args->env_list);
+	clear_list(&args->pids);
+}
+
+void	print_linked_list(t_list *l)
+{
+	while (l)
+	{
+		printf("pid: %d\n", *(int *)(l->content));
+		l = l->next;
+	}
 }
 
 int	main2(int argc, char **argv, char **envp)
@@ -172,24 +208,24 @@ int	main2(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 	init_minishell(envp, &args);
-	args.exit_code = 0;
 	while (1)
 	{
 		str = readline("minishell$ ");
 		if (ft_strlen(str) > 0)
 			add_history(str);
-		if (*str == 'y')
+		if (*str == 'y' && ft_strlen(str) == 1)
 			break ;
 		if (*str != 0)
 		{
 			words = quoted_split(str, '|');
-			set_params(&args, words, str);
-			leave_children();
+			run_pipex(&args, words, str);
 		}
 		free(str);
 	}
+	free(str);
 	free_lists(&args);
-	return (0);
+	free(args.pids);
+	return (args.exit_code);
 }
 
 int	main(int argc, char **argv, char **envp)

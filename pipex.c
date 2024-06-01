@@ -6,11 +6,13 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/30 16:45:10 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/01 09:16:09 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	append_pid(int p, t_args *args);
 
 void	setup_fds(t_fd *p)
 {
@@ -27,41 +29,74 @@ void	restore_fds(t_fd *p)
 	close(p->tempout);
 }
 
-void	handle_export(t_args *args, char **av)
+int	handle_export(t_args *args, char **av)
 {
 	int	i;
-	//int	ans;
+	int	ans;
 
 	i = 1;
+	ans = 0;
 	while (av[i])
-		my_export(args, av[i++]);
+		ans = my_export(args, av[i++]);
 	if (i == 1)
 		print_list(&args->export_list, 1);
+	return (ans);
 }
 
-void	handle_unset(t_args *args, char **av)
+int	handle_unset(t_args *args, char **av)
 {
 	int	i;
+	int	ans;
 
 	i = 1;
+	ans = 0;
 	while (av[i])
 	{
-		my_unset(&args->export_list, av[i]);
-		my_unset(&args->env_list, av[i++]);
+		if (check_key(av[i]) == 1)
+		{
+			my_unset(&args->export_list, av[i]);
+			my_unset(&args->env_list, av[i]);
+		}
+		else
+		{
+			ans = 1;
+			print_error_msg("not a valid identifier\n", av[i]);
+		}
+		i++;
 	}
+	return (ans);
+}
+
+int	find_key(t_export *export_list, char *key)
+{
+	t_export	*temp;
+	int			ans;
+
+	ans = 0;
+	temp = export_list;
+	while (temp)
+	{
+		if (key && ft_strncmp(temp->pair->key, key, ft_strlen(key)) == 0)
+		{
+			ans = 1;
+			break ;
+		}
+		temp = temp->next;
+	}
+	return (ans);
 }
 
 void	update_pwd(t_args *args, char *prev_pwd, char *cur_pwd)
 {
 	char	*str2;
 
-	if (get_value_from_key(&args->export_list, "PWD") != NULL)
+	if (find_key(args->export_list, "PWD") == 1)
 	{
 		str2 = ft_strjoin("PWD=", cur_pwd);
 		my_export(args, str2);
 		free(str2);
 	}
-	if (get_value_from_key(&args->export_list, "OLDPWD") != NULL)
+	if (find_key(args->export_list, "OLDPWD") == 1)
 	{
 		str2 = ft_strjoin("OLDPWD=", prev_pwd);
 		my_export(args, str2);
@@ -69,51 +104,80 @@ void	update_pwd(t_args *args, char *prev_pwd, char *cur_pwd)
 	}
 }
 
-void	handle_cd(t_args *args, char **av)
+void	free_pwds(char *pwd, char *cur_pwd, char *prev_pwd)
 {
-	//int		ans;
-	char	*str;
-	char	*prev_pwd;
-	char	*cur_pwd;
-
-	prev_pwd = my_strdup(my_pwd());
-	if (!av[1])
-	{
-		str = get_value_from_key(&args->export_list, "HOME");
-		my_cd(str);
-	}
-	else
-		my_cd(av[1]);
-	cur_pwd = my_strdup(my_pwd());
-	update_pwd(args, prev_pwd, cur_pwd);
+	free(pwd);
 	free(cur_pwd);
 	free(prev_pwd);
 }
 
+int	handle_cd(t_args *args, char **av)
+{
+	int		ans;
+	char	*str;
+	char	*prev_pwd;
+	char	*cur_pwd;
+	char	*pwd;
+
+	pwd = my_pwd(0);
+	prev_pwd = my_strdup(pwd);
+	free(pwd);
+	if (!av[1])
+		str = get_value_from_key(&args->export_list, "HOME");
+	else
+		str = av[1];
+	ans = my_cd(str);
+	if (str && av[1] && ft_strncmp(av[1], str, ft_strlen(str)) != 0)
+		free(str);
+	pwd = my_pwd(0);
+	cur_pwd = my_strdup(pwd);
+	if (ans == 0)
+		update_pwd(args, prev_pwd, cur_pwd);
+	free_pwds(pwd, cur_pwd, prev_pwd);
+	return (ans);
+}
+
+void	builtin_exit_code(int exit_code, t_args *args)
+{
+	int	pid;
+
+	pid = fork();
+	if (pid == 0)
+		exit(exit_code);
+	else
+		append_pid(pid, args);
+}
+
+void	handle_exit(char **av)
+{
+	my_exit(av[1]);
+}
+
 void	handle_builtin(char **av, t_args *args)
 {
+	char	*pwd;
+	int		ans;
+
+	ans = 0;
 	if (ft_strlen(av[0]) == 6 && ft_strncmp("export", av[0], 6) == 0)
-		handle_export(args, av);
+		ans = handle_export(args, av);
 	else if (ft_strlen(av[0]) == 3 && ft_strncmp("env", av[0], 3) == 0)
 		print_list(&args->env_list, 0);
 	else if (ft_strlen(av[0]) == 5 && ft_strncmp("unset", av[0], 5) == 0)
-		handle_unset(args, av);
+		ans = handle_unset(args, av);
 	else if (ft_strlen(av[0]) == 4 && ft_strncmp("echo", av[0], 4) == 0)
-		my_echo(&av[0]);
+		ans = my_echo(&av[0]);
 	else if (ft_strlen(av[0]) == 3 && ft_strncmp("pwd", av[0], 3) == 0)
-		printf("%s\n", my_pwd());
+	{
+		pwd = my_pwd(1);
+		free(pwd);
+	}
 	else if (ft_strlen(av[0]) == 2 && ft_strncmp("cd", av[0], 2) == 0)
-		handle_cd(args, av);
+		ans = handle_cd(args, av);
+	else if (ft_strlen(av[0]) == 4 && ft_strncmp("exit", av[0], 4) == 0)
+		handle_exit(av);
+	builtin_exit_code(ans, args);
 }
-// p = fork();
-// if (p == 0)
-// {
-// 	if (ans != 0)
-// 		exit(1);
-// 	exit(0);
-// }
-// else
-// 	ft_lstadd_back(&args->pids, ft_lstnew(p));
 
 char	*get_value_from_key(t_export **list, char *key)
 {
@@ -197,69 +261,83 @@ int	ft_str_is_numeric(char *str)
 	return (ans);
 }
 
-int	error_exit(t_args *args, char *command)
-{
-	char	*err;
-	int		exit_code;
-
-	(void)args;
-	err = strerror(errno);
-	if (ft_strncmp(err, "No such file or directory", 25) == 0 || \
-		ft_strncmp(err, "command not found", 17) == 0)
-		exit_code = 127;
-	else if (ft_strncmp(err, "Permission denied", 17) == 0)
-		exit_code = 126;
-	else
-		exit_code = 1;
-	perror(command);
-	return (exit_code);
-}
-
 void	dir_error(char *first)
 {
 	if (is_dir(first) != 0)
 	{
-		printf("minishell: %s: is a directory\n", first);
+		print_error_msg("is a directory\n", first);
 		exit(126);
 	}
 }
 
-void	handle_command(char **av, t_args *args)
+void	execute_command(char *first, char **av, char **envp, t_args *args)
 {
-	int		p;
 	char	*command;
 
-	dir_error(av[0]);
-	p = fork();
-	if (p == 0)
+	dir_error(first);
+	command = search_path(first, &args->export_list);
+	if (command == NULL || access(command, F_OK) != 0)
 	{
-		command = search_path(av[0], &args->export_list);
-		execve(command, av, args->envp);
-		exit(error_exit(args, command));
+		print_error_msg("command not found\n", first);
+		exit(127);
 	}
+	if (access(command, X_OK) != 0)
+	{
+		print_error_msg("Permission denied\n", first);
+		exit(126);
+	}
+	if (execve(command, av, envp) == -1)
+		print_error_msg("error", first);
+	exit(1);
 }
-/*if (ft_strlen(command) == 11 && ft_strncmp(command, "./minishell", 11) == 0)
+
+void	append_pid(int p, t_args *args)
 {
-	val_str = get_value_from_key(&args->export_list, "SHLVL");
-	if (val_str && ft_str_is_numeric(val_str) == 1)
-	{
-		val_int = ft_atoi(val_str);
-	}
+	int		*pid_copy;
+	t_list	*new;
+	t_list	*last;
+
+	pid_copy = (int *)malloc(sizeof(int));
+	*pid_copy = p;
+	new = ft_lstnew(pid_copy);
+	if (!args->pids)
+		args->pids = new;
 	else
-		my_export(args, "SHLVL=1");
+	{
+		last = args->pids;
+		while (last->next)
+			last = last->next;
+		last->next = new;
+	}
+	new->next = NULL;
 }
-else
-err = strerror(errno);
-if (ft_strncmp(err, "No such file or directory", 25) == 0 || \
-	ft_strncmp(err, "command not found", 17) == 0)
-	exit_code = 127;
-else if (ft_strncmp(err, "Permission denied", 17) == 0)
-	exit_code = 126;
-else
-	exit_code = 1;
-perror(command);
-exit(exit_code);
-	ft_lstadd_back(&args->pids, ft_lstnew(p));*/
+
+void	handle_command(char **av, t_args *args)
+{
+	if (av[0][0] == '/' && access(av[0], F_OK) != 0)
+	{
+		print_error_msg("No such file or directory\n", av[0]);
+		exit(127);
+	}
+	execute_command(av[0], av, args->envp, args);
+}
+
+void	run_command(t_args *args, t_fd *p, char **av)
+{
+	int		pid;
+
+	pid = fork();
+	if (pid == 0)
+	{
+		close(p->fdin);
+		close(p->fdout);
+		handle_command(av, args);
+	}
+	else if (pid == -1)
+		print_error_msg("failed\n", "fork");
+	else if (pid > 0)
+		append_pid(pid, args);
+}
 
 void	handle_pipe(int j, t_args *args, t_fd *p)
 {
@@ -283,7 +361,7 @@ void	handle_pipe(int j, t_args *args, t_fd *p)
 		if (is_builtin(av[0]) == 1)
 			handle_builtin(av, args);
 		else
-			handle_command(av, args);
+			run_command(args, p, av);
 	}
 	free_arr(av);
 }
@@ -292,30 +370,10 @@ void	pipex(t_args *args)
 {
 	t_fd	p;
 	int		j;
-	int		status;
 
 	setup_fds(&p);
 	j = 0;
 	while (j < args->p_count + 1)
 		handle_pipe(j++, args, &p);
 	restore_fds(&p);
-	while (j != -1)
-		j = wait(&status);
-	args->exit_code = WEXITSTATUS(status);
 }
-
-// int	main(int argc, char **argv, char **envp)
-// {
-// 	char	**split;
-// 	t_export	*list = NULL;
-// 	int	i = 0;
-// 	while (envp[i] != NULL)
-// 	{
-// 		split = ft_split(envp[i], '=');
-// 		populate(&list, split);
-// 		i++;
-// 	}
-// 	char	buf[] = "~this~is~astring~";
-// 	char	*str = tilde_exp(buf, &list);
-// 	printf("%s\n", str);
-// }

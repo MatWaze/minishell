@@ -17,15 +17,15 @@ lflags = -L$(libft_dir) -L$(readline_dir)/lib
 iflags = -I. -I$(include_dir) -I$(libft_dir) -I$(readline_dir)/include
 cflags = -Wall -Wextra -Werror -g3# -fsanitize=address
 
-all : $(name)
+all : dirs $(name)
 
 $(name) : $(readline_dir)/lib/libreadline.a $(libft_dir)/libft.a $(obj)
 	$(cc) $(lflags) -o $(name) $(obj) -lreadline -lft -lcurses
 
-$(build_dir)/%.o: %.c Makefile $(include_dir)/minishell.h | $(build_dir)
+$(build_dir)/%.o: %.c Makefile $(include_dir)/minishell.h
 	$(cc) $(cflags) $(iflags) -c $< -o $@
 
-$(EXPANSION_BUILD_DIR)/%.o: $(EXPANSION_BUILD_DIR) $(EXPANSION_DIR)/%.c Makefile $(EXPANSION_DIR)/expansion.h
+$(EXPANSION_BUILD_DIR)/%.o: $(EXPANSION_DIR)/%.c Makefile $(EXPANSION_DIR)/expansion.h
 	$(cc) $(cflags) $(iflags) -c $< -o $@
 
 $(libft_dir)/libft.a:
@@ -33,6 +33,8 @@ $(libft_dir)/libft.a:
 
 $(readline_dir)/lib/libreadline.a: $(readline_dir)/Makefile
 	make -C $(readline_dir) install
+
+dirs: $(EXPANSION_BUILD_DIR)
 
 $(EXPANSION_BUILD_DIR): | $(build_dir)
 	mkdir $@

@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/01 15:09:25 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/01 17:56:06 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,13 +172,17 @@ void	run_pipex(t_args *args, char **words, char *str)
 {
 	int	p_count;
 	int	status;
+	int	pipex_return;
 
 	args->argv = words;
 	p_count = pipe_count(str);
 	args->p_count = p_count;
-	pipex(args);
+	pipex_return = pipex(args);
 	status = wait_for_children(args);
-	args->exit_code = WEXITSTATUS(status);
+	if (pipex_return != 1)
+		args->exit_code = WEXITSTATUS(status);
+	else
+		args->exit_code = 1;
 	free_arr(args->argv);
 	clear_list(&args->pids);
 }

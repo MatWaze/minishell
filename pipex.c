@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/01 17:30:45 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/01 17:55:40 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -330,7 +330,6 @@ void	handle_command(char **av, t_args *args)
 int	run_command(t_args *args, t_fd *p, char **av)
 {
 	int		pid;
-	pid_t	svi;
 	int		ans;
 
 	ans = 0;
@@ -378,29 +377,24 @@ int	handle_pipe(int j, t_args *args, t_fd *p)
 	return (ans);
 }
 
-void	pipex(t_args *args)
+int	pipex(t_args *args)
 {
 	t_fd	p;
 	int		j;
+	int		ans;
 
 	setup_fds(&p);
 	j = 0;
+	ans = 0;
 	while (j < args->p_count + 1)
 	{
 		if (handle_pipe(j++, args, &p) == 1)
 		{
-			t_list	*temp;
-
-			temp = args->pids;
-			while (temp)
-			{
-				int	svi = *(int *) temp->content;
-				kill(svi, 0);
-				temp = temp->next;
-			}
 			print_error_msg("failed: Resource temporarily unavailable\n", "fork");
+			ans = 1;
 			break ;
 		}
 	}
 	restore_fds(&p);
+	return (ans);
 }

@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/02 16:39:27 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/02 16:49:29 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,7 +184,6 @@ int	handle_builtin(char **av, t_args *args)
 	else if (ft_strlen(av[0]) == 4 && ft_strncmp("exit", av[0], 4) == 0)
 	{
 		handle_exit(av, args);
-		printf("%s\n", av[0]);
 	}
 	return (builtin_exit_code(ans, args));
 }

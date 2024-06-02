@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/05 16:20:42 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/02 16:39:56 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/02 17:39:08 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,13 +187,19 @@ void	free_content(t_export *l)
 	free(l);
 }
 
-void	exit_no_arguments(char *num_str, t_args *args)
+int	exit_no_arguments(char *num_str, t_args *args)
 {
+	int	ans;
+
+	ans = 0;
 	if (!num_str && args->p_count == 0)
 	{
 		ft_putstr_fd("exit\n", 1);
 		exit(0);
 	}
+	else if (!num_str)
+		ans = 1;
+	return (ans);
 }
 
 void	my_exit(char *num_str, t_args *args)
@@ -203,28 +209,27 @@ void	my_exit(char *num_str, t_args *args)
 	unsigned int		exit_status;
 	char				*joined;
 
-	printf("svi\n");
-	exit_no_arguments(num_str, args);
-	num = ft_atoi(num_str);
-	unum = (unsigned long long) ft_atoi(num_str);
-	printf("num: %lld\n", num);
-	printf("unum: %llu\n", unum);
-	if (*num_str != '-' && (ft_str_is_numeric(num_str) == 0 || \
-		(ft_strlen(num_str) > 19 || unum > LONG_MAX)))
+	if (exit_no_arguments(num_str, args) == 0)
 	{
-		joined = ft_strjoin(num_str, ": numeric argument required\n");
-		print_error_msg(joined, "exit");
-		free(joined);
-		exit_status = 255;
-	}
-	else if (num < 0)
-		exit_status = unum % 256;
-	else
-		exit_status = num % 256;
-	if (args->p_count == 0)
-	{
-		ft_putstr_fd("exit\n", 1);
-		exit(exit_status);
+		num = ft_atoi(num_str);
+		unum = (unsigned long long) ft_atoi(num_str);
+		if (*num_str != '-' && (ft_str_is_numeric(num_str) == 0 || \
+			(ft_strlen(num_str) > 19 || unum > LONG_MAX)))
+		{
+			joined = ft_strjoin(num_str, ": numeric argument required\n");
+			print_error_msg(joined, "exit");
+			free(joined);
+			exit_status = 255;
+		}
+		else if (num < 0)
+			exit_status = unum % 256;
+		else
+			exit_status = num % 256;
+		if (args->p_count == 0)
+		{
+			ft_putstr_fd("exit\n", 1);
+			exit(exit_status);
+		}
 	}
 }
 

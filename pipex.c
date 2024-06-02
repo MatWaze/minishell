@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/01 17:55:40 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/02 16:39:27 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ int	handle_unset(t_args *args, char **av)
 	ans = 0;
 	while (av[i])
 	{
-		if (check_key(av[i]) == 1)
+		if (check_key(av[i]) == 1 && args->p_count == 0)
 		{
 			my_unset(&args->export_list, av[i]);
 			my_unset(&args->env_list, av[i]);
@@ -127,6 +127,8 @@ int	handle_cd(t_args *args, char **av)
 	else
 		str = av[1];
 	ans = my_cd(str);
+	if (args->p_count != 0) // if cd is used in pipe, then dont change the directory
+		my_cd(prev_pwd);
 	if (str && av[1] && ft_strncmp(av[1], str, ft_strlen(str)) != 0)
 		free(str);
 	pwd = my_pwd(0);
@@ -153,9 +155,9 @@ int	builtin_exit_code(int exit_code, t_args *args)
 	return (ans);
 }
 
-void	handle_exit(char **av)
+void	handle_exit(char **av, t_args *args)
 {
-	my_exit(av[1]);
+	my_exit(av[1], args);
 }
 
 int	handle_builtin(char **av, t_args *args)
@@ -180,7 +182,10 @@ int	handle_builtin(char **av, t_args *args)
 	else if (ft_strlen(av[0]) == 2 && ft_strncmp("cd", av[0], 2) == 0)
 		ans = handle_cd(args, av);
 	else if (ft_strlen(av[0]) == 4 && ft_strncmp("exit", av[0], 4) == 0)
-		handle_exit(av);
+	{
+		handle_exit(av, args);
+		printf("%s\n", av[0]);
+	}
 	return (builtin_exit_code(ans, args));
 }
 

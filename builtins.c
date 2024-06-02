@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/05 16:20:42 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/01 15:09:17 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/02 16:39:56 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,10 @@ int	my_cd(char *path)
 		if (!path)
 			print_error_msg("HOME is not set\n", "cd");
 		else
+		{
+			ft_putstr_fd("minishell: cd: ", 2);
 			perror(path);
+		}
 		ans = 1;
 	}
 	return (ans);
@@ -111,16 +114,16 @@ int	my_echo(char **strs)
 	if (split_len(strs) > 1)
 	{
 		set_flag(strs, &i, &flag);
-		while (strs[i] != NULL)
+		while (strs[i])
 		{
-			printf("%s", strs[i]);
-			if (strs[i + 1] != NULL)
-				printf(" ");
+			ft_putstr_fd(strs[i], 1);
+			if (strs[i + 1])
+				ft_putchar_fd(' ', 1);
 			i++;
 		}
 	}
 	if (flag == 0)
-		printf("\n");
+		ft_putchar_fd('\n', 1);
 	return (0);
 }
 
@@ -184,31 +187,45 @@ void	free_content(t_export *l)
 	free(l);
 }
 
-void	my_exit(char *num_str)
+void	exit_no_arguments(char *num_str, t_args *args)
 {
-	unsigned long long	unum;
-	long long			num;
-	unsigned int		exit_status;
-
-	if (!num_str)
+	if (!num_str && args->p_count == 0)
 	{
 		ft_putstr_fd("exit\n", 1);
 		exit(0);
 	}
+}
+
+void	my_exit(char *num_str, t_args *args)
+{
+	unsigned long long	unum;
+	long long			num;
+	unsigned int		exit_status;
+	char				*joined;
+
+	printf("svi\n");
+	exit_no_arguments(num_str, args);
 	num = ft_atoi(num_str);
-	unum = (unsigned long long) num;
-	if (ft_str_is_numeric(num_str) == 0 || \
-		(ft_strlen(num_str) > 19 || unum > LONG_MAX))
+	unum = (unsigned long long) ft_atoi(num_str);
+	printf("num: %lld\n", num);
+	printf("unum: %llu\n", unum);
+	if (*num_str != '-' && (ft_str_is_numeric(num_str) == 0 || \
+		(ft_strlen(num_str) > 19 || unum > LONG_MAX)))
 	{
-		print_error_msg("numeric argument required\n", "exit");
+		joined = ft_strjoin(num_str, ": numeric argument required\n");
+		print_error_msg(joined, "exit");
+		free(joined);
 		exit_status = 255;
 	}
 	else if (num < 0)
 		exit_status = unum % 256;
 	else
 		exit_status = num % 256;
-	ft_putstr_fd("exit\n", 1);
-	exit(exit_status);
+	if (args->p_count == 0)
+	{
+		ft_putstr_fd("exit\n", 1);
+		exit(exit_status);
+	}
 }
 
 void	my_unset(t_export **l, char *str)
@@ -266,8 +283,9 @@ int	my_export(t_args *args, char *s)
 	val2 = get_val(s);
 	if (check_key(key) == 1)
 	{
-		if ((ft_strlen(key) >= 1 && is_inside(val2, key, &args->env_list) \
-			== 0) || is_inside(val, key, &args->export_list) == 0)
+		if (args->p_count == 0 && ((ft_strlen(key) >= 1 && \
+			is_inside(val2, key, &args->env_list) == 0) || \
+			is_inside(val, key, &args->export_list) == 0))
 			append_to_lists(val, val2, key, args);
 		ans = 0;
 	}

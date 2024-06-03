@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/03 12:56:29 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/03 15:07:44 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ int	handle_cd(t_args *args, char **av)
 	else
 		str = av[1];
 	ans = my_cd(str);
-	if (args->p_count != 0) // if cd is used in pipe, then dont change the directory
+	if (args->p_count != 0)
 		my_cd(prev_pwd);
 	if (str && av[1] && ft_strncmp(av[1], str, ft_strlen(str)) != 0)
 		free(str);
@@ -184,9 +184,7 @@ int	handle_builtin(char **av, t_args *args)
 	else if (ft_strlen(av[0]) == 2 && ft_strncmp("cd", av[0], 2) == 0)
 		ans = handle_cd(args, av);
 	else if (ft_strlen(av[0]) == 4 && ft_strncmp("exit", av[0], 4) == 0)
-	{
 		handle_exit(av, args);
-	}
 	return (builtin_exit_code(ans, args));
 }
 

@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/03 12:46:14 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/03 15:08:44 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,7 @@ void	init_minishell(char **envp, t_args *args)
 
 	i = 0;
 	args->envp = envp;
+	args->p_count = 0;
 	export_list = NULL;
 	env_list = NULL;
 	while (envp[i] != NULL)
@@ -115,8 +116,8 @@ void	init_minishell(char **envp, t_args *args)
 	args->export_list = export_list;
 	args->pids = NULL;
 	args->exit_code = 0;
-	set_pwds(args);
 	sort_list(&export_list);
+	set_pwds(args);
 }
 
 void	clear_export(t_export **exp)
@@ -235,6 +236,6 @@ int	main2(int argc, char **argv, char **envp)
 int	main(int argc, char **argv, char **envp)
 {
 	main2(argc, argv, envp);
-	system("leaks minishell");
+	// system("leaks minishell");
 	return (0);
 }

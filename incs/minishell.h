@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 18:44:22 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/01 10:53:04 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/03 11:36:19 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@
 # include "builtins/builtins.h"
 # include "expansion/expansion.h"
 # include "quotes/quotes.h"
+# include "export/export.h"
 
 char	*search_path(char *cmd, t_export **env);
 char	*get_str(char **strs2, char *cmd);

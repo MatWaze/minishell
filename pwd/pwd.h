@@ -1,30 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   t_args.h                                           :+:      :+:    :+:   */
+/*   pwd.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/01 10:18:31 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/03 18:20:27 by zanikin          ###   ########.fr       */
+/*   Created: 2024/06/03 18:15:30 by zanikin           #+#    #+#             */
+/*   Updated: 2024/06/03 18:39:52 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef T_ARGS_H
-# define T_ARGS_H
-# include "export/t_export.h"
-# include "libft/libft.h"
+#ifndef PWD_H
+# define PWD_H
+# include "t_args.h"
 
-typedef struct s_args
-{
-	char		**argv;
-	char		**envp;
-	int			p_count;
-	char		**my_envp;
-	int			exit_code;
-	t_list		*pids;
-	int			*last_cmd; // not needed?
-	t_export	*export_list;
-	t_export	*env_list;
-}		t_args;
+char	*pwd(int i);
+void	set_pwds(t_args *args);
+void	update_pwd(t_args *args, char *prev_pwd, char *cur_pwd);
 #endif

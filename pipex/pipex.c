@@ -6,141 +6,18 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/01 10:53:13 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/03 19:57:55 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <sys/stat.h>
 
+#include "export/export.h"
 #include "t_args.h"
 #include "t_fd.h"
 
 void	append_pid(int p, t_args *args);
-
-int	handle_export(t_args *args, char **av)
-{
-	int	i;
-	int	ans;
-
-	i = 1;
-	ans = 0;
-	while (av[i])
-		ans = my_export(args, av[i++]);
-	if (i == 1)
-		print_list(&args->export_list, 1);
-	return (ans);
-}
-
-int	handle_unset(t_args *args, char **av)
-{
-	int	i;
-	int	ans;
-
-	i = 1;
-	ans = 0;
-	while (av[i])
-	{
-		if (check_key(av[i]) == 1)
-		{
-			my_unset(&args->export_list, av[i]);
-			my_unset(&args->env_list, av[i]);
-		}
-		else
-		{
-			ans = 1;
-			print_error_msg("not a valid identifier\n", av[i]);
-		}
-		i++;
-	}
-	return (ans);
-}
-
-int	find_key(t_export *export_list, char *key)
-{
-	t_export	*temp;
-	int			ans;
-
-	ans = 0;
-	temp = export_list;
-	while (temp)
-	{
-		if (key && ft_strncmp(temp->pair->key, key, ft_strlen(key)) == 0)
-		{
-			ans = 1;
-			break ;
-		}
-		temp = temp->next;
-	}
-	return (ans);
-}
-
-void	update_pwd(t_args *args, char *prev_pwd, char *cur_pwd)
-{
-	char	*str2;
-
-	if (find_key(args->export_list, "PWD") == 1)
-	{
-		str2 = ft_strjoin("PWD=", cur_pwd);
-		my_export(args, str2);
-		free(str2);
-	}
-	if (find_key(args->export_list, "OLDPWD") == 1)
-	{
-		str2 = ft_strjoin("OLDPWD=", prev_pwd);
-		my_export(args, str2);
-		free(str2);
-	}
-}
-
-void	free_pwds(char *pwd, char *cur_pwd, char *prev_pwd)
-{
-	free(pwd);
-	free(cur_pwd);
-	free(prev_pwd);
-}
-
-int	handle_cd(t_args *args, char **av)
-{
-	int		ans;
-	char	*str;
-	char	*prev_pwd;
-	char	*cur_pwd;
-	char	*pwd;
-
-	pwd = my_pwd(0);
-	prev_pwd = my_strdup(pwd);
-	free(pwd);
-	if (!av[1])
-		str = get_value_from_key(&args->export_list, "HOME");
-	else
-		str = av[1];
-	ans = my_cd(str);
-	if (str && av[1] && ft_strncmp(av[1], str, ft_strlen(str)) != 0)
-		free(str);
-	pwd = my_pwd(0);
-	cur_pwd = my_strdup(pwd);
-	if (ans == 0)
-		update_pwd(args, prev_pwd, cur_pwd);
-	free_pwds(pwd, cur_pwd, prev_pwd);
-	return (ans);
-}
-
-void	builtin_exit_code(int exit_code, t_args *args)
-{
-	int	pid;
-
-	pid = fork();
-	if (pid == 0)
-		exit(exit_code);
-	else
-		append_pid(pid, args);
-}
-
-void	handle_exit(char **av)
-{
-	my_exit(av[1]);
-}
 
 void	handle_builtin(char **av, t_args *args)
 {
@@ -155,7 +32,7 @@ void	handle_builtin(char **av, t_args *args)
 	else if (ft_strlen(av[0]) == 5 && ft_strncmp("unset", av[0], 5) == 0)
 		ans = handle_unset(args, av);
 	else if (ft_strlen(av[0]) == 4 && ft_strncmp("echo", av[0], 4) == 0)
-		ans = my_echo(&av[0]);
+		ans = echo(&av[0]);
 	else if (ft_strlen(av[0]) == 3 && ft_strncmp("pwd", av[0], 3) == 0)
 	{
 		pwd = my_pwd(1);
@@ -164,62 +41,8 @@ void	handle_builtin(char **av, t_args *args)
 	else if (ft_strlen(av[0]) == 2 && ft_strncmp("cd", av[0], 2) == 0)
 		ans = handle_cd(args, av);
 	else if (ft_strlen(av[0]) == 4 && ft_strncmp("exit", av[0], 4) == 0)
-		handle_exit(av);
+		shell_exit(av[1]);
 	builtin_exit_code(ans, args);
-}
-
-char	*get_value_from_key(t_export **list, char *key)
-{
-	t_export	*temp;
-	char		*ans;
-
-	temp = *list;
-	ans = NULL;
-	while (temp)
-	{
-		if (ft_strncmp(key, temp->pair->key, \
-			ft_strlen(temp->pair->key)) == 0)
-		{
-			ans = temp->pair->val;
-			break ;
-		}
-		temp = temp->next;
-	}
-	return (ans);
-}
-
-int	my_strncpy(char *dest, char *src, int size)
-{
-	int	i;
-
-	i = 0;
-	while (src[i] && i < size)
-	{
-		dest[i] = src[i];
-		i++;
-	}
-	return (i);
-}
-
-char	*get_ans(char *str, char *ans, char *home_dir)
-{
-	int	i;
-	int	j;
-	int	len;
-
-	i = 0;
-	j = 0;
-	len = ft_strlen(home_dir);
-	while (str[i])
-	{
-		if (str[i] == '~')
-			j += my_strncpy(&ans[j], home_dir, len);
-		else
-			ans[j++] = str[i];
-		i++;
-	}
-	ans[j] = '\0';
-	return (ans);
 }
 
 int	is_dir(char *path)
@@ -229,25 +52,6 @@ int	is_dir(char *path)
 	if (stat(path, &file_info) == -1)
 		return (0);
 	return (((file_info.st_mode) & S_IFMT) == S_IFDIR);
-}
-
-int	ft_str_is_numeric(char *str)
-{
-	int	i;
-	int	ans;
-
-	i = 0;
-	ans = 1;
-	while (str[i])
-	{
-		if (!ft_isdigit(str[i]))
-		{
-			ans = 0;
-			break ;
-		}
-		i++;
-	}
-	return (ans);
 }
 
 void	dir_error(char *first)

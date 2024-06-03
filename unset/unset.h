@@ -1,22 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   t_content.h                                        :+:      :+:    :+:   */
+/*   unset.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/01 10:10:05 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/01 10:17:19 by zanikin          ###   ########.fr       */
+/*   Created: 2024/06/03 19:22:50 by zanikin           #+#    #+#             */
+/*   Updated: 2024/06/03 19:54:57 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef T_CONTENT_H
-# define T_CONTENT_H
+#ifndef UNSET_H
+# define UNSET_H
+# include "export/t_export.h"
 
-typedef struct s_content
-{
-	char				*val;
-	char				*key;
-	struct s_content	*next;
-}	t_content;
+void	my_unset(t_export **l, char *str);
 #endif

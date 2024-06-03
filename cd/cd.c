@@ -1,30 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   t_args.h                                           :+:      :+:    :+:   */
+/*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/01 10:18:31 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/03 18:20:27 by zanikin          ###   ########.fr       */
+/*   Created: 2024/06/03 18:46:35 by zanikin           #+#    #+#             */
+/*   Updated: 2024/06/03 19:53:59 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef T_ARGS_H
-# define T_ARGS_H
-# include "export/t_export.h"
-# include "libft/libft.h"
+#include <unistd.h>
+#include <stdio.h>
 
-typedef struct s_args
+void	print_error_msg(char *msg, char *cmd);
+
+int	cd(char *path)
 {
-	char		**argv;
-	char		**envp;
-	int			p_count;
-	char		**my_envp;
-	int			exit_code;
-	t_list		*pids;
-	int			*last_cmd; // not needed?
-	t_export	*export_list;
-	t_export	*env_list;
-}		t_args;
-#endif
+	int		ans;
+
+	ans = 0;
+	if (!path || chdir(path) == -1)
+	{
+		if (!path)
+			print_error_msg("HOME is not set\n", "cd");
+		else
+			perror(path);
+		ans = 1;
+	}
+	return (ans);
+}

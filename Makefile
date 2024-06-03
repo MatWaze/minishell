@@ -1,27 +1,43 @@
 name = minishell
 cc = cc
 build_dir = build
-src = my_split export1_funcs export2_funcs builtins pipex minishell quoted_split quotes helper_functions1 helper_functions2
-obj = $(addprefix $(build_dir)/, $(addsuffix .o, $(src)))
+include_dir=incs
+
+# MODULES
+EXPANSION_DIR=expansion
+EXPANSION_SRC=expansion expansion_counter digits_counter
+EXPANSION_BUILD_DIR=$(build_dir)/$(EXPANSION_DIR)
+EXPANSION_OBJ=$(addprefix $(EXPANSION_BUILD_DIR)/, $(addsuffix .o, $(EXPANSION_SRC)))
+
+src = export1_funcs export2_funcs builtins pipex minishell quoted_split quotes helper_functions1 helper_functions2
+obj = $(addprefix $(build_dir)/, $(addsuffix .o, $(src))) $(EXPANSION_OBJ)
 readline_dir = readline-8.2
 libft_dir = libft
-lflags = -Llibft -L$(readline_dir)/lib
-iflags = -Iincs -I$(libft_dir) -I$(readline_dir)/include
-cflags = -Wall -Wextra -Werror #-g3 -fsanitize=address
+lflags = -L$(libft_dir) -L$(readline_dir)/lib
+iflags = -I. -I$(include_dir) -I$(libft_dir) -I$(readline_dir)/include
+cflags = -Wall -Wextra -Werror
 
-all : $(name)
+all : dirs $(name)
 
-$(name) : $(build_dir) $(readline_dir)/lib/libreadline.a $(libft_dir)/libft.a $(obj)
-	$(cc) $(cflags) $(lflags) -o $(name) $(obj) -lreadline -lft -lcurses
+$(name) : $(readline_dir)/lib/libreadline.a $(libft_dir)/libft.a $(obj)
+	$(cc) $(lflags) -o $(name) $(obj) -lreadline -lft -lcurses
 
-$(build_dir)/%.o: %.c Makefile incs/minishell.h
+$(build_dir)/%.o: %.c Makefile $(include_dir)/minishell.h
 	$(cc) $(cflags) $(iflags) -c $< -o $@
+
+$(EXPANSION_BUILD_DIR)/%.o: $(EXPANSION_DIR)/%.c Makefile $(EXPANSION_DIR)/expansion.h
+	$(cc) $(cflags) $(iflags)  -c $< -o $@
 
 $(libft_dir)/libft.a:
 	make -C $(libft_dir)
 
 $(readline_dir)/lib/libreadline.a: $(readline_dir)/Makefile
 	make -C $(readline_dir) install
+
+dirs: $(EXPANSION_BUILD_DIR)
+
+$(EXPANSION_BUILD_DIR): | $(build_dir)
+	mkdir $@
 
 $(build_dir):
 	mkdir $@
@@ -45,4 +61,4 @@ re : fclean configure all
 configure:
 	cd $(readline_dir); ./configure --prefix=$(shell pwd)/$(readline_dir) --enable-shared=no
 
-.PHONY: all clean fclean re configure
+.PHONY: all clean fclean re configure dirs

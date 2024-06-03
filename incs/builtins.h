@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 14:29:25 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/01 19:29:29 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/03 12:58:39 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void		append(char *s, char *key, t_export **l);
 void		populate(t_export **l, char *key);
 void		sort_list(t_export **l);
 void		print_linked_list(t_list *l);
-void		my_exit(char *num_str);
+void		my_exit(char *num_str, t_args *args);
 void		print_error_msg(char *msg, char *cmd);
 void		my_unset(t_export **l, char *str);
 char		*my_pwd(int i);

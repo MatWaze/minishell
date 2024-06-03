@@ -6,11 +6,11 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/01 19:46:09 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/03 12:56:29 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "incs/minishell.h"
+#include "minishell.h"
 
 void	append_pid(int p, t_args *args);
 
@@ -35,6 +35,7 @@ int	handle_export(t_args *args, char **av)
 	int	ans;
 
 	i = 1;
+	ans = 0;
 	while (av[i])
 		ans = my_export(args, av[i++]);
 	if (i == 1)
@@ -51,7 +52,7 @@ int	handle_unset(t_args *args, char **av)
 	ans = 0;
 	while (av[i])
 	{
-		if (check_key(av[i]) == 1)
+		if (check_key(av[i]) == 1 && args->p_count == 0)
 		{
 			my_unset(&args->export_list, av[i]);
 			my_unset(&args->env_list, av[i]);
@@ -124,8 +125,10 @@ int	handle_cd(t_args *args, char **av)
 	if (!av[1])
 		str = get_value_from_key(&args->export_list, "HOME");
 	else
-		str = tilde_exp(av[1], &args->export_list);
+		str = av[1];
 	ans = my_cd(str);
+	if (args->p_count != 0) // if cd is used in pipe, then dont change the directory
+		my_cd(prev_pwd);
 	if (str && av[1] && ft_strncmp(av[1], str, ft_strlen(str)) != 0)
 		free(str);
 	pwd = my_pwd(0);
@@ -136,23 +139,28 @@ int	handle_cd(t_args *args, char **av)
 	return (ans);
 }
 
-void	builtin_exit_code(int exit_code, t_args *args)
+int	builtin_exit_code(int exit_code, t_args *args)
 {
 	int	pid;
+	int	ans;
 
+	ans = 0;
 	pid = fork();
 	if (pid == 0)
 		exit(exit_code);
+	else if (pid == -1)
+		ans = 1;
 	else
 		append_pid(pid, args);
+	return (ans);
 }
 
-void	handle_exit(char **av)
+void	handle_exit(char **av, t_args *args)
 {
-	my_exit(av[1]);
+	my_exit(av[1], args);
 }
 
-void	handle_builtin(char **av, t_args *args)
+int	handle_builtin(char **av, t_args *args)
 {
 	char	*pwd;
 	int		ans;
@@ -176,8 +184,10 @@ void	handle_builtin(char **av, t_args *args)
 	else if (ft_strlen(av[0]) == 2 && ft_strncmp("cd", av[0], 2) == 0)
 		ans = handle_cd(args, av);
 	else if (ft_strlen(av[0]) == 4 && ft_strncmp("exit", av[0], 4) == 0)
-		handle_exit(av);
-	builtin_exit_code(ans, args);
+	{
+		handle_exit(av, args);
+	}
+	return (builtin_exit_code(ans, args));
 }
 
 char	*get_value_from_key(t_export **list, char *key)
@@ -231,35 +241,6 @@ char	*get_ans(char *str, char *ans, char *home_dir)
 		i++;
 	}
 	ans[j] = '\0';
-	return (ans);
-}
-
-char	*tilde_exp(char *str, t_export **list)
-{
-	int		i;
-	int		count;
-	char	*ans;
-	char	*home_dir;
-
-	i = 0;
-	count = 0;
-	home_dir = get_value_from_key(list, "HOME");
-	if (!home_dir || ft_strchr(str, '~') == NULL)
-		return (str);
-	while (str[i])
-	{
-		if (str[i++] == '~')
-			count++;
-	}
-	i = 0;
-	count = ft_strlen(home_dir) * count;
-	while (str[i])
-	{
-		if (str[i++] != '~')
-			count++;
-	}
-	ans = (char *) malloc(sizeof(char) * (count + 1));
-	ans = get_ans(str, ans, home_dir);
 	return (ans);
 }
 
@@ -344,28 +325,20 @@ void	append_pid(int p, t_args *args)
 
 void	handle_command(char **av, t_args *args)
 {
-	char	*first;
-
-	if (ft_strchr(av[0], '~') != NULL)
+	if (av[0][0] == '/' && access(av[0], F_OK) != 0)
 	{
-		first = tilde_exp(av[0], &args->export_list);
-		if (!first)
-			first = av[0];
-	}
-	else
-		first = av[0];
-	if (first[0] == '/' && access(first, F_OK) != 0)
-	{
-		print_error_msg("No such file or directory\n", first);
+		print_error_msg("No such file or directory\n", av[0]);
 		exit(127);
 	}
-	execute_command(first, av, args->envp, args);
+	execute_command(av[0], av, args->envp, args);
 }
 
-void	run_command(t_args *args, t_fd *p, char **av)
+int	run_command(t_args *args, t_fd *p, char **av)
 {
 	int		pid;
+	int		ans;
 
+	ans = 0;
 	pid = fork();
 	if (pid == 0)
 	{
@@ -374,59 +347,60 @@ void	run_command(t_args *args, t_fd *p, char **av)
 		handle_command(av, args);
 	}
 	else if (pid == -1)
-		print_error_msg("failed: Resource temporarily unavailable\n", "fork");
+		ans = 1;
 	else if (pid > 0)
 		append_pid(pid, args);
+	return (ans);
 }
 
-void	handle_pipe(int j, t_args *args, t_fd *p)
+int	handle_pipe(int j, t_args *args, t_fd *p)
 {
 	char	**av;
+	int		ans;
 
+	ans = 0;
 	dup2(p->fdin, 0);
 	close(p->fdin);
 	av = quoted_split(args->argv[j], ' ');
-	if (j == args->p_count)
-		p->fdout = dup(p->tempout);
-	else
+	if (expand_list(av, &args->env_list, args->exit_code))
 	{
-		pipe(p->fd);
-		p->fdout = p->fd[1];
-		p->fdin = p->fd[0];
+		if (j == args->p_count)
+			p->fdout = dup(p->tempout);
+		else
+		{
+			pipe(p->fd);
+			p->fdout = p->fd[1];
+			p->fdin = p->fd[0];
+		}
+		dup2(p->fdout, 1);
+		close(p->fdout);
+		if (is_builtin(av[0]) == 1)
+			ans = handle_builtin(av, args);
+		else
+			ans = run_command(args, p, av);
 	}
-	dup2(p->fdout, 1);
-	close(p->fdout);
-	if (is_builtin(av[0]) == 1)
-		handle_builtin(av, args);
-	else
-		run_command(args, p, av);
 	free_arr(av);
+	return (ans);
 }
 
-void	pipex(t_args *args)
+int	pipex(t_args *args)
 {
 	t_fd	p;
 	int		j;
+	int		ans;
 
 	setup_fds(&p);
 	j = 0;
+	ans = 0;
 	while (j < args->p_count + 1)
-		handle_pipe(j++, args, &p);
+	{
+		if (handle_pipe(j++, args, &p) == 1)
+		{
+			print_error_msg("failed: Resource temporarily unavailable\n", "fork");
+			ans = 1;
+			break ;
+		}
+	}
 	restore_fds(&p);
+	return (ans);
 }
-
-// int	main(int argc, char **argv, char **envp)
-// {
-// 	char	**split;
-// 	t_export	*list = NULL;
-// 	int	i = 0;
-// 	while (envp[i] != NULL)
-// 	{
-// 		split = ft_split(envp[i], '=');
-// 		populate(&list, split);
-// 		i++;
-// 	}
-// 	char	buf[] = "~this~is~astring~";
-// 	char	*str = tilde_exp(buf, &list);
-// 	printf("%s\n", str);
-// }

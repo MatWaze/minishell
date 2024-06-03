@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/05 16:20:42 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/01 19:47:31 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/03 12:56:14 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,10 @@ int	my_cd(char *path)
 		if (!path)
 			print_error_msg("HOME is not set\n", "cd");
 		else
+		{
+			ft_putstr_fd("minishell: cd: ", 2);
 			perror(path);
+		}
 		ans = 1;
 	}
 	return (ans);
@@ -184,31 +187,50 @@ void	free_content(t_export *l)
 	free(l);
 }
 
-void	my_exit(char *num_str)
+int	exit_no_arguments(char *num_str, t_args *args)
 {
-	unsigned long long	unum;
-	long long			num;
-	unsigned int		exit_status;
+	int	ans;
 
-	if (!num_str)
+	ans = 0;
+	if (!num_str && args->p_count == 0)
 	{
 		ft_putstr_fd("exit\n", 1);
 		exit(0);
 	}
-	num = ft_atoi(num_str);
-	unum = (unsigned long long) num;
-	if (ft_str_is_numeric(num_str) == 0 || \
-		(ft_strlen(num_str) > 19 || unum > LONG_MAX))
+	else if (!num_str)
+		ans = 1;
+	return (ans);
+}
+
+void	my_exit(char *num_str, t_args *args)
+{
+	unsigned long long	unum;
+	long long			num;
+	unsigned int		exit_status;
+	char				*joined;
+
+	if (exit_no_arguments(num_str, args) == 0)
 	{
-		print_error_msg("numeric argument required\n", "exit");
-		exit_status = 255;
+		num = ft_atoi(num_str);
+		unum = (unsigned long long) ft_atoi(num_str);
+		if (*num_str != '-' && (ft_str_is_numeric(num_str) == 0 || \
+			(ft_strlen(num_str) > 19 || unum > LONG_MAX)))
+		{
+			joined = ft_strjoin(num_str, ": numeric argument required\n");
+			print_error_msg(joined, "exit");
+			free(joined);
+			exit_status = 255;
+		}
+		else if (num < 0)
+			exit_status = unum % 256;
+		else
+			exit_status = num % 256;
+		if (args->p_count == 0)
+		{
+			ft_putstr_fd("exit\n", 1);
+			exit(exit_status);
+		}
 	}
-	else if (num < 0)
-		exit_status = unum % 256;
-	else
-		exit_status = num % 256;
-	ft_putstr_fd("exit\n", 1);
-	exit(exit_status);
 }
 
 void	my_unset(t_export **l, char *str)
@@ -266,8 +288,9 @@ int	my_export(t_args *args, char *s)
 	val2 = get_val(s);
 	if (check_key(key) == 1)
 	{
-		if ((ft_strlen(key) >= 1 && is_inside(val2, key, &args->env_list) \
-			== 0) || is_inside(val, key, &args->export_list) == 0)
+		if (args->p_count == 0 && ((ft_strlen(key) >= 1 && \
+			is_inside(val2, key, &args->env_list) == 0) || \
+			is_inside(val, key, &args->export_list) == 0))
 			append_to_lists(val, val2, key, args);
 		ans = 0;
 	}
@@ -279,24 +302,3 @@ int	my_export(t_args *args, char *s)
 	free_values(val, val2, split);
 	return (ans);
 }
-
-// int	main2(int argc, char **argv, char **envp)
-// {
-// 	t_export	*list = NULL;
-// 	char	*str;
-
-// 	while (1)
-// 	{
-// 		str = readline("minishell$ ");
-// 		list = my_export(list, envp, str);
-// 	}
-// 	// ft_lstclear(&list, free);
-// 	return (0);
-// }
-
-// int	main(int argc, char **argv, char **envp)
-// {
-// 	main2(argc, argv, envp);
-// 	// system("leaks minishell");
-// 	return (0);
-// }

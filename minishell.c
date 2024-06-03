@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/01 14:44:54 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/03 12:46:14 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,31 +79,6 @@ char	*env_expansion(char *s, t_export *l)
 	return (ans);
 }
 
-// char	**change_envp(t_export **env_list)
-// {
-// 	t_export	*temp;
-// 	char		*str;
-// 	char		*joined_str;
-// 	char		**new_envp;
-// 	int			len;
-
-// 	len = ft_lstsize((t_list *) *env_list);
-// 	printf("len: %d\n", len);
-// 	new_envp = (char **) malloc(sizeof(char *) * (len + 1));
-// 	len = 0;
-// 	temp = *env_list;
-// 	while (temp)
-// 	{
-// 		joined_str = ft_strjoin(temp->pair->key, "=");
-// 		str = ft_strjoin(joined_str, temp->pair->val);
-// 		free(joined_str);
-// 		new_envp[len++] = str;
-// 		temp = temp->next;
-// 	}
-// 	new_envp[len] = NULL;
-// 	return (new_envp);
-// }
-
 void	set_pwds(t_args *args)
 {
 	char	*pwd;
@@ -140,8 +115,8 @@ void	init_minishell(char **envp, t_args *args)
 	args->export_list = export_list;
 	args->pids = NULL;
 	args->exit_code = 0;
-	sort_list(&export_list);
 	set_pwds(args);
+	sort_list(&export_list);
 }
 
 void	clear_export(t_export **exp)
@@ -197,13 +172,17 @@ void	run_pipex(t_args *args, char **words, char *str)
 {
 	int	p_count;
 	int	status;
+	int	pipex_return;
 
 	args->argv = words;
 	p_count = pipe_count(str);
 	args->p_count = p_count;
-	pipex(args);
+	pipex_return = pipex(args);
 	status = wait_for_children(args);
-	args->exit_code = WEXITSTATUS(status);
+	if (pipex_return != 1)
+		args->exit_code = WEXITSTATUS(status);
+	else
+		args->exit_code = 1;
 	free_arr(args->argv);
 	clear_list(&args->pids);
 }
@@ -255,8 +234,6 @@ int	main2(int argc, char **argv, char **envp)
 
 int	main(int argc, char **argv, char **envp)
 {
-	(void)argc;
-	(void)argv;
 	main2(argc, argv, envp);
 	system("leaks minishell");
 	return (0);

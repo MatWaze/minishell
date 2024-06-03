@@ -15,7 +15,7 @@ readline_dir = readline-8.2
 libft_dir = libft
 lflags = -L$(libft_dir) -L$(readline_dir)/lib
 iflags = -I. -I$(include_dir) -I$(libft_dir) -I$(readline_dir)/include
-cflags = -Wall -Wextra -Werror -g3# -fsanitize=address
+cflags = -Wall -Wextra -Werror
 
 all : dirs $(name)
 
@@ -26,7 +26,7 @@ $(build_dir)/%.o: %.c Makefile $(include_dir)/minishell.h
 	$(cc) $(cflags) $(iflags) -c $< -o $@
 
 $(EXPANSION_BUILD_DIR)/%.o: $(EXPANSION_DIR)/%.c Makefile $(EXPANSION_DIR)/expansion.h
-	$(cc) $(cflags) $(iflags) -c $< -o $@
+	$(cc) $(cflags) $(iflags)  -c $< -o $@
 
 $(libft_dir)/libft.a:
 	make -C $(libft_dir)

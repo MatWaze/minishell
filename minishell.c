@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/01 17:56:06 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/03 12:46:14 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,8 +115,8 @@ void	init_minishell(char **envp, t_args *args)
 	args->export_list = export_list;
 	args->pids = NULL;
 	args->exit_code = 0;
-	sort_list(&export_list);
 	set_pwds(args);
+	sort_list(&export_list);
 }
 
 void	clear_export(t_export **exp)

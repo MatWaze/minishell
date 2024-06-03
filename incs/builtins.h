@@ -63,7 +63,6 @@ char		*my_pwd(int i);
 char		**change_envp(t_export **env_list);
 char		*get_val(char *s);
 char		*my_strdup(char *src);
-char		*tilde_exp(char *str, t_export **list);
 char		**my_split(char *str, char *charset);
 char		*get_value_from_key(t_export **list, char *key);
 int			my_strncpy(char *dest, char *src, int size);

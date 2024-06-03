@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/03 15:07:44 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/03 17:29:22 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,14 +258,17 @@ int	ft_str_is_numeric(char *str)
 
 	i = 0;
 	ans = 1;
-	while (str[i])
+	if (str)
 	{
-		if (!ft_isdigit(str[i]))
+		while (str[i])
 		{
-			ans = 0;
-			break ;
+			if (!ft_isdigit(str[i]))
+			{
+				ans = 0;
+				break ;
+			}
+			i++;
 		}
-		i++;
 	}
 	return (ans);
 }

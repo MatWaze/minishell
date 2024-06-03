@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/05 16:20:42 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/03 12:56:14 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/03 18:39:56 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -202,29 +202,72 @@ int	exit_no_arguments(char *num_str, t_args *args)
 	return (ans);
 }
 
-void	my_exit(char *num_str, t_args *args)
+void	positive_number_exit(unsigned int *exit_status, char *num_str)
 {
 	unsigned long long	unum;
-	long long			num;
+	char			*joined;
+	int			len;
+
+	len = ft_strlen(num_str);
+	if (*num_str == '+')
+	{
+		unum = (unsigned long long) ft_atoi(num_str + 1);
+		len--;
+	}
+	else
+		unum = (unsigned long long) ft_atoi(num_str);
+	if (len > 19 || unum > LLONG_MAX)
+	{
+		*exit_status = 255;
+		joined = ft_strjoin(num_str, ": numeric argument required\n");
+		print_error_msg(joined, "exit");
+		free(joined);
+	}
+	else
+		*exit_status = unum % 256;
+}
+
+void	negative_number_exit(unsigned int *exit_status, char *num_str, \
+	char *neg_num_str)
+{
+	unsigned long long	pos_num;
+	unsigned long long	to_compare;
+	unsigned long long	neg_num;
+	char			*joined;
+
+	to_compare = (unsigned long long) 9223372036854775808U;
+	neg_num = (unsigned long long) ft_atoi(neg_num_str);
+	pos_num = (unsigned long long) ft_atoi(num_str);
+	if (ft_strlen(num_str) > 19 || pos_num > to_compare)
+	{
+		*exit_status = 255;
+		joined = ft_strjoin(neg_num_str, ": numeric2 argument required\n");
+		print_error_msg(joined, "exit");
+		free(joined);
+	}
+	else
+		*exit_status = neg_num % 256;
+}
+
+void my_exit(char *num_str, t_args *args)
+{
 	unsigned int		exit_status;
 	char				*joined;
 
+	exit_status = 0;
 	if (exit_no_arguments(num_str, args) == 0)
 	{
-		num = ft_atoi(num_str);
-		unum = (unsigned long long) ft_atoi(num_str);
-		if (*num_str != '-' && (ft_str_is_numeric(num_str) == 0 || \
-			(ft_strlen(num_str) > 19 || unum > LONG_MAX)))
+		if ((*num_str == '+' || *num_str == '-') && \
+			ft_str_is_numeric(num_str + 1) == 0)
 		{
+			exit_status = 255;	
 			joined = ft_strjoin(num_str, ": numeric argument required\n");
 			print_error_msg(joined, "exit");
-			free(joined);
-			exit_status = 255;
 		}
-		else if (num < 0)
-			exit_status = unum % 256;
+		else if (ft_strchr(num_str, '-') != NULL)
+			negative_number_exit(&exit_status, num_str + 1, num_str);
 		else
-			exit_status = num % 256;
+			positive_number_exit(&exit_status, num_str);
 		if (args->p_count == 0)
 		{
 			ft_putstr_fd("exit\n", 1);

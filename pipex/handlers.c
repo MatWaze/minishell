@@ -6,19 +6,18 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 19:52:18 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/03 19:57:25 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/04 19:10:52 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 
+#include "common/common.h"
 #include "export/export.h"
 #include "unset/unset.h"
 #include "cd/cd.h"
 #include "pwd/pwd.h"
 #include "t_args.h"
-
-void	print_error_msg(char *msg, char *cmd);
 
 int	handle_export(t_args *args, char **av)
 {
@@ -43,10 +42,10 @@ int	handle_unset(t_args *args, char **av)
 	ans = 0;
 	while (av[i])
 	{
-		if (check_key(av[i]) == 1)
+		if (ft_isalpha(av[i][0]) || av[i][0] == '_')
 		{
-			my_unset(&args->export_list, av[i]);
-			my_unset(&args->env_list, av[i]);
+			unset(&args->export_list, av[i]);
+			unset(&args->env_list, av[i]);
 		}
 		else
 		{

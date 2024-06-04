@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 19:10:19 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/03 19:18:18 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/04 19:34:15 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,9 @@
 #include <unistd.h>
 
 #include "libft/libft.h"
+#include "common/common.h"
 #include "t_args.h"
 
-void		print_error_msg(char *msg, char *cmd);
-void		append_pid(int p, t_args *args);
 static int	ft_str_is_numeric(char *str);
 
 void	shell_exit(char *num_str)
@@ -43,17 +42,6 @@ void	shell_exit(char *num_str)
 		exit_status = num % 256;
 	ft_putstr_fd("exit\n", 1);
 	exit(exit_status);
-}
-
-void	builtin_exit_code(int exit_code, t_args *args)
-{
-	int	pid;
-
-	pid = fork();
-	if (pid == 0)
-		exit(exit_code);
-	else
-		append_pid(pid, args);
 }
 
 static int	ft_str_is_numeric(char *str)

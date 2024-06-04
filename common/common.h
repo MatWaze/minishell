@@ -1,32 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cd.c                                               :+:      :+:    :+:   */
+/*   common.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/03 18:46:35 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/04 19:36:09 by zanikin          ###   ########.fr       */
+/*   Created: 2024/06/04 18:08:16 by zanikin           #+#    #+#             */
+/*   Updated: 2024/06/04 18:12:42 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <stdio.h>
+#ifndef COMMON_H
+# define COMMON_H
 
-#include "common/common.h"
-
-int	cd(char *path)
-{
-	int		ans;
-
-	ans = 0;
-	if (!path || chdir(path) == -1)
-	{
-		if (!path)
-			print_error_msg("HOME is not set\n", "cd");
-		else
-			perror(path);
-		ans = 1;
-	}
-	return (ans);
-}
+void	free_arr(char **av);
+void	print_error_msg(char *msg, char *cmd);
+#endif

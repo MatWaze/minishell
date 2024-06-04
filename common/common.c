@@ -1,16 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtins.c                                         :+:      :+:    :+:   */
+/*   common.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/05 16:20:42 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/03 19:23:41 by zanikin          ###   ########.fr       */
+/*   Created: 2024/06/04 18:11:41 by zanikin           #+#    #+#             */
+/*   Updated: 2024/06/04 19:35:48 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include <stdlib.h>
+
+#include "libft/libft.h"
 
 void	print_error_msg(char *msg, char *cmd)
 {
@@ -20,30 +22,15 @@ void	print_error_msg(char *msg, char *cmd)
 	ft_putstr_fd(msg, 2);
 }
 
-int	is_builtin(char *str)
+void	free_arr(char **av)
 {
-	static char	*buf[8] = {"echo", "cd", "pwd", "export", \
-		"unset", "env", "exit", NULL};
-	int			i;
-	int			ans;
+	int	i;
 
 	i = 0;
-	ans = 0;
-	while (buf[i] != NULL)
+	while (av[i])
 	{
-		if (ft_strncmp(str, buf[i], ft_strlen(str)) == 0)
-			ans = 1;
+		free(av[i]);
 		i++;
 	}
-	return (ans);
-}
-
-int	check_key(char *key)
-{
-	int	ans;
-
-	ans = 0;
-	if (ft_isalpha(*key) == 1 || *key == '_')
-		ans = 1;
-	return (ans);
+	free(av);
 }

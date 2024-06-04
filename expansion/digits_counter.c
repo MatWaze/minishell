@@ -6,14 +6,15 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 15:07:02 by zanikin           #+#    #+#             */
-/*   Updated: 2024/05/31 15:53:18 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/04 19:33:42 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-static int	pos(int n);
-static int	neg(int n);
 int			digits_count(int n);
 void		insert_number(char *dst, int n);
+
+static int	pos(int n);
+static int	neg(int n);
 
 void	insert_number(char *dst, int n)
 {

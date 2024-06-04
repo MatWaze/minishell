@@ -6,9 +6,11 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 13:08:18 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/03 18:07:58 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/04 19:16:05 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include <stdlib.h>
 
 #include "libft/libft.h"
 #include "t_export.h"

@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 19:23:21 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/03 19:54:48 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/04 19:10:52 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "export/export.h"
 #include "libft/libft.h"
 
-void	my_unset(t_export **l, char *str)
+void	unset(t_export **l, char *str)
 {
 	t_export	*temp;
 	t_export	*prev;

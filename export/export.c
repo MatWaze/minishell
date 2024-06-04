@@ -6,17 +6,18 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 12:42:21 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/03 19:52:49 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/04 19:19:18 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "common/common.h"
 #include "libft/libft.h"
 #include "t_args.h"
 
-void		print_error_msg(char *msg, char *cmd);
+void		append(char *s, char *key, t_export **l);
 
 static int	is_inside(char *s, char *key, t_export **l);
 static void	append_to_lists(char *val, char *val2, char *key, t_args *args);
@@ -35,7 +36,7 @@ int	export(t_args *args, char *s)
 	key = split[0];
 	val = get_val(s);
 	val2 = get_val(s);
-	if (check_key(key) == 1)
+	if (ft_isalpha(*key) == 1 || *key == '_')
 	{
 		if ((ft_strlen(key) >= 1 && is_inside(val2, key, &args->env_list) \
 			== 0) || is_inside(val, key, &args->export_list) == 0)

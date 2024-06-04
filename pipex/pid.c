@@ -1,32 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cd.c                                               :+:      :+:    :+:   */
+/*   pid.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/03 18:46:35 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/04 19:36:09 by zanikin          ###   ########.fr       */
+/*   Created: 2024/06/04 19:01:53 by zanikin           #+#    #+#             */
+/*   Updated: 2024/06/04 19:02:52 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <stdio.h>
+#include <stdlib.h>
 
-#include "common/common.h"
+#include "t_args.h"
 
-int	cd(char *path)
+void	append_pid(int p, t_args *args)
 {
-	int		ans;
+	int		*pid_copy;
+	t_list	*new;
+	t_list	*last;
 
-	ans = 0;
-	if (!path || chdir(path) == -1)
+	pid_copy = (int *)malloc(sizeof(int));
+	*pid_copy = p;
+	new = ft_lstnew(pid_copy);
+	if (!args->pids)
+		args->pids = new;
+	else
 	{
-		if (!path)
-			print_error_msg("HOME is not set\n", "cd");
-		else
-			perror(path);
-		ans = 1;
+		last = args->pids;
+		while (last->next)
+			last = last->next;
+		last->next = new;
 	}
-	return (ans);
+	new->next = NULL;
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
+/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:49:32 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/04 19:25:56 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/05 17:04:05 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ int			is_inside_quotes(char type, char *qtype);
 char		*extract_ev(const char **pstr);
 void		insert_number(char *dst, int n);
 int			digits_count(int n);
+char		*expand(const char *str, t_export **evlist, int error);
 
 static void	expand_envvar(const char **pstr, char **exp_str,
 				t_export **evlist, int error);

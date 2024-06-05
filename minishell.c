@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/05 11:11:33 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/05 15:40:28 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,14 +97,15 @@ static void	run_pipex(t_args *args, char **words, char *str)
 			args->p_count++;
 		i++;
 	}
-	pipex(args);
-	list = args->pids;
-	while (list)
+	if (pipex(args) == 1)
 	{
-		waitpid(*(int *) list->content, &args->exit_code, 0);
-		list = list->next;
+		print_error_msg("failed: Resource temporarily unavailable\n", \
+			"fork");
+		kill_processes(args->pids);
+		args->exit_code = 1;
 	}
-	args->exit_code = WEXITSTATUS(args->exit_code);
+	else
+		get_exit_status(args);
 	free_arr(args->argv);
 	ft_lstclear(&args->pids, free);
 }

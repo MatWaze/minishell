@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   t_args.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
+/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/01 10:18:31 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/03 18:20:27 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/05 15:26:15 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ typedef struct s_args
 	char		**my_envp;
 	int			exit_code;
 	t_list		*pids;
-	int			*last_cmd; // not needed?
 	t_export	*export_list;
 	t_export	*env_list;
 }		t_args;

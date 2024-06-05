@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 19:52:18 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/04 19:10:52 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/05 13:02:52 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 #include "unset/unset.h"
 #include "cd/cd.h"
 #include "pwd/pwd.h"
-#include "t_args.h"
 
 int	handle_export(t_args *args, char **av)
 {
@@ -79,7 +78,7 @@ int	handle_cd(t_args *args, char **av)
 	cur_pwd = ft_strdup(path);
 	if (ans == 0)
 		update_pwd(args, prev_pwd, cur_pwd);
-	free(pwd);
+	free(path);
 	free(cur_pwd);
 	free(prev_pwd);
 	return (ans);

@@ -6,14 +6,13 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 21:06:16 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/04 19:23:50 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/05 12:26:13 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 
 #include "export/export.h"
-#include "libft/libft.h"
 
 char			*extract_ev(const char **str);
 int				is_inside_quotes(char type, char *qtype);

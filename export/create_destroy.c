@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 13:08:18 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/04 19:16:05 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/05 13:21:29 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 #include "libft/libft.h"
 #include "t_export.h"
+
+t_keyval	*ft_content_new(char *key, char *val);
 
 void	populate(t_export **l, char *key)
 {
@@ -51,9 +53,12 @@ t_keyval	*ft_content_new(char *key, char *val)
 	return (result);
 }
 
-void	free_export_content(t_keyval *content)
+void	free_export_content(void *content)
 {
-	free(content->key);
-	free(content->val);
+	t_keyval	*kv;
+
+	kv = content;
+	free(kv->key);
+	free(kv->val);
 	free(content);
 }

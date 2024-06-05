@@ -6,13 +6,12 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 16:04:54 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/03 12:31:55 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/05 12:32:30 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 
-#include "libft/libft.h"
 #include "export/export.h"
 
 static int	append_list(char *s, char *key, t_export *l1, t_export *l2)

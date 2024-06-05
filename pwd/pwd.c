@@ -6,14 +6,13 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 18:18:12 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/04 19:12:12 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/05 12:36:10 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "t_args.h"
 #include "export/export.h"
 
 char	*pwd(int i)

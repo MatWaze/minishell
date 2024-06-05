@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 19:10:19 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/04 19:34:15 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/05 12:25:49 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "libft/libft.h"
 #include "common/common.h"
 #include "t_args.h"
 

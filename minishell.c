@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/04 16:56:38 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/05 13:22:27 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,15 @@
 
 #include <sys/wait.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <readline/history.h>
+#include <readline/readline.h>
 
-#include "readline/history.h"
-#include "readline/readline.h"
-#include "t_args.h"
 #include "quotes/quotes.h"
 #include "pwd/pwd.h"
 #include "export/export.h"
 #include "pipex/pipex.h"
+#include "common/common.h"
 
 static void	run_pipex(t_args *args, char **words, char *str);
 static void	init_minishell(char **envp, t_args *args);

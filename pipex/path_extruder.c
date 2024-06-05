@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:01 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/04 18:16:15 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/05 13:03:53 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include "export/t_export.h"
 #include "libft/libft.h"
+#include "common/common.h"
 
 static char	*get_path(t_export **env);
 static char	*get_str(char **strs2, char *cmd);

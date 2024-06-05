@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 12:42:21 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/04 19:19:18 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/05 12:33:07 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 #include <stdio.h>
 
 #include "common/common.h"
-#include "libft/libft.h"
 #include "t_args.h"
 
 void		append(char *s, char *key, t_export **l);

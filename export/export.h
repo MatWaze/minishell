@@ -6,17 +6,16 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/01 10:39:00 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/04 19:19:48 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/05 13:21:53 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef EXPORT_H
 # define EXPORT_H
-# include "t_export.h"
 # include "t_args.h"
 
 int			find_key(t_export *export_list, char *key);
-void		free_export_content(t_keyval *content);
+void		free_export_content(void *content);
 void		print_list(t_export **list, int i);
 t_keyval	*ft_content_new(char *key, char *val);
 void		populate(t_export **l, char *key);

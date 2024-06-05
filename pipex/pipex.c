@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/04 19:07:49 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/05 13:08:09 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 #include "expansion/expansion.h"
 #include "common/common.h"
 #include "export/export.h"
-#include "t_args.h"
+#include "quotes/quotes.h"
 #include "t_fd.h"
 
 char		*search_path(char *cmd, t_export **env);
@@ -116,7 +116,8 @@ static void	execute_command(char *first, char **av, char **envp, t_args *args)
 	char		*command;
 	struct stat	file_info;
 
-	if (stat(first, &file_info) != -1 && file_info.st_mode & S_IFMT == S_IFDIR)
+	if (stat(first, &file_info) != -1
+		&& (file_info.st_mode & S_IFMT) == S_IFDIR)
 	{
 		print_error_msg("is a directory\n", first);
 		exit(126);

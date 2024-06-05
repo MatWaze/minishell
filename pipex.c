@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/03 17:29:22 by marvin           ###   ########.fr       */
+/*   Updated: 2024/06/04 14:27:15 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -282,10 +282,73 @@ void	dir_error(char *first)
 	}
 }
 
+void	populate_new_envp(char **envp, t_export *current)
+{
+	char	*key_value;
+	char	*key_val;
+	char	*joined;
+	int		j;
+
+	j = 0;
+	while (current)
+	{
+		joined = my_strdup(current->pair->key);
+		key_value = ft_strjoin(joined, "=");
+		free(joined);
+		if (current->pair->val)
+		{
+			key_val = ft_strjoin(key_value, my_strdup(current->pair->val));
+			free(key_value);
+		}
+		else
+			key_val = key_value;
+		envp[j] = key_val;
+		current = current->next;
+		j++;
+	}
+	envp[j] = NULL;
+}
+
+char	**change_envp(t_export **env_list)
+{
+	t_export	*current;
+	char		**envp;
+	int			i;
+
+	if (!env_list || !(*env_list))
+		return (NULL);
+	current = *env_list;
+	i = 0;
+	while (current)
+	{
+		i++;
+		current = current->next;
+	}
+	envp = (char **) malloc(sizeof(char *) * (i + 1));
+	if (!envp)
+		return (NULL);
+	current = *env_list;
+	populate_new_envp(envp, current);
+	return (envp);
+}
+
+void	print_split(char **split)
+{
+	int	fd = open("file1.txt", O_CREAT | O_WRONLY | O_RDONLY, 0666);
+	for (int i = 0; split[i]; i++)
+	{
+		ft_putstr_fd(split[i], fd);
+		ft_putchar_fd('\n', fd);
+	}
+	ft_putstr_fd("end\n", fd);
+}
+
 void	execute_command(char *first, char **av, char **envp, t_args *args)
 {
 	char	*command;
+	char	**my_envp;
 
+	(void) envp;
 	dir_error(first);
 	command = search_path(first, &args->export_list);
 	if (command == NULL || access(command, F_OK) != 0)
@@ -298,7 +361,9 @@ void	execute_command(char *first, char **av, char **envp, t_args *args)
 		print_error_msg("Permission denied\n", first);
 		exit(126);
 	}
-	if (execve(command, av, envp) == -1)
+	my_envp = change_envp(&args->env_list);
+	print_split(my_envp);
+	if (execve(command, av, my_envp) == -1)
 		print_error_msg("error", first);
 	exit(1);
 }

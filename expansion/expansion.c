@@ -6,28 +6,28 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:49:32 by zanikin           #+#    #+#             */
-/*   Updated: 2024/05/31 15:54:33 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/04 19:25:56 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "expansion.h"
 #include <stdlib.h>
+
+#include "libft/libft.h"
+#include "export/export.h"
 
 size_t		count_expanded_string(const char *str, t_export **ev,
 				int error);
 int			is_inside_quotes(char type, char *qtype);
+char		*extract_ev(const char **pstr);
+void		insert_number(char *dst, int n);
+int			digits_count(int n);
+
 static void	expand_envvar(const char **pstr, char **exp_str,
 				t_export **evlist, int error);
 static void	insert_envvar_val(const char **pstr, char **exp_str,
 				t_export **evlist);
 static void	expand_loop(const char *str, char *exp_str, t_export **evlist,
 				int error);
-char		*get_value_from_key(t_export **list, char *key);
-char		*extract_ev(const char **pstr);
-size_t		ft_strlcpy(char *dest, const char *src, size_t size);
-size_t		ft_strlen(const char *s);
-void		insert_number(char *dst, int n);
-int			digits_count(int n);
 
 int	expand_list(char **strs, t_export **evlist, int error)
 {

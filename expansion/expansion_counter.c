@@ -6,20 +6,21 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 21:06:16 by zanikin           #+#    #+#             */
-/*   Updated: 2024/05/31 15:19:08 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/04 19:23:50 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "expansion.h"
 #include <stdlib.h>
 
-size_t			ft_strlen(const char *s);
+#include "export/export.h"
+#include "libft/libft.h"
+
 char			*extract_ev(const char **str);
 int				is_inside_quotes(char type, char *qtype);
+int				digits_count(int n);
+
 static size_t	ev_size(const char **str, t_export **ev, int error);
 static size_t	count_evv_size(const char **str, t_export **evlist);
-char			*get_value_from_key(t_export **list, char *key);
-int				digits_count(int n);
 
 size_t	count_expanded_string(const char *str, t_export **ev, int error)
 {

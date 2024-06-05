@@ -6,93 +6,56 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/04 13:15:20 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/05 11:11:33 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-#include "minishell.h"
 
 // prompt; history; run executables; redirections; ' and ";
 // pipes; env vars; $? ; ctrl-C; ctrl-D; ctrl-\; built-ins
 
-void	print_linked_list(t_list *l);
+#include <sys/wait.h>
+#include <stdlib.h>
 
-int	pipe_count(char *str)
+#include "readline/history.h"
+#include "readline/readline.h"
+#include "t_args.h"
+#include "quotes/quotes.h"
+#include "pwd/pwd.h"
+#include "export/export.h"
+#include "pipex/pipex.h"
+
+static void	run_pipex(t_args *args, char **words, char *str);
+static void	init_minishell(char **envp, t_args *args);
+
+int	main(int argc, char **argv, char **envp)
 {
-	int	i;
-	int	c;
+	t_args		args;
+	char		*str;
+	char		**words;
 
-	i = 0;
-	c = 0;
-	while (str[i])
+	(void)argc;
+	(void)argv;
+	init_minishell(envp, &args);
+	while (1)
 	{
-		if (str[i] == '|' && !quotes_type(str, str + i))
-			c++;
-		i++;
-	}
-	return (c);
-}
-
-char	*find_val(t_export *l, char *to_find)
-{
-	t_export	*temp;
-	char		*ans;
-	int			count;
-
-	ans = NULL;
-	temp = l;
-	while (temp)
-	{
-		if (ft_strlen(temp->pair->key) > ft_strlen(to_find))
-			count = ft_strlen(temp->pair->key);
-		else
-			count = ft_strlen(to_find);
-		if (ft_strncmp(temp->pair->key, to_find, count) == 0)
+		str = readline("minishell$ ");
+		if (ft_strlen(str) > 0)
+			add_history(str);
+		if (*str != 0)
 		{
-			ans = temp->pair->val;
-			break ;
+			words = quoted_split(str, '|');
+			run_pipex(&args, words, str);
 		}
-		temp = temp->next;
+		free(str);
 	}
-	return (ans);
+	ft_lstclear((t_list **)&args.export_list, free_export_content);
+	ft_lstclear((t_list **)&args.env_list, free_export_content);
+	ft_lstclear(&args.pids, free);
+	free(args.pids);
+	return (args.exit_code);
 }
 
-char	*env_expansion(char *s, t_export *l)
-{
-	int		i;
-	char	*ans;
-
-	i = 0;
-	ans = s;
-	while (s[i])
-	{
-		if (s[i] == '$')
-		{
-			if (ft_isalpha(s[i + 1]) == 1 || s[i + 1] == '_')
-			{
-				ans = find_val(l, &s[i + 1]);
-				break ;
-			}
-		}
-		i++;
-	}
-	return (ans);
-}
-
-void	set_pwds(t_args *args)
-{
-	char	*pwd;
-	char	*joined_str;
-
-	pwd = my_pwd(0);
-	my_export(args, "OLDPWD");
-	joined_str = ft_strjoin("PWD=", pwd);
-	free(pwd);
-	my_export(args, joined_str);
-	free(joined_str);
-}
-
-void	init_minishell(char **envp, t_args *args)
+static void	init_minishell(char **envp, t_args *args)
 {
 	t_export	*export_list;
 	t_export	*env_list;
@@ -120,122 +83,28 @@ void	init_minishell(char **envp, t_args *args)
 	set_pwds(args);
 }
 
-void	clear_export(t_export **exp)
+static void	run_pipex(t_args *args, char **words, char *str)
 {
-	t_export	*temp;
-	t_export	*to_free;
-
-	temp = *exp;
-	while (temp)
-	{
-		to_free = temp;
-		temp = temp->next;
-		free(to_free->pair->key);
-		free(to_free->pair->val);
-		free(to_free->pair);
-		free(to_free);
-	}
-	*exp = NULL;
-}
-
-void	clear_list(t_list **l)
-{
-	t_list	*temp;
-	t_list	*to_free;
-
-	temp = *l;
-	while (temp)
-	{
-		to_free = temp;
-		temp = temp->next;
-		free(to_free->content);
-		free(to_free);
-	}
-	*l = NULL;
-}
-
-int	wait_for_children(t_args *args)
-{
-	pid_t	pid;
+	int		i;
 	t_list	*list;
 
+	i = 0;
+	args->p_count = 0;
+	args->argv = words;
+	while (str[i])
+	{
+		if (str[i] == '|' && !quotes_type(str, str + i))
+			args->p_count++;
+		i++;
+	}
+	pipex(args);
 	list = args->pids;
 	while (list)
 	{
-		pid = *(int *) list->content;
-		waitpid(pid, &args->exit_code, 0);
+		waitpid(*(int *) list->content, &args->exit_code, 0);
 		list = list->next;
 	}
-	return (args->exit_code);
-}
-
-void	run_pipex(t_args *args, char **words, char *str)
-{
-	int	p_count;
-	int	status;
-	int	pipex_return;
-
-	args->argv = words;
-	p_count = pipe_count(str);
-	args->p_count = p_count;
-	pipex_return = pipex(args);
-	status = wait_for_children(args);
-	if (pipex_return != 1)
-		args->exit_code = WEXITSTATUS(status);
-	else
-		args->exit_code = 1;
+	args->exit_code = WEXITSTATUS(args->exit_code);
 	free_arr(args->argv);
-	clear_list(&args->pids);
-}
-
-void	free_lists(t_args *args)
-{
-	clear_export(&args->export_list);
-	clear_export(&args->env_list);
-	clear_list(&args->pids);
-}
-
-void	print_linked_list(t_list *l)
-{
-	while (l)
-	{
-		printf("pid: %d\n", *(int *)(l->content));
-		l = l->next;
-	}
-}
-
-int	main2(int argc, char **argv, char **envp)
-{
-	t_args		args;
-	char		*str;
-	char		**words;
-
-	(void)argc;
-	(void)argv;
-	init_minishell(envp, &args);
-	while (1)
-	{
-		str = readline("minishell$ ");
-		if (ft_strlen(str) > 0)
-			add_history(str);
-		if (*str == 'y' && ft_strlen(str) == 1)
-			break ;
-		if (*str != 0)
-		{
-			words = quoted_split(str, '|');
-			run_pipex(&args, words, str);
-		}
-		free(str);
-	}
-	free(str);
-	free_lists(&args);
-	free(args.pids);
-	return (args.exit_code);
-}
-
-int	main(int argc, char **argv, char **envp)
-{
-	main2(argc, argv, envp);
-	// system("leaks minishell");
-	return (0);
+	ft_lstclear(&args->pids, free);
 }

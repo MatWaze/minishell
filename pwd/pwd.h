@@ -1,20 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expansion.h                                        :+:      :+:    :+:   */
+/*   pwd.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/26 15:12:50 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/01 10:44:12 by zanikin          ###   ########.fr       */
+/*   Created: 2024/06/03 18:15:30 by zanikin           #+#    #+#             */
+/*   Updated: 2024/06/03 18:39:52 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef EXPANSION_H
-# define EXPANSION_H
-# include "export/t_export.h"
+#ifndef PWD_H
+# define PWD_H
+# include "t_args.h"
 
-char	*expand(const char *str, t_export **evlist, int error);
-int		expand_list(char **strs, t_export **evlist, int error);
-
+char	*pwd(int i);
+void	set_pwds(t_args *args);
+void	update_pwd(t_args *args, char *prev_pwd, char *cur_pwd);
 #endif

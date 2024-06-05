@@ -1,20 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expansion.h                                        :+:      :+:    :+:   */
+/*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/26 15:12:50 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/01 10:44:12 by zanikin          ###   ########.fr       */
+/*   Created: 2024/06/03 18:46:35 by zanikin           #+#    #+#             */
+/*   Updated: 2024/06/04 19:36:09 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef EXPANSION_H
-# define EXPANSION_H
-# include "export/t_export.h"
+#include <unistd.h>
+#include <stdio.h>
 
-char	*expand(const char *str, t_export **evlist, int error);
-int		expand_list(char **strs, t_export **evlist, int error);
+#include "common/common.h"
 
-#endif
+int	cd(char *path)
+{
+	int		ans;
+
+	ans = 0;
+	if (!path || chdir(path) == -1)
+	{
+		if (!path)
+			print_error_msg("HOME is not set\n", "cd");
+		else
+			perror(path);
+		ans = 1;
+	}
+	return (ans);
+}

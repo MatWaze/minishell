@@ -1,20 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expansion.h                                        :+:      :+:    :+:   */
+/*   exit.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/26 15:12:50 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/01 10:44:12 by zanikin          ###   ########.fr       */
+/*   Created: 2024/06/03 19:09:29 by zanikin           #+#    #+#             */
+/*   Updated: 2024/06/03 19:15:06 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef EXPANSION_H
-# define EXPANSION_H
-# include "export/t_export.h"
+#ifndef EXIT_H
+# define EXIT_H
 
-char	*expand(const char *str, t_export **evlist, int error);
-int		expand_list(char **strs, t_export **evlist, int error);
-
+void	shell_exit(char *num_str);
 #endif

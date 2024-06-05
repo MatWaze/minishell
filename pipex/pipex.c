@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/05 13:08:09 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/05 16:43:54 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	pipex(t_args *args)
 		close(p.fdin);
 		av = quoted_split(args->argv[j], ' ');
 		if (expand_list(av, &args->env_list, args->exit_code))
-			handle_pipe(j, args, &p, av);
+			handle_pipe(j++, args, &p, av);
 		free_arr(av);
 	}
 	dup2(p.tempin, 0);

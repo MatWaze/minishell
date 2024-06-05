@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 13:08:18 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/05 13:21:29 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/05 16:40:13 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,10 @@ t_keyval	*ft_content_new(char *key, char *val)
 	if (result)
 	{
 		result->key = ft_strdup(key);
-		result->val = ft_strdup(val);
+		if (val)
+			result->val = ft_strdup(val);
+		else
+			result->val = NULL;
 		result->next = NULL;
 	}
 	return (result);

@@ -1,21 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   fd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/01 09:53:43 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/05 15:39:31 by mamazari         ###   ########.fr       */
+/*   Created: 2024/06/05 15:17:45 by mamazari          #+#    #+#             */
+/*   Updated: 2024/06/05 15:20:05 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PIPEX_H
-# define PIPEX_H
-# include "t_args.h"
+#include "t_fd.h"
 
-int			pipex(t_args *args);
-void		kill_processes(t_list *pids);
-void		get_exit_status(t_args *args);
-
-#endif
+void	restore_in_out(t_fd *p)
+{
+	dup2(p->tempin, 0);
+	dup2(p->tempout, 1);
+	close(p->tempin);
+	close(p->tempout);
+}

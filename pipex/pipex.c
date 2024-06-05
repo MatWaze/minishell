@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
+/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/04 19:07:49 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/05 16:53:44 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,22 +24,27 @@
 #include "t_fd.h"
 
 char		*search_path(char *cmd, t_export **env);
+char		**change_envp(t_export **env_list);
 int			handle_unset(t_args *args, char **av);
 int			handle_export(t_args *args, char **av);
 int			handle_cd(t_args *args, char **av);
 void		append_pid(int p, t_args *args);
+void		fork_conditions(pid_t pid, t_args *args, int error, int *ans);
+void		restore_in_out(t_fd *p);
 
-static void	run_external_command(t_args *args, t_fd *p, char **av);
-static void	handle_pipe(int j, t_args *args, t_fd *p, char **av);
-static void	execute_command(char *first, char **av, char **envp, t_args *args);
+static void	run_external_command(t_args *args, t_fd *p, char **av, int *ans);
+static int	handle_pipe(int j, t_args *args, t_fd *p, char **av);
+static void	execute_command(char *first, char **av, t_args *args);
 static int	run_command_if_builtin(char **av, t_args *args, int *code);
 
-void	pipex(t_args *args)
+int	pipex(t_args *args)
 {
 	t_fd	p;
 	int		j;
+	int		ans;
 	char	**av;
 
+	ans = 0;
 	p.tempin = dup(0);
 	p.tempout = dup(1);
 	p.fdin = dup(p.tempin);
@@ -49,21 +54,25 @@ void	pipex(t_args *args)
 		dup2(p.fdin, 0);
 		close(p.fdin);
 		av = quoted_split(args->argv[j], ' ');
-		if (expand_list(av, &args->env_list, args->exit_code))
-			handle_pipe(j, args, &p, av);
+		if (expand_list(av, &args->env_list, args->exit_code) && \
+			handle_pipe(j++, args, &p, av) == 1)
+		{
+			ans = 1;
+			break ;
+		}
 		free_arr(av);
 	}
-	dup2(p.tempin, 0);
-	dup2(p.tempout, 1);
-	close(p.tempin);
-	close(p.tempout);
+	restore_in_out(&p);
+	return (ans);
 }
 
-static void	handle_pipe(int j, t_args *args, t_fd *p, char **av)
+static int	handle_pipe(int j, t_args *args, t_fd *p, char **av)
 {
 	pid_t	pid;
 	int		error;
+	int		ans;
 
+	ans = 0;
 	if (j == args->p_count)
 		p->fdout = dup(p->tempout);
 	else
@@ -77,13 +86,11 @@ static void	handle_pipe(int j, t_args *args, t_fd *p, char **av)
 	if (run_command_if_builtin(av, args, &error))
 	{
 		pid = fork();
-		if (pid == 0)
-			exit(error);
-		else
-			append_pid(pid, args);
+		fork_conditions(pid, args, error, &ans);
 	}
 	else
-		run_external_command(args, p, av);
+		run_external_command(args, p, av, &ans);
+	return (ans);
 }
 
 static int	run_command_if_builtin(char **av, t_args *args, int *code)
@@ -111,9 +118,10 @@ static int	run_command_if_builtin(char **av, t_args *args, int *code)
 	return (ans);
 }
 
-static void	execute_command(char *first, char **av, char **envp, t_args *args)
+static void	execute_command(char *first, char **av, t_args *args)
 {
 	char		*command;
+	char		**updated_envp;
 	struct stat	file_info;
 
 	if (stat(first, &file_info) != -1 && file_info.st_mode & S_IFMT == S_IFDIR)
@@ -132,12 +140,13 @@ static void	execute_command(char *first, char **av, char **envp, t_args *args)
 		print_error_msg("Permission denied\n", first);
 		exit(126);
 	}
-	if (execve(command, av, envp) == -1)
-		print_error_msg("error", first);
+	updated_envp = change_envp(&args->env_list);
+	if (execve(command, av, updated_envp) == -1)
+		perror(first);
 	exit(1);
 }
 
-static void	run_external_command(t_args *args, t_fd *p, char **av)
+static void	run_external_command(t_args *args, t_fd *p, char **av, int *ans)
 {
 	int		pid;
 
@@ -151,10 +160,10 @@ static void	run_external_command(t_args *args, t_fd *p, char **av)
 			print_error_msg("No such file or directory\n", av[0]);
 			exit(127);
 		}
-		execute_command(av[0], av, args->envp, args);
+		execute_command(av[0], av, args);
 	}
 	else if (pid == -1)
-		print_error_msg("failed\n", "fork");
+		*ans = 1;
 	else if (pid > 0)
 		append_pid(pid, args);
 }

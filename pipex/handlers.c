@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 19:52:18 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/05 17:27:40 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/06 15:51:18 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,12 @@ int	handle_export(t_args *args, char **av)
 	i = 1;
 	ans = 0;
 	while (av[i])
-		ans = export(args, av[i++]);
+	{
+		if (*av[i] == '=')
+			print_error_msg("not a valid identifier\n", av[i++]);
+		else
+			ans = export(args, av[i++]);
+	}
 	if (i == 1)
 		print_list(&args->export_list, 1);
 	return (ans);

@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 12:42:21 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/05 12:19:08 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/05 17:30:12 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 #include <stdio.h>
 
 #include "common/common.h"
-#include "libft/libft.h"
 #include "t_args.h"
 
 void		append(char *s, char *key, t_export **l);
@@ -38,9 +37,9 @@ int	export(t_args *args, char *s)
 	val2 = get_val(s);
 	if (ft_isalpha(*key) == 1 || *key == '_')
 	{
-		if (args->p_count == 0 && (ft_strlen(key) >= 1 && \
+		if (args->p_count == 0 && ((ft_strlen(key) >= 1 && \
 			is_inside(val2, key, &args->env_list) == 0) || \
-			is_inside(val, key, &args->export_list) == 0)
+			is_inside(val, key, &args->export_list) == 0))
 			append_to_lists(val, val2, key, args);
 		ans = 0;
 	}

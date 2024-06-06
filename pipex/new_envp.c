@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   change_envp.c                                      :+:      :+:    :+:   */
+/*   new_envp.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/05 12:36:50 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/05 12:39:37 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/06 11:53:18 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,12 +48,12 @@ void	populate_new_envp(char **envp, t_export *current)
 	j = 0;
 	while (current)
 	{
-		joined = my_strdup(current->pair->key);
+		joined = ft_strdup(current->pair->key);
 		key_value = ft_strjoin(joined, "=");
 		free(joined);
 		if (current->pair->val)
 		{
-			key_val = ft_strjoin(key_value, my_strdup(current->pair->val));
+			key_val = ft_strjoin(key_value, ft_strdup(current->pair->val));
 			free(key_value);
 		}
 		else

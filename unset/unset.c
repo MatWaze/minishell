@@ -6,14 +6,13 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 19:23:21 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/04 19:10:52 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/05 12:21:03 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 
 #include "export/export.h"
-#include "libft/libft.h"
 
 void	unset(t_export **l, char *str)
 {

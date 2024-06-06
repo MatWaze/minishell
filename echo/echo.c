@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
+/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 19:02:53 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/03 19:07:26 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/06 09:23:22 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,9 @@ int	echo(char **strs)
 		set_flag(strs, &i, &flag);
 		while (strs[i] != NULL)
 		{
-			printf("%s", strs[i]);
+			ft_putstr_fd(strs[i], 1);
 			if (strs[i + 1] != NULL)
-				printf(" ");
+				ft_putchar_fd(' ', 1);
 			i++;
 		}
 	}

@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 19:10:19 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/05 12:14:09 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/06 13:34:31 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "libft/libft.h"
 #include "common/common.h"
 #include "t_args.h"
 

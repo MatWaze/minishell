@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   exit.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
+/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 19:09:29 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/03 19:15:06 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/06 08:56:36 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef EXIT_H
 # define EXIT_H
 
-void	shell_exit(char *num_str);
+void	shell_exit(char *num_str, t_args *args);
 #endif

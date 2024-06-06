@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/05 15:40:28 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/06 08:15:22 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,15 @@
 
 #include <sys/wait.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <readline/history.h>
+#include <readline/readline.h>
 
-#include "readline/history.h"
-#include "readline/readline.h"
-#include "t_args.h"
 #include "quotes/quotes.h"
 #include "pwd/pwd.h"
 #include "export/export.h"
 #include "pipex/pipex.h"
+#include "common/common.h"
 
 static void	run_pipex(t_args *args, char **words, char *str);
 static void	init_minishell(char **envp, t_args *args);
@@ -63,8 +64,8 @@ static void	init_minishell(char **envp, t_args *args)
 	int			i;
 
 	i = 0;
-	args->envp = envp;
 	args->p_count = 0;
+	args->envp = envp;
 	export_list = NULL;
 	env_list = NULL;
 	while (envp[i] != NULL)
@@ -86,10 +87,8 @@ static void	init_minishell(char **envp, t_args *args)
 static void	run_pipex(t_args *args, char **words, char *str)
 {
 	int		i;
-	t_list	*list;
 
 	i = 0;
-	args->p_count = 0;
 	args->argv = words;
 	while (str[i])
 	{

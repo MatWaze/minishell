@@ -6,13 +6,12 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:49:32 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/05 17:04:05 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/05 17:25:44 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 
-#include "libft/libft.h"
 #include "export/export.h"
 
 size_t		count_expanded_string(const char *str, t_export **ev,

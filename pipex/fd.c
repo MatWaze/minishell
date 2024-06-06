@@ -6,9 +6,11 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/05 15:17:45 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/05 15:20:05 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/05 17:46:18 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include <unistd.h>
 
 #include "t_fd.h"
 

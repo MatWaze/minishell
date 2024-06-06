@@ -6,11 +6,12 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 19:01:53 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/05 15:39:21 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/06 13:32:24 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
+#include <signal.h>
 
 #include "t_args.h"
 

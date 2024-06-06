@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/05 16:53:44 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/06 13:32:30 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 #include "expansion/expansion.h"
 #include "common/common.h"
 #include "export/export.h"
-#include "t_args.h"
+#include "quotes/quotes.h"
 #include "t_fd.h"
 
 char		*search_path(char *cmd, t_export **env);
@@ -112,7 +112,7 @@ static int	run_command_if_builtin(char **av, t_args *args, int *code)
 	else if (ft_strlen(av[0]) == 2 && ft_strncmp("cd", av[0], 2) == 0)
 		*code = handle_cd(args, av);
 	else if (ft_strlen(av[0]) == 4 && ft_strncmp("exit", av[0], 4) == 0)
-		shell_exit(av[1]);
+		shell_exit(av[1], args);
 	else
 		ans = 0;
 	return (ans);
@@ -124,7 +124,8 @@ static void	execute_command(char *first, char **av, t_args *args)
 	char		**updated_envp;
 	struct stat	file_info;
 
-	if (stat(first, &file_info) != -1 && file_info.st_mode & S_IFMT == S_IFDIR)
+	if (stat(first, &file_info) != -1
+		&& (file_info.st_mode & S_IFMT) == S_IFDIR)
 	{
 		print_error_msg("is a directory\n", first);
 		exit(126);

@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 19:02:53 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/06 09:23:22 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/06 16:46:44 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,8 @@ static void	set_flag(char **strs, int *i, int *flag)
 
 	while (strs[*i] && strs[*i][0] == '-')
 	{
+		if (ft_strlen(strs[*i]) == 1 && strs[*i][0] == '-')
+			break ;
 		trimmed = ft_strtrim(strs[*i], "n");
 		if (!(ft_strlen(trimmed) == 1 && ft_strncmp(trimmed, "-", 1) == 0))
 		{

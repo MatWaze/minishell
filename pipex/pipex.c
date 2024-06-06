@@ -6,13 +6,14 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/06 13:32:30 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/06 15:14:58 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/stat.h>
+#include <stdio.h>
 
 #include "pwd/pwd.h"
 #include "echo/echo.h"

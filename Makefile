@@ -3,9 +3,9 @@ build_dir = build
 include_dir=incs
 readline_dir = readline-8.2
 libft_dir = libft
-lflags = -L$(libft_dir) -L$(readline_dir)/lib #-fsanitize=address -fsanitize=undefined -D_GLIBCXX_DEBUG
+lflags = -L$(libft_dir) -L$(readline_dir)/lib -fsanitize=address -fsanitize=undefined -D_GLIBCXX_DEBUG
 iflags = -I. -I$(include_dir) -I$(libft_dir) -I$(readline_dir)/include
-cflags = -Wall -Wextra -Werror #-fsanitize=address -fsanitize=undefined -D_GLIBCXX_DEBUG
+cflags = -Wall -Wextra -Werror -fsanitize=address -fsanitize=undefined -D_GLIBCXX_DEBUG
 
 # sanitize : cflags += -g3 -fsanitize=address -fsanitize=undefined
 # sanitize : lflags += -g3 -fsanitize=address -fsanitize=undefined

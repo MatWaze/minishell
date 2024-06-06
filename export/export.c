@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 12:42:21 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/05 12:33:07 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/06 13:18:19 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,10 @@ static int	is_inside(char *s, char *key, t_export **l)
 		if (ft_strncmp(key, temp->pair->key, count) == 0)
 		{
 			free(temp->pair->val);
-			temp->pair->val = ft_strdup(s);
+			if (s)
+				temp->pair->val = ft_strdup(s);
+			else
+				temp->pair->val = NULL;
 			ans = 1;
 		}
 		temp = temp->next;

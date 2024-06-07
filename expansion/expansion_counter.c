@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion_counter.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
+/*   By: zanikin < zanikin@student.42yerevan.am>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 21:06:16 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/05 12:26:13 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/07 12:14:33 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,14 @@ size_t	count_expanded_string(const char *str, t_export **ev, int error)
 {
 	size_t	esize;
 	char	qtype;
+	char	*tmp;
 
 	esize = 0;
 	qtype = 0;
-	if (*str == '~' && (!str[1] || str[1] == '/'))
+	tmp = get_value_from_key(ev, "HOME");
+	if (*str == '~' && tmp && (!str[1] || str[1] == '/'))
 	{
-		esize += ft_strlen(get_value_from_key(ev, "HOME"));
+		esize += ft_strlen(tmp);
 		str++;
 	}
 	while (*str)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zanikin < zanikin@student.42yerevan.am>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:49:32 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/05 17:25:44 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/07 12:12:01 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,9 +61,9 @@ char	*expand(const char *str, t_export **evlist, int error)
 	exp_str = (char *)malloc(sizeof(char) * (exp_str_size + 1));
 	if (exp_str)
 	{
-		if (*str == '~' && (!str[1] || str[1] == '/'))
+		home = get_value_from_key(evlist, "HOME");
+		if (*str == '~' && home && (!str[1] || str[1] == '/'))
 		{
-			home = get_value_from_key(evlist, "HOME");
 			expand_loop(str + 1, exp_str + ft_strlcpy(exp_str, home,
 					ft_strlen(home) + 1), evlist, error);
 		}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zanikin < zanikin@student.42yerevan.am>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/06 08:15:22 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/07 13:07:55 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,27 +27,20 @@
 
 static void	run_pipex(t_args *args, char **words, char *str);
 static void	init_minishell(char **envp, t_args *args);
+static int	main_loop(t_args *args);
 
 int	main(int argc, char **argv, char **envp)
 {
-	t_args		args;
-	char		*str;
-	char		**words;
+	t_args	args;
+	int		running;
 
 	(void)argc;
 	(void)argv;
 	init_minishell(envp, &args);
-	while (1)
+	running = 1;
+	while (running)
 	{
-		str = readline("minishell$ ");
-		if (ft_strlen(str) > 0)
-			add_history(str);
-		if (*str != 0)
-		{
-			words = quoted_split(str, '|');
-			run_pipex(&args, words, str);
-		}
-		free(str);
+		running = main_loop(&args);
 	}
 	ft_lstclear((t_list **)&args.export_list, free_export_content);
 	ft_lstclear((t_list **)&args.env_list, free_export_content);
@@ -82,6 +75,35 @@ static void	init_minishell(char **envp, t_args *args)
 	args->exit_code = 0;
 	sort_list(&export_list);
 	set_pwds(args);
+}
+
+static int	main_loop(t_args *args)
+{
+	char	*str;
+	size_t	size;
+	char	qstr[2];
+
+	str = readline("minishell$ ");
+	if (str)
+		size = ft_strlen(str);
+	else
+		size = 0;
+	if (size)
+	{
+		add_history(str);
+		args->exit_code = quotes_type(str, str + size);
+		if (args->exit_code)
+		{
+			qstr[0] = (char)args->exit_code;
+			qstr[1] = '\0';
+			print_error_msg("Unclosed quote\n", (char *)qstr);
+			args->exit_code = 1;
+		}
+		else
+			run_pipex(args, quoted_split(str, '|'), str);
+	}
+	free(str);
+	return (str != NULL);
 }
 
 static void	run_pipex(t_args *args, char **words, char *str)

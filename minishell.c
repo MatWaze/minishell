@@ -6,7 +6,7 @@
 /*   By: zanikin < zanikin@student.42yerevan.am>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/07 13:07:55 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/07 18:55:59 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ static void	init_minishell(char **envp, t_args *args)
 	int			i;
 
 	i = 0;
-	args->p_count = 0;
 	args->envp = envp;
 	export_list = NULL;
 	env_list = NULL;
@@ -110,6 +109,7 @@ static void	run_pipex(t_args *args, char **words, char *str)
 {
 	int		i;
 
+	args->p_count = 0;
 	i = 0;
 	args->argv = words;
 	while (str[i])

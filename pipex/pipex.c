@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/06 15:14:58 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/10 16:59:53 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ static int	handle_pipe(int j, t_args *args, t_fd *p, char **av)
 	int		error;
 	int		ans;
 
+	error = 0;
 	ans = 0;
 	if (j == args->p_count)
 		p->fdout = dup(p->tempout);
@@ -96,10 +97,11 @@ static int	handle_pipe(int j, t_args *args, t_fd *p, char **av)
 
 static int	run_command_if_builtin(char **av, t_args *args, int *code)
 {
-	int		ans;
+	int				ans;
+	unsigned int	exit_status;
 
-	*code = 0;
 	ans = 1;
+	exit_status = 0;
 	if (ft_strlen(av[0]) == 6 && ft_strncmp("export", av[0], 6) == 0)
 		*code = handle_export(args, av);
 	else if (ft_strlen(av[0]) == 3 && ft_strncmp("env", av[0], 3) == 0)
@@ -113,7 +115,7 @@ static int	run_command_if_builtin(char **av, t_args *args, int *code)
 	else if (ft_strlen(av[0]) == 2 && ft_strncmp("cd", av[0], 2) == 0)
 		*code = handle_cd(args, av);
 	else if (ft_strlen(av[0]) == 4 && ft_strncmp("exit", av[0], 4) == 0)
-		shell_exit(av[1], args);
+		*code = shell_exit(av[1], args, &exit_status);
 	else
 		ans = 0;
 	return (ans);

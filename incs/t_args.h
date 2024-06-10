@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/01 10:18:31 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/05 15:26:15 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/08 17:33:03 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ typedef struct s_args
 	char		**envp;
 	int			p_count;
 	char		**my_envp;
+	int			quotes_closed;
 	int			exit_code;
 	t_list		*pids;
 	t_export	*export_list;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zanikin < zanikin@student.42yerevan.am>    +#+  +:+       +#+        */
+/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/07 18:55:59 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/08 17:35:07 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <readline/history.h>
 #include <readline/readline.h>
+#include <signal.h>
 
 #include "quotes/quotes.h"
 #include "pwd/pwd.h"
@@ -31,8 +32,8 @@ static int	main_loop(t_args *args);
 
 int	main(int argc, char **argv, char **envp)
 {
-	t_args	args;
-	int		running;
+	t_args				args;
+	int					running;
 
 	(void)argc;
 	(void)argv;
@@ -57,6 +58,7 @@ static void	init_minishell(char **envp, t_args *args)
 	int			i;
 
 	i = 0;
+	args->quotes_closed = 0;
 	args->envp = envp;
 	export_list = NULL;
 	env_list = NULL;
@@ -90,8 +92,8 @@ static int	main_loop(t_args *args)
 	if (size)
 	{
 		add_history(str);
-		args->exit_code = quotes_type(str, str + size);
-		if (args->exit_code)
+		args->quotes_closed = quotes_type(str, str + size);
+		if (args->quotes_closed)
 		{
 			qstr[0] = (char)args->exit_code;
 			qstr[1] = '\0';

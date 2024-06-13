@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   quoted_split.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zanikin < zanikin@student.42yerevan.am>    +#+  +:+       +#+        */
+/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 13:17:38 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/12 09:58:16 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/13 10:06:12 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,15 +106,18 @@ static int	ft_split_loop(char *str, char *set, char **output)
 	i = 0;
 	j = 0;
 	error = 0;
-	track_quote(str, '\0');
+	track_quote(str, '\0', 0);
 	while (!error && str[i])
 	{
-		if (track_quote(NULL, '\0') || ft_strchr(set, str[i]) == NULL)
+		if (track_quote(NULL, '\0', 0) || ft_strchr(set, str[i]) == NULL)
 		{
 			count = 1;
-			while (str[i + count] && (track_quote(NULL, '\0')
+			while (str[i + count] && (track_quote(NULL, '\0', 1)
 					|| ft_strchr(set, str[i + count]) == NULL))
+			{
 				count++;
+				track_quote(NULL, '\0', 0);
+			}
 			output[j] = ft_strndup(str + i, count);
 			error = output[j++] == NULL;
 			i += count - 1;

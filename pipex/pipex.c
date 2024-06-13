@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zanikin < zanikin@student.42yerevan.am>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/06 15:14:58 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/10 19:40:09 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int	pipex(t_args *args)
 	{
 		dup2(p.fdin, 0);
 		close(p.fdin);
-		av = quoted_split(args->argv[j], ' ');
+		av = quoted_split(args->argv[j], "\t\n\v\f\r ");
 		if (expand_list(av, &args->env_list, args->exit_code) && \
 			handle_pipe(j++, args, &p, av) == 1)
 		{

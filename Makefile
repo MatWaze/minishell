@@ -7,11 +7,11 @@ lflags = -L$(libft_dir) -L$(readline_dir)/lib
 iflags = -I. -I$(include_dir) -I$(libft_dir) -I$(readline_dir)/include
 cflags = -Wall -Wextra -Werror -g
 
+all : dirs $(name)
+
 sanitize : cflags += -g3 -fsanitize=address -fsanitize=undefined -D_GLIBCXX_DEBUG
 sanitize : lflags += -g3 -fsanitize=address -fsanitize=undefined -D_GLIBCXX_DEBUG
 sanitize : all
-
-all : dirs $(name)
 
 $(libft_dir)/libft.a:
 	make -C $(libft_dir)
@@ -220,7 +220,7 @@ QUOTES_BUILD_DIR=$(build_dir)/$(QUOTES_DIR)
 QUOTES_OBJ=$(addprefix $(QUOTES_BUILD_DIR)/, $(addsuffix .o, $(QUOTES_SRC)))
 obj+=$(QUOTES_OBJ)
 
-$(QUOTES_BUILD_DIR)/quoted_split.o: $(QUOTES_DIR)/quoted_split.c Makefile
+$(QUOTES_BUILD_DIR)/quoted_split.o: $(QUOTES_DIR)/quoted_split.c Makefile $(libft_dir)/libft.h
 	cc $(cflags) $(iflags) -o $@ -c $<
 
 $(QUOTES_BUILD_DIR)/quotes.o: $(QUOTES_DIR)/quotes.c Makefile

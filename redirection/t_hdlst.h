@@ -1,19 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   quotes.h                                           :+:      :+:    :+:   */
+/*   t_hdlst.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zanikin < zanikin@student.42yerevan.am>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/01 09:55:21 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/12 09:29:50 by zanikin          ###   ########.fr       */
+/*   Created: 2024/06/10 09:20:19 by zanikin           #+#    #+#             */
+/*   Updated: 2024/06/10 09:24:28 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef QUOTES_H
-# define QUOTES_H
+#ifndef T_HDLST_H
+# define T_HDLST_H
 
-char	**quoted_split(char *str, char *set);
-char	quotes_type(const char *str, const char *const pc);
-char	track_quote(const char *str, char assumed_qtype, int stop);
+typedef struct s_hdlst
+{
+	char			*str;
+	struct s_hdlst	*next;
+}	t_hdlst;
 #endif

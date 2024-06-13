@@ -6,7 +6,7 @@
 /*   By: zanikin < zanikin@student.42yerevan.am>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/07 18:55:59 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/10 19:37:37 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ static int	main_loop(t_args *args)
 			args->exit_code = 1;
 		}
 		else
-			run_pipex(args, quoted_split(str, '|'), str);
+			run_pipex(args, quoted_split(str, "|"), str);
 	}
 	free(str);
 	return (str != NULL);

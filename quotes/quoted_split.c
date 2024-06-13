@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 13:17:38 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/13 10:06:12 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/13 10:18:20 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,10 +114,7 @@ static int	ft_split_loop(char *str, char *set, char **output)
 			count = 1;
 			while (str[i + count] && (track_quote(NULL, '\0', 1)
 					|| ft_strchr(set, str[i + count]) == NULL))
-			{
-				count++;
-				track_quote(NULL, '\0', 0);
-			}
+				track_quote(NULL, (char)count++, 0);
 			output[j] = ft_strndup(str + i, count);
 			error = output[j++] == NULL;
 			i += count - 1;

@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 19:10:19 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/10 17:08:30 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/14 19:15:24 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@
 #include "t_args.h"
 
 static int	exit_no_arguments(char *num_str, t_args *args);
-static int	ft_str_is_numeric(char *str);
 static void	negative_number_exit(unsigned int *exit_status, \
 	char *num_str, char *neg_num_str);
 static void	positive_number_exit(unsigned int *exit_status, char *num_str);
@@ -68,28 +67,6 @@ static int	exit_no_arguments(char *num_str, t_args *args)
 	return (ans);
 }
 
-static int	ft_str_is_numeric(char *str)
-{
-	int	i;
-	int	ans;
-
-	i = 0;
-	ans = 1;
-	if (str)
-	{
-		while (str[i])
-		{
-			if (!ft_isdigit(str[i]))
-			{
-				ans = 0;
-				break ;
-			}
-			i++;
-		}
-	}
-	return (ans);
-}
-
 static void	negative_number_exit(unsigned int *exit_status, char *num_str, \
 	char *neg_num_str)
 {
@@ -135,4 +112,23 @@ static void	positive_number_exit(unsigned int *exit_status, char *num_str)
 	}
 	else
 		*exit_status = unum % 256;
+}
+
+int	exit_too_many_arguments(char **av, \
+	int *exit_status)
+{
+	int	ans;
+	int	i;
+
+	i = 0;
+	ans = 0;
+	while (av[i] != NULL)
+		i++;
+	if (i > 2 && av[1] && ft_str_is_numeric(av[1]))
+	{
+		print_error_msg("too many arguments\n", "exit");
+		*exit_status = 1;
+		ans = 1;
+	}
+	return (ans);
 }

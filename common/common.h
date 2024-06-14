@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   common.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
+/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 18:08:16 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/04 18:12:42 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/14 18:48:35 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,4 +15,6 @@
 
 void	free_arr(char **av);
 void	print_error_msg(char *msg, char *cmd);
+int		ft_str_is_numeric(char *str);
+
 #endif

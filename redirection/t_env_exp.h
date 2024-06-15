@@ -1,21 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   redirection.h                                      :+:      :+:    :+:   */
+/*   t_env_exp.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/07 13:24:16 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/15 11:30:34 by zanikin          ###   ########.fr       */
+/*   Created: 2024/06/15 10:48:15 by zanikin           #+#    #+#             */
+/*   Updated: 2024/06/15 10:52:23 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef REDIRECTION_H
-# define REDIRECTION_H
-# include "t_env_exp.h"
-# include "t_fd.h"
-# include "t_hdlst.h"
+#ifndef T_ENV_EXP
+# define T_ENV_EXP
+# include "export/t_export.h"
 
-char	**remove_redirections(const char *str, t_fd *fds, t_hdlst **dels,
-			t_env_exp	*env_exp);
+typedef struct s_env_exp
+{
+	t_export	**evl;
+	int			error;
+}	t_env_exp;
 #endif

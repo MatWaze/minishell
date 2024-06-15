@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zanikin < zanikin@student.42yerevan.am>    +#+  +:+       +#+        */
+/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/10 19:37:37 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/15 10:10:49 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,9 +78,9 @@ static void	init_minishell(char **envp, t_args *args)
 
 static int	main_loop(t_args *args)
 {
-	char	*str;
-	size_t	size;
-	char	qstr[2];
+	char		*str;
+	size_t		size;
+	static char	qstr[2] = {0};
 
 	str = readline("minishell$ ");
 	if (str)
@@ -94,7 +94,6 @@ static int	main_loop(t_args *args)
 		if (args->exit_code)
 		{
 			qstr[0] = (char)args->exit_code;
-			qstr[1] = '\0';
 			print_error_msg("Unclosed quote\n", (char *)qstr);
 			args->exit_code = 1;
 		}

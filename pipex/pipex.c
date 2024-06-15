@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/10 16:59:53 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/15 17:15:56 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <stdio.h>
+#include <string.h>
+#include <errno.h>
+#include <fcntl.h>
 
 #include "pwd/pwd.h"
 #include "echo/echo.h"
@@ -49,14 +52,14 @@ int	pipex(t_args *args)
 	p.tempin = dup(0);
 	p.tempout = dup(1);
 	p.fdin = dup(p.tempin);
-	j = 0;
-	while (j < args->p_count + 1)
+	j = -1;
+	while (++j < args->p_count + 1)
 	{
 		dup2(p.fdin, 0);
 		close(p.fdin);
 		av = quoted_split(args->argv[j], ' ');
-		if (expand_list(av, &args->env_list, args->exit_code) && \
-			handle_pipe(j++, args, &p, av) == 1)
+		if (av && *av && expand_list(av, &args->env_list, args->exit_code) && \
+			handle_pipe(j, args, &p, av) == 1)
 		{
 			ans = 1;
 			break ;
@@ -115,7 +118,10 @@ static int	run_command_if_builtin(char **av, t_args *args, int *code)
 	else if (ft_strlen(av[0]) == 2 && ft_strncmp("cd", av[0], 2) == 0)
 		*code = handle_cd(args, av);
 	else if (ft_strlen(av[0]) == 4 && ft_strncmp("exit", av[0], 4) == 0)
-		*code = shell_exit(av[1], args, &exit_status);
+	{
+		if (exit_too_many_arguments(av, code) == 0)
+			*code = shell_exit(av[1], args, &exit_status);
+	}
 	else
 		ans = 0;
 	return (ans);
@@ -123,30 +129,30 @@ static int	run_command_if_builtin(char **av, t_args *args, int *code)
 
 static void	execute_command(char *first, char **av, t_args *args)
 {
-	char		*command;
+	char		*cmd;
 	char		**updated_envp;
-	struct stat	file_info;
+	struct stat	f_info;
 
-	if (stat(first, &file_info) != -1
-		&& (file_info.st_mode & S_IFMT) == S_IFDIR)
+	cmd = search_path(first, &args->export_list);
+	if (stat(first, &f_info) != -1 && (f_info.st_mode & S_IFMT) == S_IFDIR)
 	{
 		print_error_msg("is a directory\n", first);
 		exit(126);
 	}
-	command = search_path(first, &args->export_list);
-	if (command == NULL || access(command, F_OK) != 0)
+	else if (!cmd || access(cmd, F_OK) != 0)
 	{
 		print_error_msg("command not found\n", first);
 		exit(127);
 	}
-	if (access(command, X_OK) != 0)
+	else if (!((f_info.st_mode & S_IRUSR) || (f_info.st_mode & S_IXUSR) \
+	|| (f_info.st_mode & S_IXUSR)) && access(cmd, X_OK) != 0)
 	{
 		print_error_msg("Permission denied\n", first);
 		exit(126);
 	}
 	updated_envp = change_envp(&args->env_list);
-	if (execve(command, av, updated_envp) == -1)
-		perror(first);
+	execve(cmd, av, updated_envp);
+	print_error_msg(strerror(errno), first);
 	exit(1);
 }
 
@@ -159,7 +165,8 @@ static void	run_external_command(t_args *args, t_fd *p, char **av, int *ans)
 	{
 		close(p->fdin);
 		close(p->fdout);
-		if (av[0][0] == '/' && access(av[0], F_OK) != 0)
+		if ((ft_strchr(av[0], '/') || (ft_strnstr(av[0], "./", 2))) \
+		&& access(av[0], F_OK) != 0)
 		{
 			print_error_msg("No such file or directory\n", av[0]);
 			exit(127);

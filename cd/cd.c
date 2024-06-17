@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
+/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 18:46:35 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/04 19:36:09 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/17 14:11:31 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	cd(char *path)
 	if (!path || chdir(path) == -1)
 	{
 		if (!path)
-			print_error_msg("HOME is not set\n", "cd");
+			print_error_msg("HOME is not set", "cd");
 		else
 			perror(path);
 		ans = 1;

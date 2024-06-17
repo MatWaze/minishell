@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 19:10:19 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/14 19:15:24 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/17 14:10:35 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ unsigned int	shell_exit(char *num_str, t_args *args, \
 			((*num_str == '+' || *num_str == '-') && ft_strlen(num_str) == 1))
 		{
 			*exit_status = 255;
-			joined = ft_strjoin(num_str, ": numeric argument required\n");
+			joined = ft_strjoin(num_str, ": numeric argument required");
 			print_error_msg(joined, "exit");
 			free(joined);
 		}
@@ -81,7 +81,7 @@ static void	negative_number_exit(unsigned int *exit_status, char *num_str, \
 	if (ft_strlen(num_str) > 19 || pos_num > to_compare)
 	{
 		*exit_status = 255;
-		joined = ft_strjoin(neg_num_str, ": numeric argument required\n");
+		joined = ft_strjoin(neg_num_str, ": numeric argument required");
 		print_error_msg(joined, "exit");
 		free(joined);
 	}
@@ -106,7 +106,7 @@ static void	positive_number_exit(unsigned int *exit_status, char *num_str)
 	if (len > 19 || unum > LLONG_MAX)
 	{
 		*exit_status = 255;
-		joined = ft_strjoin(num_str, ": numeric argument required\n");
+		joined = ft_strjoin(num_str, ": numeric argument required");
 		print_error_msg(joined, "exit");
 		free(joined);
 	}
@@ -126,7 +126,7 @@ int	exit_too_many_arguments(char **av, \
 		i++;
 	if (i > 2 && av[1] && ft_str_is_numeric(av[1]))
 	{
-		print_error_msg("too many arguments\n", "exit");
+		print_error_msg("too many arguments", "exit");
 		*exit_status = 1;
 		ans = 1;
 	}

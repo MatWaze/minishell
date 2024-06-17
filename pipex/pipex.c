@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zanikin < zanikin@student.42yerevan.am>    +#+  +:+       +#+        */
+/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/10 19:40:09 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/17 11:55:16 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 #include "common/common.h"
 #include "export/export.h"
 #include "quotes/quotes.h"
-#include "t_fd.h"
+#include "redirection/redirection.h"
 
 char		*search_path(char *cmd, t_export **env);
 char		**change_envp(t_export **env_list);
@@ -49,18 +49,16 @@ int	pipex(t_args *args)
 	p.tempin = dup(0);
 	p.tempout = dup(1);
 	p.fdin = dup(p.tempin);
+	p.rfd = -1;
+	p.wfd = -1;
 	j = 0;
-	while (j < args->p_count + 1)
+	while (!ans && j < args->p_count + 1)
 	{
 		dup2(p.fdin, 0);
 		close(p.fdin);
 		av = quoted_split(args->argv[j], "\t\n\v\f\r ");
-		if (expand_list(av, &args->env_list, args->exit_code) && \
-			handle_pipe(j++, args, &p, av) == 1)
-		{
-			ans = 1;
-			break ;
-		}
+		ans = expand_list(av, &args->env_list, args->exit_code)
+			&& handle_pipe(j++, args, &p, av) == 1;
 		free_arr(av);
 	}
 	restore_in_out(&p);

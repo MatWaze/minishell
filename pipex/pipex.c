@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/17 11:55:16 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/18 16:08:13 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,25 +40,33 @@ static int	run_command_if_builtin(char **av, t_args *args, int *code);
 
 int	pipex(t_args *args)
 {
-	t_fd	p;
-	int		j;
-	int		ans;
-	char	**av;
+	t_fd		p;
+	int			j;
+	int			ans;
+	char		**av;
+	t_env_exp	env_exp;
 
 	ans = 0;
 	p.tempin = dup(0);
 	p.tempout = dup(1);
-	p.fdin = dup(p.tempin);
-	p.rfd = -1;
-	p.wfd = -1;
+	env_exp.error = args->exit_code;
+	env_exp.evl = &args->env_list;
+	p.fdin = 0;
 	j = 0;
 	while (!ans && j < args->p_count + 1)
 	{
+		p.rfd = -1;
+		p.wfd = -1;
+		av = remove_redirections(args->argv[j], &p, &args->dels, &env_exp);
+		ans = !expand_list(av, &args->env_list, args->exit_code);
+		if (av == NULL || ans)
+			args->exit_code = 1;
+		if (p.rfd != -1)
+			p.fdin = p.rfd;
 		dup2(p.fdin, 0);
-		close(p.fdin);
-		av = quoted_split(args->argv[j], "\t\n\v\f\r ");
-		ans = expand_list(av, &args->env_list, args->exit_code)
-			&& handle_pipe(j++, args, &p, av) == 1;
+		if (p.fdin)
+			close(p.fdin);
+		ans = ans || handle_pipe(j++, args, &p, av);
 		free_arr(av);
 	}
 	restore_in_out(&p);
@@ -73,7 +81,12 @@ static int	handle_pipe(int j, t_args *args, t_fd *p, char **av)
 
 	ans = 0;
 	if (j == args->p_count)
-		p->fdout = dup(p->tempout);
+	{
+		if (p->wfd == -1)
+			p->fdout = dup(p->tempout);
+		else
+			p->fdout = p->wfd;
+	}
 	else
 	{
 		pipe(p->fd);
@@ -82,6 +95,7 @@ static int	handle_pipe(int j, t_args *args, t_fd *p, char **av)
 	}
 	dup2(p->fdout, 1);
 	close(p->fdout);
+	heredoc(&args->dels);
 	if (run_command_if_builtin(av, args, &error))
 	{
 		pid = fork();

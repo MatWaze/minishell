@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   t_args.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/01 10:18:31 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/05 15:26:15 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/18 09:39:49 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef T_ARGS_H
 # define T_ARGS_H
 # include "export/t_export.h"
+# include "redirection/t_hdlst.h"
 # include "libft/libft.h"
 
 typedef struct s_args
@@ -23,6 +24,7 @@ typedef struct s_args
 	char		**my_envp;
 	int			exit_code;
 	t_list		*pids;
+	t_hdlst		*dels;
 	t_export	*export_list;
 	t_export	*env_list;
 }		t_args;

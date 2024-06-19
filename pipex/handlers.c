@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 19:52:18 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/17 14:22:11 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/19 16:27:42 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,8 @@ int	handle_unset(t_args *args, char **av)
 	ans = 0;
 	while (av[i])
 	{
-		if (ft_str_is_alpha(av[i]) == 1 && args->p_count == 0)
+		if ((ft_str_is_alpha(av[i]) == 1 || (ft_isalpha(av[i][0]) && \
+		ft_str_not_alpha(&av[i][1]))) && args->p_count == 0)
 		{
 			unset(&args->export_list, av[i]);
 			unset(&args->env_list, av[i]);

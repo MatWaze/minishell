@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 12:42:21 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/17 14:16:41 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/19 16:25:43 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,8 @@ int	export(t_args *args, char *s)
 	val = get_val(s);
 	val2 = get_val(s);
 	ans = 1;
-	if (key && (ft_str_is_alpha(key) == 1))
+	if (key && (ft_str_is_alpha(key) == 1 || (ft_isalpha(key[0]) && \
+	ft_str_not_alpha(&key[1]))))
 	{
 		ans = 0;
 		if (args->p_count == 0 && ((ft_strlen(key) >= 1 && \

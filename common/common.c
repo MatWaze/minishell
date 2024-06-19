@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 18:11:41 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/17 14:35:27 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/19 16:25:02 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,28 @@ int	ft_str_is_alpha(char *str)
 		while (str[i])
 		{
 			if (!(ft_isalpha(str[i]) || str[i] == '_'))
+			{
+				ans = 0;
+				break ;
+			}
+			i++;
+		}
+	}
+	return (ans);
+}
+
+int	ft_str_not_alpha(char *str)
+{
+	int	i;
+	int	ans;
+
+	i = 0;
+	ans = 1;
+	if (str)
+	{
+		while (str[i])
+		{
+			if (!(ft_isalnum(str[i]) || str[i] == '_'))
 			{
 				ans = 0;
 				break ;

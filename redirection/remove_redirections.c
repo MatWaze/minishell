@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 13:25:26 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/18 15:13:58 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/20 10:28:10 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@
 
 char				*get_redir_arg(const char **str, t_export **evl, int error);
 int					count_cmd_str(const char *str, size_t *size);
-static const char	*heredoc_delimeter(const char *str, t_fd *fds,
-						t_hdlst **dels, t_env_exp *env_exp);
+static const char	*heredoc_delimeter(const char *str, t_hdlst **dels,
+						t_env_exp *env_exp);
 const char			*read_from_file(const char *str, t_fd *fds,
 						t_env_exp *env_exp);
 const char			*write_to_file(const char *str, t_fd *fds, int oflags,
@@ -75,7 +75,7 @@ static const char	*redirect(const char *str, t_fd *fds, t_hdlst **dels,
 						t_env_exp *env_exp)
 {
 	if (*str == '<' && str[1] == '<')
-		str = heredoc_delimeter(str + 2, fds, dels, env_exp);
+		str = heredoc_delimeter(str + 2, dels, env_exp);
 	else if (*str == '<')
 		str = read_from_file(str + 1, fds, env_exp);
 	else if (str[1] == '>')
@@ -85,8 +85,8 @@ static const char	*redirect(const char *str, t_fd *fds, t_hdlst **dels,
 	return (str);
 }
 
-static const char	*heredoc_delimeter(const char *str, t_fd *fds,
-						t_hdlst **dels, t_env_exp *env_exp)
+static const char	*heredoc_delimeter(const char *str, t_hdlst **dels,
+						t_env_exp *env_exp)
 {
 	t_list	*new;
 	char	*arg;

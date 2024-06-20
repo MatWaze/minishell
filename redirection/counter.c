@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 12:00:36 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/15 13:04:25 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/20 10:25:53 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,14 +36,13 @@ int	count_cmd_str(const char *str, size_t *size)
 		if (!track_quote(NULL, '\0', 0) && (*str == '<' || *str == '>'))
 		{
 			red_sign[0] = *str;
-			str += *str == '<' && str[1] == '<' || *str == '>' && str[1] == '>';
+			str += (*str == '<' && str[1] == '<')
+				|| (*str == '>' && str[1] == '>');
 			track_quote(++str, '\0', 0);
 			pass_spaces(&str);
-			error = (!*str || *str == '<' || *str == '>');
-			if (error)
+			if (!*str || *str == '<' || *str == '>')
 				print_error_msg("redirect operator has no argument", red_sign);
-			else
-				error = validate_arg(&str);
+			error = !*str || *str == '<' || *str == '>' || validate_arg(&str);
 		}
 		else
 			str++;
@@ -60,7 +59,7 @@ static int	validate_arg(const char **str)
 
 	error = 0;
 	var = NULL;
-	if (*str == '$' && str[0][1] && !ft_strchr("\t\n\v\f\r <>'\"", str[0][1]))
+	if (**str == '$' && str[0][1] && !ft_strchr("\t\n\v\f\r <>'\"", str[0][1]))
 	{
 		var = extract_ev(str);
 		error = var == NULL
@@ -101,9 +100,9 @@ static void	pass_spaces(const char **str)
 
 char	*get_redir_arg(const char **str, t_export **evl, int error)
 {
-	char	*tstr;
-	char	*arg;
-	size_t	arg_size;
+	const char	*tstr;
+	char		*arg;
+	size_t		arg_size;
 
 	pass_spaces(str);
 	tstr = *str;
@@ -115,7 +114,7 @@ char	*get_redir_arg(const char **str, t_export **evl, int error)
 		ft_strlcpy(arg, tstr, arg_size + 1);
 		tstr = expand(arg, evl, error);
 		free(arg);
-		arg = tstr;
+		arg = (char *)tstr;
 	}
 	return (arg);
 }

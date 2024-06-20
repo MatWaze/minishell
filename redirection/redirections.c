@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/17 10:03:46 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/18 15:13:52 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/20 10:26:53 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 #include "t_hdlst.h"
 #include "common/common.h"
 #include "t_fd.h"
+
+char				*get_redir_arg(const char **str, t_export **evl, int error);
 
 static const char	*rw(const char *str, int *fd, t_env_exp *env_exp,
 						int flags);

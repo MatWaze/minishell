@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/17 10:03:46 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/20 10:26:53 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/20 12:14:00 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ static const char	*rw(const char *str, int *fd, t_env_exp *env_exp, int flags)
 	arg = get_redir_arg(&str, env_exp->evl, env_exp->error);
 	if (arg)
 	{
-		nfd = open(arg, flags);
+		nfd = open(arg, flags, (S_IRUSR + S_IWUSR) | S_IRGRP | S_IROTH);
 		if (nfd < 0)
 			print_error_msg(strerror(errno), arg);
 		else

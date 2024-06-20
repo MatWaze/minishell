@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 13:25:26 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/20 10:28:10 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/20 12:04:09 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,12 +42,12 @@ char	**remove_redirections(const char *str, t_fd *fds, t_hdlst **dels,
 	size_t	i;
 
 	initialize(dels, &cmd, &splitted_cmd, &i);
-	if (count_cmd_str(str, &cmd_size))
+	if (!count_cmd_str(str, &cmd_size))
 		cmd = (char *)malloc(sizeof(char) * (cmd_size + 1));
 	if (cmd)
 	{
 		track_quote(str, '\0', 0);
-		while (str && i < cmd_size)
+		while (str && *str)
 		{
 			if (!track_quote(NULL, '\0', 0) && (*str == '<' || *str == '>'))
 				str = redirect(str, fds, dels, env_exp);

@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 12:00:36 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/20 10:25:53 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/20 11:42:08 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ int	count_cmd_str(const char *str, size_t *size)
 			if (!*str || *str == '<' || *str == '>')
 				print_error_msg("redirect operator has no argument", red_sign);
 			error = !*str || *str == '<' || *str == '>' || validate_arg(&str);
+			*size -= 1;
 		}
 		else
 			str++;

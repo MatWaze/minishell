@@ -6,14 +6,20 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 19:01:53 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/06 13:32:24 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/21 16:44:15 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include <signal.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <stdio.h>
+#include <errno.h>
 
 #include "t_args.h"
+
+extern int	g_exit_status;
 
 void	append_pid(int p, t_args *args)
 {
@@ -22,21 +28,24 @@ void	append_pid(int p, t_args *args)
 	t_list	*last;
 
 	pid_copy = (int *)malloc(sizeof(int));
-	*pid_copy = p;
-	new = ft_lstnew(pid_copy);
-	if (!args->pids)
-		args->pids = new;
-	else
+	if (pid_copy)
 	{
-		last = args->pids;
-		while (last->next)
-			last = last->next;
-		last->next = new;
+		*pid_copy = p;
+		new = ft_lstnew(pid_copy);
+		if (!args->pids)
+			args->pids = new;
+		else
+		{
+			last = args->pids;
+			while (last->next)
+				last = last->next;
+			last->next = new;
+		}
+		new->next = NULL;
 	}
-	new->next = NULL;
 }
 
-void	fork_conditions(pid_t pid, t_args *args, int error, int *ans)
+void	fork_conditions(int pid, t_args *args, int error, int *ans)
 {
 	if (pid == 0)
 		exit(error);
@@ -54,19 +63,27 @@ void	kill_processes(t_list *pids)
 	while (temp)
 	{
 		kill(*(int *) temp->content, SIGKILL);
+		waitpid(*(int *) temp->content, NULL, 0);
 		temp = temp->next;
 	}
 }
 
-void	get_exit_status(t_args *args)
+void	get_exit_status(t_list *pids)
 {
 	t_list	*list;
+	int		exit_status;
+	pid_t	pid;
 
-	list = args->pids;
+	list = pids;
 	while (list)
 	{
-		waitpid(*(int *) list->content, &args->exit_code, 0);
+		pid = waitpid(*(int *) list->content, &exit_status, 0);
+		while (pid == -1 && errno == EINTR)
+			pid = waitpid(*(int *) list->content, &exit_status, 0);
 		list = list->next;
 	}
-	args->exit_code = WEXITSTATUS(args->exit_code);
+	if (WIFEXITED(exit_status))
+		g_exit_status = WEXITSTATUS(exit_status);
+	else if (WIFSIGNALED(exit_status))
+		g_exit_status = 128 + WTERMSIG(exit_status);
 }

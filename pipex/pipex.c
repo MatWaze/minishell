@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/17 14:13:19 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/22 14:45:44 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,15 @@
 #include "quotes/quotes.h"
 #include "t_fd.h"
 
+extern int	g_exit_status;
+
 char		*search_path(char *cmd, t_export **env);
 char		**change_envp(t_export **env_list);
 int			handle_unset(t_args *args, char **av);
 int			handle_export(t_args *args, char **av);
 int			handle_cd(t_args *args, char **av);
 void		append_pid(int p, t_args *args);
-void		fork_conditions(pid_t pid, t_args *args, int error, int *ans);
+void		fork_conditions(int pid, t_args *args, int error, int *ans);
 void		restore_in_out(t_fd *p);
 
 static void	run_external_command(t_args *args, t_fd *p, char **av, int *ans);
@@ -58,10 +60,11 @@ int	pipex(t_args *args)
 		dup2(p.fdin, 0);
 		close(p.fdin);
 		av = quoted_split(args->argv[j], ' ');
-		if (av && *av && expand_list(av, &args->env_list, args->exit_code) && \
-			handle_pipe(j, args, &p, av) == 1)
+		if (av && *av && expand_list(av, &args->env_list, \
+		g_exit_status) && handle_pipe(j, args, &p, av) == 1)
 		{
 			ans = 1;
+			free_arr(av);
 			break ;
 		}
 		free_arr(av);
@@ -72,9 +75,9 @@ int	pipex(t_args *args)
 
 static int	handle_pipe(int j, t_args *args, t_fd *p, char **av)
 {
-	pid_t	pid;
 	int		error;
 	int		ans;
+	int		pid;
 
 	error = 0;
 	ans = 0;
@@ -137,22 +140,26 @@ static void	execute_command(char *first, char **av, t_args *args)
 	if (stat(first, &f_info) != -1 && (f_info.st_mode & S_IFMT) == S_IFDIR)
 	{
 		print_error_msg("is a directory", first);
+		system("leaks minishell");
 		exit(126);
 	}
 	else if (!cmd || access(cmd, F_OK) != 0)
 	{
 		print_error_msg("command not found", first);
+		system("leaks minishell");
 		exit(127);
 	}
 	else if (!((f_info.st_mode & S_IRUSR) || (f_info.st_mode & S_IXUSR) \
 	|| (f_info.st_mode & S_IXUSR)) && access(cmd, X_OK) != 0)
 	{
 		print_error_msg("Permission denied", first);
+		system("leaks minishell");
 		exit(126);
 	}
 	updated_envp = change_envp(&args->env_list);
 	execve(cmd, av, updated_envp);
 	print_error_msg(strerror(errno), first);
+	system("leaks minishell");
 	exit(1);
 }
 
@@ -160,6 +167,7 @@ static void	run_external_command(t_args *args, t_fd *p, char **av, int *ans)
 {
 	int		pid;
 
+	*ans = 0;
 	pid = fork();
 	if (pid == 0)
 	{

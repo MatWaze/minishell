@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/22 14:45:44 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/22 15:12:03 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,26 +140,22 @@ static void	execute_command(char *first, char **av, t_args *args)
 	if (stat(first, &f_info) != -1 && (f_info.st_mode & S_IFMT) == S_IFDIR)
 	{
 		print_error_msg("is a directory", first);
-		system("leaks minishell");
 		exit(126);
 	}
 	else if (!cmd || access(cmd, F_OK) != 0)
 	{
 		print_error_msg("command not found", first);
-		system("leaks minishell");
 		exit(127);
 	}
 	else if (!((f_info.st_mode & S_IRUSR) || (f_info.st_mode & S_IXUSR) \
 	|| (f_info.st_mode & S_IXUSR)) && access(cmd, X_OK) != 0)
 	{
 		print_error_msg("Permission denied", first);
-		system("leaks minishell");
 		exit(126);
 	}
 	updated_envp = change_envp(&args->env_list);
 	execve(cmd, av, updated_envp);
 	print_error_msg(strerror(errno), first);
-	system("leaks minishell");
 	exit(1);
 }
 

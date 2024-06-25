@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zanikin < zanikin@student.42yerevan.am>    +#+  +:+       +#+        */
+/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:49:32 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/07 12:12:01 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/22 06:55:12 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,8 @@ int	expand_list(char **strs, t_export **evlist, int error)
 	char	*str;
 
 	i = 0;
-	expanded = 1;
-	while (strs[i] && expanded)
+	expanded = strs != NULL;
+	while (expanded && strs[i])
 	{
 		str = expand(strs[i], evlist, error);
 		if (str)

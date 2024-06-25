@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/18 16:08:13 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/23 00:41:29 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,15 +58,16 @@ int	pipex(t_args *args)
 		p.rfd = -1;
 		p.wfd = -1;
 		av = remove_redirections(args->argv[j], &p, &args->dels, &env_exp);
-		ans = !expand_list(av, &args->env_list, args->exit_code);
-		if (av == NULL || ans)
+		ans = !expand_list(av, &args->env_list, args->exit_code) * 2;
+		if (ans)
 			args->exit_code = 1;
 		if (p.rfd != -1)
 			p.fdin = p.rfd;
 		dup2(p.fdin, 0);
 		if (p.fdin)
 			close(p.fdin);
-		ans = ans || handle_pipe(j++, args, &p, av);
+		if (!ans)
+			ans = handle_pipe(j++, args, &p, av);
 		free_arr(av);
 	}
 	restore_in_out(&p);

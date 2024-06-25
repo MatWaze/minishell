@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/15 10:10:49 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/22 02:17:22 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,13 +39,12 @@ int	main(int argc, char **argv, char **envp)
 	init_minishell(envp, &args);
 	running = 1;
 	while (running)
-	{
 		running = main_loop(&args);
-	}
 	ft_lstclear((t_list **)&args.export_list, free_export_content);
 	ft_lstclear((t_list **)&args.env_list, free_export_content);
 	ft_lstclear(&args.pids, free);
 	free(args.pids);
+	system("leaks minishell");
 	return (args.exit_code);
 }
 

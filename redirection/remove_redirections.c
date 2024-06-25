@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 13:25:26 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/20 12:04:09 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/22 07:54:28 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,8 @@
 #include "t_hdlst.h"
 
 char				*get_redir_arg(const char **str, t_export **evl, int error);
-int					count_cmd_str(const char *str, size_t *size);
+int					count_cmd_str(const char *str, size_t *size,
+						t_export **evl);
 static const char	*heredoc_delimeter(const char *str, t_hdlst **dels,
 						t_env_exp *env_exp);
 const char			*read_from_file(const char *str, t_fd *fds,
@@ -42,7 +43,7 @@ char	**remove_redirections(const char *str, t_fd *fds, t_hdlst **dels,
 	size_t	i;
 
 	initialize(dels, &cmd, &splitted_cmd, &i);
-	if (!count_cmd_str(str, &cmd_size))
+	if (!count_cmd_str(str, &cmd_size, env_exp->evl))
 		cmd = (char *)malloc(sizeof(char) * (cmd_size + 1));
 	if (cmd)
 	{

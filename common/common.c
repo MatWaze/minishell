@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 18:11:41 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/04 19:35:48 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/23 01:18:55 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ void	print_error_msg(char *msg, char *cmd)
 	ft_putstr_fd(cmd, 2);
 	ft_putstr_fd(": ", 2);
 	ft_putstr_fd(msg, 2);
+	if (msg[ft_strlen(msg) - 1] != '\n')
+		ft_putchar_fd('\n', 2);
 }
 
 void	free_arr(char **av)
@@ -27,10 +29,13 @@ void	free_arr(char **av)
 	int	i;
 
 	i = 0;
-	while (av[i])
+	if (av)
 	{
-		free(av[i]);
-		i++;
+		while (av[i])
+		{
+			free(av[i]);
+			i++;
+		}
+		free(av);
 	}
-	free(av);
 }

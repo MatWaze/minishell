@@ -6,12 +6,13 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 12:00:36 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/20 11:42:08 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/23 00:34:27 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 
+#include "export/export.h"
 #include "expansion/expansion.h"
 #include "libft/libft.h"
 #include "quotes/quotes.h"
@@ -19,14 +20,14 @@
 
 char		*extract_ev(const char **pstr);
 
-static int	validate_arg(const char **str);
+static int	validate_arg(const char **str, t_export **evl);
 static void	pass_spaces(const char **str);
 static void	pass_until_arg_end(const char **str);
 
-int	count_cmd_str(const char *str, size_t *size)
+int	count_cmd_str(const char *str, size_t *size, t_export **evl)
 {
 	int			error;
-	static char	red_sign[2] = {0};
+	static char	red_sign[3] = {0};
 
 	*size = 0;
 	error = 0;
@@ -36,13 +37,20 @@ int	count_cmd_str(const char *str, size_t *size)
 		if (!track_quote(NULL, '\0', 0) && (*str == '<' || *str == '>'))
 		{
 			red_sign[0] = *str;
-			str += (*str == '<' && str[1] == '<')
-				|| (*str == '>' && str[1] == '>');
+			if ((*str == '<' && str[1] == '<')
+				|| (*str == '>' && str[1] == '>'))
+			{
+				str++;
+				red_sign[1] = *str;
+			}
+			else
+				red_sign[1] = '\0';
 			track_quote(++str, '\0', 0);
 			pass_spaces(&str);
 			if (!*str || *str == '<' || *str == '>')
-				print_error_msg("redirect operator has no argument", red_sign);
-			error = !*str || *str == '<' || *str == '>' || validate_arg(&str);
+				print_error_msg("operator has no argument\n", red_sign);
+			error = !*str || *str == '<' || *str == '>'
+				|| validate_arg(&str, evl);
 			*size -= 1;
 		}
 		else
@@ -52,7 +60,7 @@ int	count_cmd_str(const char *str, size_t *size)
 	return (error);
 }
 
-static int	validate_arg(const char **str)
+static int	validate_arg(const char **str, t_export **evl)
 {
 	int		error;
 	char	*error_msg;
@@ -63,15 +71,15 @@ static int	validate_arg(const char **str)
 	if (**str == '$' && str[0][1] && !ft_strchr("\t\n\v\f\r <>'\"", str[0][1]))
 	{
 		var = extract_ev(str);
-		error = var == NULL
-			&& (!str[0][1] || ft_strchr("\t\n\v\f\r <>", str[0][1]));
+		error = var == NULL || (get_value_from_key(evl, var) == NULL
+				&& (!str[0][1] || ft_strchr("\t\n\v\f\r <>", str[0][1])));
 		track_quote(++(str[0]), '\0', 0);
 	}
 	if (error)
 	{
 		error_msg = ft_strjoin("$", var);
 		if (error_msg)
-			print_error_msg("ambiguous redirect", error_msg);
+			print_error_msg("ambiguous redirect\n", error_msg);
 		free(error_msg);
 	}
 	else
@@ -92,7 +100,8 @@ static void	pass_until_arg_end(const char **str)
 
 static void	pass_spaces(const char **str)
 {
-	while (!track_quote(NULL, '\0', 1) && ft_strchr("\t\n\v\f\r ", str[0][0]))
+	while (str[0][0] &&!track_quote(NULL, '\0', 1)
+			&& ft_strchr("\t\n\v\f\r ", str[0][0]))
 	{
 		str[0]++;
 		track_quote(NULL, '\0', 0);

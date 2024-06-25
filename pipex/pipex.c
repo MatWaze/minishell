@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/23 00:41:29 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/23 02:23:59 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ int	pipex(t_args *args)
 	{
 		p.rfd = -1;
 		p.wfd = -1;
-		av = remove_redirections(args->argv[j], &p, &args->dels, &env_exp);
+		av = remove_redirections(args->argv[j], &p, &args->hds.hdlst, &env_exp);
 		ans = !expand_list(av, &args->env_list, args->exit_code) * 2;
 		if (ans)
 			args->exit_code = 1;
@@ -81,6 +81,7 @@ static int	handle_pipe(int j, t_args *args, t_fd *p, char **av)
 	int		ans;
 
 	ans = 0;
+	heredoc(&args->hds);
 	if (j == args->p_count)
 	{
 		if (p->wfd == -1)
@@ -96,7 +97,6 @@ static int	handle_pipe(int j, t_args *args, t_fd *p, char **av)
 	}
 	dup2(p->fdout, 1);
 	close(p->fdout);
-	heredoc(&args->dels);
 	if (run_command_if_builtin(av, args, &error))
 	{
 		pid = fork();

@@ -6,52 +6,59 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 15:17:03 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/18 16:01:13 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/25 07:32:33 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <errno.h>
 
 #include "libft/libft.h"
 #include "readline/readline.h"
-#include "t_hdlst.h"
+#include "t_heredoc.h"
 #include "common/common.h"
 
-static int	print_error(void);
+static void	print_error(int error);
 
-void	heredoc(t_hdlst **pdels)
+int	heredoc(t_heredoc *hds)
 {
 	char	*line;
 	int		error;
 	size_t	size;
-	t_hdlst	*dels;
+	ssize_t	wrote;
 
-	error = 0;
-	dels = *pdels;
-	while (!error && dels)
+	error = pipe(hds->fd);
+	while (!error && hds->hdlst)
 	{
 		line = readline("> ");
 		if (line)
 		{
 			size = ft_strlen(line);
-			if (size == ft_strlen(dels->str) && !ft_strncmp(dels->str, line,
-					size))
-				dels = dels->next;
+			if (size == ft_strlen(hds->hdlst->str)
+				&& !ft_strncmp(hds->hdlst->str, line, size))
+				hds->hdlst = hds->hdlst->next;
 			else
-				printf("%s\n", line);
+			{
+				wrote = write(hds->fd[1], line, size);
+			}
 			free(line);
 		}
 		else
-			error = print_error();
+			error = 1;
 	}
-	ft_lstclear((t_list **)pdels, free);
-	*pdels = NULL;
+	ft_lstclear((t_list **)&hds->hdlst, free);
+	print_error(error);
+	return (error);
 }
 
-static int	print_error(void)
+static void	print_error(int error)
 {
-	print_error_msg("here-document delimited by end-of-file",
-		"warning");
-	return (1);
+	if (errno)
+		print_error_msg(strerror(errno), "<<");
+	else if (error == 1)
+		print_error_msg("here-document delimited by end-of-file",
+			"warning");
 }

@@ -6,11 +6,12 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 15:17:03 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/25 07:32:33 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/26 02:25:31 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
+#include <fcntl.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
@@ -22,28 +23,25 @@
 #include "common/common.h"
 
 static void	print_error(int error);
+static int	heredoc_line(const char *line, const t_hdlst **del, int fd);
+static int	heredoc_reopen()
 
 int	heredoc(t_heredoc *hds)
 {
 	char	*line;
 	int		error;
-	size_t	size;
-	ssize_t	wrote;
+	t_hdlst	*del;
 
-	error = pipe(hds->fd);
-	while (!error && hds->hdlst)
+	hds->fd = open("/tmp/minishell_here-document.txt", O_WRONLY | O_CREAT,
+			S_IWUSR);
+	error = hds->fd == -1;
+	del = hds->hdlst;
+	while (!error && del)
 	{
 		line = readline("> ");
 		if (line)
 		{
-			size = ft_strlen(line);
-			if (size == ft_strlen(hds->hdlst->str)
-				&& !ft_strncmp(hds->hdlst->str, line, size))
-				hds->hdlst = hds->hdlst->next;
-			else
-			{
-				wrote = write(hds->fd[1], line, size);
-			}
+			error = heredoc_line(line, (const t_hdlst **)&del, hds->fd);
 			free(line);
 		}
 		else
@@ -51,6 +49,34 @@ int	heredoc(t_heredoc *hds)
 	}
 	ft_lstclear((t_list **)&hds->hdlst, free);
 	print_error(error);
+	if (!error)
+		hds->fd = open("/tmp/minishell_here-document.txt", O)
+	return (error);
+}
+
+static int	heredoc_line(const char *line, const t_hdlst **del, int fd)
+{
+	size_t	size;
+	ssize_t	wrote;
+	int		error;
+
+	size = ft_strlen(line);
+	if (size == ft_strlen((*del)->str)
+		&& !ft_strncmp((*del)->str, line, size))
+	{
+		*del = (*del)->next;
+		error = 0;
+	}
+	else
+	{
+		wrote = write(fd, line, size);
+		error = (wrote == -1 || (size_t)wrote != size) * 2;
+		if (!error)
+		{
+			wrote = write(fd, "\n", 1);
+			error = (wrote == -1 || (size_t)wrote != 1) * 2;
+		}
+	}
 	return (error);
 }
 
@@ -61,4 +87,6 @@ static void	print_error(int error)
 	else if (error == 1)
 		print_error_msg("here-document delimited by end-of-file",
 			"warning");
+	else if (error == 2)
+		print_error_msg("can't write to temporary file", "<<");
 }

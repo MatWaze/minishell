@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 13:24:16 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/23 02:20:07 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/26 00:24:36 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,5 +18,5 @@
 
 char	**remove_redirections(const char *str, t_fd *fds, t_hdlst **dels,
 			t_env_exp	*env_exp);
-void	heredoc(t_heredoc *hds);
+int		heredoc(t_heredoc *hds);
 #endif

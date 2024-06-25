@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/22 02:17:22 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/26 01:57:31 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ static void	run_pipex(t_args *args, char **words, char *str);
 static void	init_minishell(char **envp, t_args *args);
 static int	main_loop(t_args *args);
 
-int	main(int argc, char **argv, char **envp)
+int	main2(int argc, char **argv, char **envp)
 {
 	t_args	args;
 	int		running;
@@ -44,8 +44,14 @@ int	main(int argc, char **argv, char **envp)
 	ft_lstclear((t_list **)&args.env_list, free_export_content);
 	ft_lstclear(&args.pids, free);
 	free(args.pids);
-	system("leaks minishell");
 	return (args.exit_code);
+}
+
+int	main(int argc, char **argv, char **envp)
+{
+	main2(argc, argv, envp);
+	system("leaks minishell");
+	return (0);
 }
 
 static void	init_minishell(char **envp, t_args *args)

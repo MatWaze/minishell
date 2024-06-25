@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/23 02:23:59 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/26 01:53:37 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,12 @@ int	pipex(t_args *args)
 		p.wfd = -1;
 		av = remove_redirections(args->argv[j], &p, &args->hds.hdlst, &env_exp);
 		ans = !expand_list(av, &args->env_list, args->exit_code) * 2;
+		if (!ans && args->hds.hdlst)
+		{
+			ans = heredoc(&args->hds);
+			if (!ans)
+				p.rfd = args->hds.fd;
+		}
 		if (ans)
 			args->exit_code = 1;
 		if (p.rfd != -1)
@@ -66,8 +72,9 @@ int	pipex(t_args *args)
 		dup2(p.fdin, 0);
 		if (p.fdin)
 			close(p.fdin);
-		if (!ans)
-			ans = handle_pipe(j++, args, &p, av);
+		if (!ans && av[0])
+			ans = handle_pipe(j, args, &p, av);
+		j++;
 		free_arr(av);
 	}
 	restore_in_out(&p);
@@ -81,7 +88,6 @@ static int	handle_pipe(int j, t_args *args, t_fd *p, char **av)
 	int		ans;
 
 	ans = 0;
-	heredoc(&args->hds);
 	if (j == args->p_count)
 	{
 		if (p->wfd == -1)

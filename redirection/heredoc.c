@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 15:17:03 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/26 11:52:35 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/26 14:02:13 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,53 +19,53 @@
 
 #include "libft/libft.h"
 #include "readline/readline.h"
-#include "t_heredoc.h"
+#include "t_fd.h"
 #include "common/common.h"
 
 static void	print_error(int error);
-static int	heredoc_line(const char *line, const t_hdlst **del, int fd);
+static int	heredoc_line(const char *line, const char *del, int *ended, int fd);
+static void	replace_fd(int wfd, int *fd, int error);
 
-int	heredoc(t_heredoc *hds)
+int	heredoc(char *del, int *rfd)
 {
 	char	*line;
 	int		error;
-	t_hdlst	*del;
+	int		fd;
+	int		ended;
 
-	hds->fd = open("/tmp/minishell_here-document.txt", O_WRONLY | O_CREAT,
+	unlink("/tmp/minishell_here-document.txt");
+	fd = open("/tmp/minishell_here-document.txt", O_WRONLY | O_CREAT,
 			S_IWUSR + S_IRUSR);
-	error = hds->fd == -1;
-	del = hds->hdlst;
-	while (!error && del)
+	error = fd == -1;
+	ended = 0;
+	while (!(error || ended))
 	{
 		line = readline("> ");
 		if (line)
 		{
-			error = heredoc_line(line, (const t_hdlst **)&del, hds->fd);
+			error = heredoc_line(line, del, &ended, fd);
 			free(line);
 		}
 		else
 			error = 1;
 	}
-	if (hds->fd != -1)
-		close(hds->fd);
-	ft_lstclear((t_list **)&hds->hdlst, free);
-	if (!error)
-		hds->fd = open("/tmp/minishell_here-document.txt", O_RDONLY);
+	free(del);
+	replace_fd(fd, rfd, error);
 	print_error(error);
-	return (error || hds->fd == -1);
+	return (error || *rfd == -1);
 }
 
-static int	heredoc_line(const char *line, const t_hdlst **del, int fd)
+static int	heredoc_line(const char *line, const char *del, int *ended, int fd)
 {
 	size_t	size;
 	ssize_t	wrote;
 	int		error;
 
 	size = ft_strlen(line);
-	if (size == ft_strlen((*del)->str)
-		&& !ft_strncmp((*del)->str, line, size))
+	if (size == ft_strlen(del)
+		&& !ft_strncmp(del, line, size))
 	{
-		*del = (*del)->next;
+		*ended = 1;
 		error = 0;
 	}
 	else
@@ -79,6 +79,14 @@ static int	heredoc_line(const char *line, const t_hdlst **del, int fd)
 		}
 	}
 	return (error);
+}
+
+static void	replace_fd(int wfd, int *fd, int error)
+{
+	if (wfd != -1)
+		close(wfd);
+	if (!error)
+		*fd = open("/tmp/minishell_here-document.txt", O_RDONLY);
 }
 
 static void	print_error(int error)

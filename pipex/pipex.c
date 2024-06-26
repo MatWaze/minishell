@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/26 01:53:37 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/26 14:01:59 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,27 +44,19 @@ int	pipex(t_args *args)
 	int			j;
 	int			ans;
 	char		**av;
-	t_env_exp	env_exp;
 
 	ans = 0;
 	p.tempin = dup(0);
 	p.tempout = dup(1);
-	env_exp.error = args->exit_code;
-	env_exp.evl = &args->env_list;
 	p.fdin = 0;
 	j = 0;
 	while (!ans && j < args->p_count + 1)
 	{
 		p.rfd = -1;
 		p.wfd = -1;
-		av = remove_redirections(args->argv[j], &p, &args->hds.hdlst, &env_exp);
+		av = remove_redirections(args->argv[j], &p, &args->export_list,
+				args->exit_code);
 		ans = !expand_list(av, &args->env_list, args->exit_code) * 2;
-		if (!ans && args->hds.hdlst)
-		{
-			ans = heredoc(&args->hds);
-			if (!ans)
-				p.rfd = args->hds.fd;
-		}
 		if (ans)
 			args->exit_code = 1;
 		if (p.rfd != -1)

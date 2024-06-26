@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/17 10:03:46 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/23 00:56:56 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/26 12:36:11 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,33 +17,39 @@
 #include <stdlib.h>
 #include <stddef.h>
 
-#include "t_env_exp.h"
-#include "t_hdlst.h"
+#include "export/t_export.h"
 #include "common/common.h"
 #include "t_fd.h"
 
 char				*get_redir_arg(const char **str, t_export **evl, int error);
 
-static const char	*rw(const char *str, int *fd, t_env_exp *env_exp,
-						int flags);
+static const char	*rw(const char *str, int *fd, char *arg, int flags);
 
-const char	*read_from_file(const char *str, t_fd *fds, t_env_exp *env_exp)
+const char	*read_from_file(const char *str, t_fd *fds, t_export **evl,
+				int error)
 {
-	return (rw(str, &fds->rfd, env_exp, O_RDONLY));
+	return (rw(str, &fds->rfd, get_redir_arg(&str, evl, error),
+			O_RDONLY));
 }
 
-const char	*write_to_file(const char *str, t_fd *fds, int oflags,
-				t_env_exp *env_exp)
+const char	*write_to_file(const char *str, t_fd *fds, t_export **evl,
+				int error)
 {
-	return (rw(str, &fds->wfd, env_exp, oflags | O_WRONLY | O_CREAT));
+	return (rw(str, &fds->wfd, get_redir_arg(&str, evl, error),
+			O_WRONLY | O_CREAT));
 }
 
-static const char	*rw(const char *str, int *fd, t_env_exp *env_exp, int flags)
+const char	*append_to_file(const char *str, t_fd *fds, t_export **evl,
+				int error)
 {
-	char	*arg;
+	return (rw(str, &fds->wfd, get_redir_arg(&str, evl, error),
+			O_APPEND | O_CREAT));
+}
+
+static const char	*rw(const char *str, int *fd, char *arg, int flags)
+{
 	int		nfd;
 
-	arg = get_redir_arg(&str, env_exp->evl, env_exp->error);
 	if (arg)
 	{
 		nfd = open(arg, flags, (S_IRUSR + S_IWUSR) | S_IRGRP | S_IROTH);

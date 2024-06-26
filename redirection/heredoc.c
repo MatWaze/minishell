@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 15:17:03 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/26 02:25:31 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/26 11:52:35 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@
 
 static void	print_error(int error);
 static int	heredoc_line(const char *line, const t_hdlst **del, int fd);
-static int	heredoc_reopen()
 
 int	heredoc(t_heredoc *hds)
 {
@@ -33,7 +32,7 @@ int	heredoc(t_heredoc *hds)
 	t_hdlst	*del;
 
 	hds->fd = open("/tmp/minishell_here-document.txt", O_WRONLY | O_CREAT,
-			S_IWUSR);
+			S_IWUSR + S_IRUSR);
 	error = hds->fd == -1;
 	del = hds->hdlst;
 	while (!error && del)
@@ -47,11 +46,13 @@ int	heredoc(t_heredoc *hds)
 		else
 			error = 1;
 	}
+	if (hds->fd != -1)
+		close(hds->fd);
 	ft_lstclear((t_list **)&hds->hdlst, free);
-	print_error(error);
 	if (!error)
-		hds->fd = open("/tmp/minishell_here-document.txt", O)
-	return (error);
+		hds->fd = open("/tmp/minishell_here-document.txt", O_RDONLY);
+	print_error(error);
+	return (error || hds->fd == -1);
 }
 
 static int	heredoc_line(const char *line, const t_hdlst **del, int fd)

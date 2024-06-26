@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/22 15:02:11 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/26 17:19:04 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,14 +30,45 @@ int	g_exit_status = 0;
 static void	run_pipex(t_args *args, char **words, char *str);
 static void	init_minishell(char **envp, t_args *args);
 static int	main_loop(t_args *args);
+static void	sigact_handler(int signum, siginfo_t *info, void *context);
+static void	sigact_handler2(int signum, siginfo_t *info, void *context);
+
+void	init_signals(int i)
+{
+	struct sigaction	sa;
+
+	ft_memset(&sa, 0, sizeof(sa));
+	sigemptyset(&sa.sa_mask);
+	if (i == 0)
+		sa.sa_sigaction = sigact_handler;
+	else
+		sa.sa_sigaction = sigact_handler2;
+	sigaction(SIGINT, &sa, NULL);
+	sigaction(SIGQUIT, &sa, NULL);
+}
+
+void	disable_echoctl(void)
+{
+	struct termios	t;
+
+	if (tcgetattr(STDIN_FILENO, &t) != 0)
+		return ;
+	t.c_lflag &= ~(ECHOCTL);
+	tcsetattr(STDIN_FILENO, TCSANOW, &t);
+}
 
 int	main2(int argc, char **argv, char **envp)
 {
 	t_args				args;
 	int					running;
 
-	(void)argc;
 	(void)argv;
+	if (argc > 1)
+	{
+		ft_putstr_fd("minishell doesn't take any arguments.\n", 2);
+		exit(1);
+	}
+	disable_echoctl();
 	init_minishell(envp, &args);
 	running = 1;
 	while (running)
@@ -50,12 +81,12 @@ int	main2(int argc, char **argv, char **envp)
 	return (g_exit_status);
 }
 
-// int	main(int argc, char **argv, char **envp)
-// {
-// 	main2(argc, argv, envp);
-// 	system("leaks minishell");
-// 	return (0);
-// }
+int	main(int argc, char **argv, char **envp)
+{
+	main2(argc, argv, envp);
+	system("leaks minishell");
+	return (0);
+}
 
 static void	init_minishell(char **envp, t_args *args)
 {
@@ -85,16 +116,6 @@ static void	init_minishell(char **envp, t_args *args)
 	set_pwds(args);
 }
 
-void	disable_echoctl(void)
-{
-	struct termios	t;
-
-	if (tcgetattr(STDIN_FILENO, &t) != 0)
-		return ;
-	t.c_lflag &= ~(ECHOCTL);
-	tcsetattr(STDIN_FILENO, TCSANOW, &t);
-}
-
 static void	sigact_handler(int signum, siginfo_t *info, void *context)
 {
 	(void)info;
@@ -112,20 +133,19 @@ static void	sigact_handler(int signum, siginfo_t *info, void *context)
 		rl_on_new_line();
 		rl_replace_line("", 0);
 		rl_redisplay();
-		rl_cleanup_after_signal();
 	}
-	disable_echoctl();
 }
 
-void	init_signals(void)
+static void	sigact_handler2(int signum, siginfo_t *info, void *context)
 {
-	struct sigaction	sa;
-
-	ft_memset(&sa, 0, sizeof(sa));
-	sigemptyset(&sa.sa_mask);
-	sa.sa_sigaction = sigact_handler;
-	sigaction(SIGINT, &sa, NULL);
-	sigaction(SIGQUIT, &sa, NULL);
+	(void)info;
+	(void)context;
+	if (signum == SIGINT || signum == SIGQUIT)
+	{
+		rl_replace_line("", 0);
+		write(1, "\n", 1);
+		rl_redisplay();
+	}
 }
 
 static int	main_loop(t_args *args)
@@ -134,8 +154,9 @@ static int	main_loop(t_args *args)
 	size_t				size;
 	char				qstr[2];
 
-	init_signals();
+	init_signals(0);
 	str = readline("minishell$ ");
+	init_signals(1);
 	if (str)
 		size = ft_strlen(str);
 	else

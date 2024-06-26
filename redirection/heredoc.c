@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 15:17:03 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/26 14:02:13 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/26 14:45:20 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static void	print_error(int error);
 static int	heredoc_line(const char *line, const char *del, int *ended, int fd);
 static void	replace_fd(int wfd, int *fd, int error);
 
-int	heredoc(char *del, int *rfd)
+int	heredoc(char *del, t_fd *fds)
 {
 	char	*line;
 	int		error;
@@ -40,7 +40,8 @@ int	heredoc(char *del, int *rfd)
 	ended = 0;
 	while (!(error || ended))
 	{
-		line = readline("> ");
+		ft_putstr_fd("> ", fds->tempout);
+		line = get_next_line(fds->tempin);
 		if (line)
 		{
 			error = heredoc_line(line, del, &ended, fd);
@@ -50,9 +51,9 @@ int	heredoc(char *del, int *rfd)
 			error = 1;
 	}
 	free(del);
-	replace_fd(fd, rfd, error);
+	replace_fd(fd, &fds->rfd, error);
 	print_error(error);
-	return (error || *rfd == -1);
+	return (error || fds->rfd == -1);
 }
 
 static int	heredoc_line(const char *line, const char *del, int *ended, int fd)
@@ -61,7 +62,7 @@ static int	heredoc_line(const char *line, const char *del, int *ended, int fd)
 	ssize_t	wrote;
 	int		error;
 
-	size = ft_strlen(line);
+	size = ft_strlen(line) - 1;
 	if (size == ft_strlen(del)
 		&& !ft_strncmp(del, line, size))
 	{

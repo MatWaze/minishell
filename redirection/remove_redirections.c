@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 13:25:26 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/26 13:47:35 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/26 14:34:44 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #include "t_fd.h"
 #include "quotes/quotes.h"
 
-int					heredoc(char *del, int *rfd);
+int					heredoc(char *del, t_fd *fds);
 char				*get_redir_arg(const char **str, t_export **evl, int error);
 int					count_cmd_str(const char *str, size_t *size,
 						t_export **evl);
@@ -77,7 +77,7 @@ static const char	*redirect(const char *str, t_fd *fds, t_export **evl,
 	if (*str == '<' && str[1] == '<')
 	{
 		str += 2;
-		if (heredoc(get_redir_arg(&str, evl, error), &fds->rfd))
+		if (heredoc(get_redir_arg(&str, evl, error), fds))
 			str = NULL;
 	}
 	else if (*str == '<')

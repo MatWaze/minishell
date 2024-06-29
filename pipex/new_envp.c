@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/05 12:36:50 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/06 11:53:18 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/29 17:02:38 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,10 @@ void	populate_new_envp(char **envp, t_export *current)
 		free(joined);
 		if (current->pair->val)
 		{
-			key_val = ft_strjoin(key_value, ft_strdup(current->pair->val));
+			joined = ft_strdup(current->pair->val);
+			key_val = ft_strjoin(key_value, joined);
 			free(key_value);
+			free(joined);
 		}
 		else
 			key_val = key_value;

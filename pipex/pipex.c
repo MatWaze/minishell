@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/26 14:01:59 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/29 20:54:20 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,10 @@ int	pipex(t_args *args)
 	ans = 0;
 	p.tempin = dup(0);
 	p.tempout = dup(1);
+	// Prime pipe
+	//pipe(p.fd);
+	//dup2(p.fd[1], 0);
+	//close(p.fd[1]);
 	p.fdin = 0;
 	j = 0;
 	while (!ans && j < args->p_count + 1)
@@ -80,17 +84,20 @@ static int	handle_pipe(int j, t_args *args, t_fd *p, char **av)
 	int		ans;
 
 	ans = 0;
-	if (j == args->p_count)
-	{
-		if (p->wfd == -1)
-			p->fdout = dup(p->tempout);
-		else
-			p->fdout = p->wfd;
-	}
+	if (j == args->p_count && p->wfd == -1)
+		p->fdout = dup(p->tempout);
+	else if (j == args->p_count)
+		p->fdout = p->wfd;
 	else
 	{
 		pipe(p->fd);
-		p->fdout = p->fd[1];
+		if (p->wfd == -1)
+			p->fdout = p->fd[1];
+		else
+		{
+			close(p->fd[1]);
+			p->fdout = p->wfd;
+		}
 		p->fdin = p->fd[0];
 	}
 	dup2(p->fdout, 1);

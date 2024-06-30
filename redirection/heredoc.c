@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 15:17:03 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/26 14:45:20 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/29 07:55:05 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,7 @@ int	heredoc(char *del, t_fd *fds)
 	int		fd;
 	int		ended;
 
-	unlink("/tmp/minishell_here-document.txt");
-	fd = open("/tmp/minishell_here-document.txt", O_WRONLY | O_CREAT,
+	fd = open("/tmp/minishell_here-document.txt", O_WRONLY | O_CREAT | O_TRUNC,
 			S_IWUSR + S_IRUSR);
 	error = fd == -1;
 	ended = 0;

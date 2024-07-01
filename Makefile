@@ -43,6 +43,7 @@ PIPEX_DIR=pipex
 PWD_DIR=pwd
 UNSET_DIR=unset
 QUOTES_DIR=quotes
+SIGNALS_DIR=signals
 
 #         ___ __ __ _ __  __ _  _ _   ___(_) ___  _ _     #
 #        / -_)\ \ /| '_ \/ _` || ' \ (_-<| |/ _ \| ' \    #
@@ -246,6 +247,24 @@ $(UNSET_BUILD_DIR): | $(build_dir)
 	mkdir $@
 
 
+#       .__                     .__          
+#  _____|__| ____   ____ _____  |  |   ______
+# /  ___/  |/ ___\ /    \\__  \ |  |  /  ___/
+# \___ \|  / /_/  >   |  \/ __ \|  |__\___ \ 
+#/____  >__\___  /|___|  (____  /____/____  >
+#     \/  /_____/      \/     \/          \/ 
+
+
+SIGNALS_SRC=signals
+SIGNALS_BUILD_DIR=$(build_dir)/$(SIGNALS_DIR)
+SIGNALS_OBJ=$(addprefix $(SIGNALS_BUILD_DIR)/, $(addsuffix .o, $(SIGNALS_SRC)))
+obj+=$(SIGNALS_OBJ)
+
+$(SIGNALS_BUILD_DIR)/signals.o: $(SIGNALS_DIR)/signals.c Makefile $(libft_dir)/libft.h
+	cc $(cflags) $(iflags) -o $@ -c $<
+
+$(SIGNALS_BUILD_DIR): | $(build_dir)
+	mkdir $@
 
 #                      _                                    #
 #         _ __   __ _ (_) _ _                               #
@@ -255,13 +274,13 @@ $(UNSET_BUILD_DIR): | $(build_dir)
 src = minishell
 obj+=$(addprefix $(build_dir)/, $(addsuffix .o, $(src)))
 
-$(build_dir)/minishell.o: minishell.c Makefile $(include_dir)/t_args.h $(EXPORT_DIR)/t_export.h $(EXPORT_DIR)/t_keyval.h $(libft_dir)/libft.h $(EXPORT_DIR)/export.h $(PIPEX_DIR)/pipex.h $(COMMON_DIR)/common.h
+$(build_dir)/minishell.o: minishell.c Makefile $(include_dir)/t_args.h $(EXPORT_DIR)/t_export.h $(EXPORT_DIR)/t_keyval.h $(libft_dir)/libft.h $(EXPORT_DIR)/export.h $(PIPEX_DIR)/pipex.h $(COMMON_DIR)/common.h $(SIGNALS_DIR)/signals.h
 	cc $(cflags) $(iflags) -o $@ -c $<
 
 $(name) : $(readline_dir)/lib/libreadline.a $(libft_dir)/libft.a $(obj)
 	cc $(lflags) -o $@ $(obj) -lreadline -lft -lcurses
 
-dirs: $(CD_BUILD_DIR) $(COMMON_BUILD_DIR) $(ECHO_BUILD_DIR) $(EXIT_BUILD_DIR) $(EXPANSION_BUILD_DIR) $(EXPORT_BUILD_DIR) $(PIPEX_BUILD_DIR) $(PWD_BUILD_DIR) $(QUOTES_BUILD_DIR) $(UNSET_BUILD_DIR)
+dirs: $(CD_BUILD_DIR) $(COMMON_BUILD_DIR) $(ECHO_BUILD_DIR) $(EXIT_BUILD_DIR) $(EXPANSION_BUILD_DIR) $(EXPORT_BUILD_DIR) $(PIPEX_BUILD_DIR) $(PWD_BUILD_DIR) $(QUOTES_BUILD_DIR) $(UNSET_BUILD_DIR) $(SIGNALS_BUILD_DIR)
 
 $(build_dir):
 	mkdir $@

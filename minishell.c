@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/26 17:19:04 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/07/01 21:28:00 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,47 +15,20 @@
 #include <stdio.h>
 #include <readline/history.h>
 #include <readline/readline.h>
-#include <signal.h>
 #include <unistd.h>
-#include <termios.h>
 
 #include "quotes/quotes.h"
 #include "pwd/pwd.h"
 #include "export/export.h"
 #include "pipex/pipex.h"
 #include "common/common.h"
+#include "signals/signals.h"
 
 int	g_exit_status = 0;
 
 static void	run_pipex(t_args *args, char **words, char *str);
 static void	init_minishell(char **envp, t_args *args);
 static int	main_loop(t_args *args);
-static void	sigact_handler(int signum, siginfo_t *info, void *context);
-static void	sigact_handler2(int signum, siginfo_t *info, void *context);
-
-void	init_signals(int i)
-{
-	struct sigaction	sa;
-
-	ft_memset(&sa, 0, sizeof(sa));
-	sigemptyset(&sa.sa_mask);
-	if (i == 0)
-		sa.sa_sigaction = sigact_handler;
-	else
-		sa.sa_sigaction = sigact_handler2;
-	sigaction(SIGINT, &sa, NULL);
-	sigaction(SIGQUIT, &sa, NULL);
-}
-
-void	disable_echoctl(void)
-{
-	struct termios	t;
-
-	if (tcgetattr(STDIN_FILENO, &t) != 0)
-		return ;
-	t.c_lflag &= ~(ECHOCTL);
-	tcsetattr(STDIN_FILENO, TCSANOW, &t);
-}
 
 int	main2(int argc, char **argv, char **envp)
 {
@@ -68,7 +41,7 @@ int	main2(int argc, char **argv, char **envp)
 		ft_putstr_fd("minishell doesn't take any arguments.\n", 2);
 		exit(1);
 	}
-	disable_echoctl();
+	remove_echo_ctl();
 	init_minishell(envp, &args);
 	running = 1;
 	while (running)
@@ -84,8 +57,8 @@ int	main2(int argc, char **argv, char **envp)
 int	main(int argc, char **argv, char **envp)
 {
 	main2(argc, argv, envp);
-	system("leaks minishell");
-	return (0);
+	// system("leaks minishell");
+	return (g_exit_status);
 }
 
 static void	init_minishell(char **envp, t_args *args)
@@ -114,38 +87,6 @@ static void	init_minishell(char **envp, t_args *args)
 	args->pids = NULL;
 	sort_list(&export_list);
 	set_pwds(args);
-}
-
-static void	sigact_handler(int signum, siginfo_t *info, void *context)
-{
-	(void)info;
-	(void)context;
-	if (signum == SIGINT)
-	{
-		g_exit_status = 1;
-		write(1, "\n", 1);
-		rl_replace_line("", 0);
-		rl_on_new_line();
-		rl_redisplay();
-	}
-	else if (signum == SIGQUIT)
-	{
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
-	}
-}
-
-static void	sigact_handler2(int signum, siginfo_t *info, void *context)
-{
-	(void)info;
-	(void)context;
-	if (signum == SIGINT || signum == SIGQUIT)
-	{
-		rl_replace_line("", 0);
-		write(1, "\n", 1);
-		rl_redisplay();
-	}
 }
 
 static int	main_loop(t_args *args)

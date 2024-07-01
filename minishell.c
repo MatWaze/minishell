@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/29 21:05:13 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/01 17:34:35 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 #include "export/export.h"
 #include "pipex/pipex.h"
 #include "common/common.h"
+#include "redirection/redirection.h"
 
 static void	run_pipex(t_args *args, char **words, char *str);
 static void	init_minishell(char **envp, t_args *args);
@@ -122,6 +123,7 @@ static void	run_pipex(t_args *args, char **words, char *str)
 			args->p_count++;
 		i++;
 	}
+	args->hd_count = count_heredoc((const char **)words);
 	if (pipex(args) == 1)
 	{
 		print_error_msg("failed: Resource temporarily unavailable\n", \

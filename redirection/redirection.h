@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 13:24:16 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/26 13:36:46 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/01 16:57:12 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,4 +17,5 @@
 
 char	**remove_redirections(const char *str, t_fd *fds, t_export **evl,
 			int error);
+int		count_heredoc(const char **pipes);
 #endif

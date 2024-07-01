@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/07/01 00:21:00 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/01 17:37:00 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ static int	run_command_if_builtin(char **av, t_args *args, int *code);
 int	pipex(t_args *args)
 {
 	t_fd		p;
-	int			j;
 	int			ans;
 	char		**av;
 
@@ -49,10 +48,11 @@ int	pipex(t_args *args)
 	p.tempin = dup(0);
 	p.tempout = dup(1);
 	p.fdin = dup(p.tempin);
-	j = 0;
-	while (!ans && j < args->p_count + 1)
+	pipe(p.hdfd);
+	args->j = 0;
+	while (!ans && args->j < args->p_count + 1)
 	{
-		av = remove_redirections(args->argv[j], &p, &args->export_list,
+		av = remove_redirections(args->argv[args->j], &p, &args->export_list,
 				args->exit_code);
 		ans = !expand_list(av, &args->env_list, args->exit_code) * 2;
 		if (ans)
@@ -65,10 +65,11 @@ int	pipex(t_args *args)
 		dup2(p.fdin, 0);
 		close(p.fdin);
 		if (!ans && av[0])
-			ans = handle_pipe(j, args, &p, av);
-		j++;
+			ans = handle_pipe(args->j, args, &p, av);
+		args->j++;
 		free_arr(av);
 	}
+	close(p.hdfd[0]);
 	restore_in_out(&p);
 	return (ans);
 }
@@ -165,12 +166,21 @@ static void	execute_command(char *first, char **av, t_args *args)
 static void	run_external_command(t_args *args, t_fd *p, char **av, int *ans)
 {
 	int		pid;
+	char	tmp;
 
 	pid = fork();
 	if (pid == 0)
 	{
+
 		close(p->fdin);
 		close(p->fdout);
+		close(p->hdfd[1]);
+		if (args->hd_count && args->j == 0)
+		{
+			while (args->hd_count--)
+				read(p->hdfd[0], &tmp, 1);
+		}
+		close(p->hdfd[0]);
 		if (av[0][0] == '/' && access(av[0], F_OK) != 0)
 		{
 			print_error_msg("No such file or directory\n", av[0]);

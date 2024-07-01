@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/01 10:18:31 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/26 12:20:42 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/01 17:16:16 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ typedef struct s_args
 	char		**argv;
 	char		**envp;
 	int			p_count;
+	int			hd_count;
+	int			j;
 	char		**my_envp;
 	int			exit_code;
 	t_list		*pids;

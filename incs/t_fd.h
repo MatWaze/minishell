@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/01 10:16:28 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/01 00:01:08 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/01 17:18:17 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ typedef struct s_fd
 	int	fdout;
 	int	fdin;
 	int	fd[2];
+	int	hdfd[2];
 	int	rfd;
 	int	wfd;
 }	t_fd;

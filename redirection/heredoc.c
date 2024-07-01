@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 15:17:03 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/29 22:06:55 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/01 17:44:40 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <errno.h>
 
 #include "libft/libft.h"
+#include "quotes/quotes.h"
 #include "readline/readline.h"
 #include "t_fd.h"
 #include "common/common.h"
@@ -25,6 +26,31 @@
 static void	print_error(int error);
 static int	heredoc_line(const char *line, const char *del, int *ended, int fd);
 static void	replace_fd(int wfd, int *fd, int error);
+
+int	count_heredoc(const char **pipes)
+{
+	int		count;
+	int		stop;
+	char	*hd;
+	int		i;
+
+	count = 0;
+	i = 0;
+	while (pipes[i])
+	{
+		stop = 0;
+		hd = ft_strnstr(pipes[i], "<<", ft_strlen(pipes[i]));
+		while (hd && !stop)
+		{
+			stop = !quotes_type(pipes[i], hd);
+			if (!stop)
+				hd = ft_strnstr(hd + 2, "<<", ft_strlen(hd + 2));
+		}
+		count += stop;
+		i++;
+	}
+	return (count);
+}
 
 int	heredoc(char *del, t_fd *fds)
 {
@@ -49,6 +75,7 @@ int	heredoc(char *del, t_fd *fds)
 		else
 			error = 1;
 	}
+	write(fds->hdfd[1], "a", 1);
 	free(del);
 	replace_fd(fd, &fds->rfd, error);
 	print_error(error);

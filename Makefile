@@ -43,6 +43,7 @@ PWD_BUILD_DIR=$(build_dir)/pwd
 UNSET_BUILD_DIR=$(build_dir)/unset
 QUOTES_BUILD_DIR=$(build_dir)/quotes
 REDIRECTION_BUILD_DIR=$(build_dir)/redirection
+SIGNALS_BUILD_DIR=$(build_dir)/signals
 
 #         ___ __ __ _ __  __ _  _ _   ___(_) ___  _ _     #
 #        / -_)\ \ /| '_ \/ _` || ' \ (_-<| |/ _ \| ' \    #
@@ -160,9 +161,30 @@ $(REDIRECTION_BUILD_DIR): | $(build_dir)
 
 DEPFLAGS = -MT $@ -MMD -MP -MF $(build_dir)/$*.d
 
+#       .__                     .__
+#  _____|__| ____   ____ _____  |  |   ______
+# /  ___/  |/ ___\ /    \\__  \ |  |  /  ___/
+# \___ \|  / /_/  >   |  \/ __ \|  |__\___ \
+#/____  >__\___  /|___|  (____  /____/____  >
+#     \/  /_____/      \/     \/          \/
+
+
+SIGNALS_MODULES=signals
+SIGNALS_OBJ=$(addprefix $(SIGNALS_BUILD_DIR)/, $(addsuffix .o, $(SIGNALS_MODULES)))
+$(SIGNALS_BUILD_DIR): | $(build_dir)
+	mkdir $@
+
+$(SIGNALS_BUILD_DIR): | $(build_dir)
+	mkdir $@
+
+#                      _                                    #
+#         _ __   __ _ (_) _ _                               #
+#        | '  \ / _` || || ' \                              #
+#        |_|_|_|\__,_||_||_||_|                             #
+
 obj=$(build_dir)/minishell.o $(EXPANSION_OBJ) $(CD_OBJ) $(COMMON_OBJ) \
 $(ECHO_OBJ) $(EXIT_OBJ) $(EXPORT_OBJ) $(PIPEX_OBJ) $(PWD_OBJ) $(QUOTES_OBJ) \
-$(REDIRECTION_OBJ) $(UNSET_OBJ)
+$(REDIRECTION_OBJ) $(UNSET_OBJ) $(SIGNALS_OBJ)
 
 $(build_dir)/%.o: %.c $(build_dir)/%.d Makefile
 	cc $(cflags) $(iflags) $(DEPFLAGS) -c $< -o $@
@@ -187,7 +209,7 @@ re : fclean configure all
 
 dirs: $(CD_BUILD_DIR)/ $(COMMON_BUILD_DIR)/ $(ECHO_BUILD_DIR)/ $(EXIT_BUILD_DIR)/ \
 $(EXPANSION_BUILD_DIR)/ $(EXPORT_BUILD_DIR)/ $(PIPEX_BUILD_DIR)/ $(PWD_BUILD_DIR)/ \
-$(QUOTES_BUILD_DIR)/ $(UNSET_BUILD_DIR)/ $(REDIRECTION_BUILD_DIR)/
+$(QUOTES_BUILD_DIR)/ $(UNSET_BUILD_DIR)/ $(REDIRECTION_BUILD_DIR)/ $(SIGNALS_BUILD_DIR)
 
 $(build_dir):
 	mkdir $@

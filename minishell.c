@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/07/01 21:30:19 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/01 22:03:26 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <readline/history.h>
 #include <readline/readline.h>
+#include <unistd.h>
 
 #include "quotes/quotes.h"
 #include "pwd/pwd.h"
@@ -22,6 +23,9 @@
 #include "pipex/pipex.h"
 #include "common/common.h"
 #include "redirection/redirection.h"
+#include "signals/signals.h"
+
+int	g_exit_status = 0;
 
 static void	run_pipex(t_args *args, char **words, char *str);
 static void	init_minishell(char **envp, t_args *args);
@@ -29,11 +33,16 @@ static int	main_loop(t_args *args);
 
 int	main2(int argc, char **argv, char **envp)
 {
-	t_args	args;
-	int		running;
+	t_args				args;
+	int					running;
 
-	(void)argc;
 	(void)argv;
+	if (argc > 1)
+	{
+		ft_putstr_fd("minishell doesn't take any arguments.\n", 2);
+		exit(1);
+	}
+	remove_echo_ctl();
 	init_minishell(envp, &args);
 	running = 1;
 	while (running)
@@ -42,14 +51,16 @@ int	main2(int argc, char **argv, char **envp)
 	ft_lstclear((t_list **)&args.env_list, free_export_content);
 	ft_lstclear(&args.pids, free);
 	free(args.pids);
-	return (args.exit_code);
+	rl_clear_history();
+	ft_putstr_fd("exit\n", 1);
+	return (g_exit_status);
 }
 
 int	main(int argc, char **argv, char **envp)
 {
 	main2(argc, argv, envp);
-	system("leaks minishell");
-	return (0);
+	// system("leaks minishell");
+	return (g_exit_status);
 }
 
 static void	init_minishell(char **envp, t_args *args)
@@ -60,6 +71,8 @@ static void	init_minishell(char **envp, t_args *args)
 	int			i;
 
 	i = 0;
+	args->p_count = 0;
+	args->quotes_closed = 0;
 	args->envp = envp;
 	export_list = NULL;
 	env_list = NULL;
@@ -74,7 +87,6 @@ static void	init_minishell(char **envp, t_args *args)
 	args->env_list = env_list;
 	args->export_list = export_list;
 	args->pids = NULL;
-	args->exit_code = 0;
 	sort_list(&export_list);
 	set_pwds(args);
 }
@@ -85,7 +97,9 @@ static int	main_loop(t_args *args)
 	size_t		size;
 	static char	qstr[2] = {0};
 
+	init_signals(0);
 	str = readline("minishell$ ");
+	init_signals(1);
 	if (str)
 		size = ft_strlen(str);
 	else
@@ -93,12 +107,13 @@ static int	main_loop(t_args *args)
 	if (size)
 	{
 		add_history(str);
-		args->exit_code = quotes_type(str, str + size);
-		if (args->exit_code)
+		args->quotes_closed = quotes_type(str, str + size);
+		if (args->quotes_closed)
 		{
-			qstr[0] = (char)args->exit_code;
-			print_error_msg("unclosed quote\n", (char *)qstr);
-			args->exit_code = 1;
+			qstr[0] = (char)g_exit_status;
+			qstr[1] = '\0';
+			print_error_msg("unclosed quote", (char *)qstr);
+			g_exit_status = 1;
 		}
 		else
 			run_pipex(args, quoted_split(str, "|"), str);
@@ -111,8 +126,8 @@ static void	run_pipex(t_args *args, char **words, char *str)
 {
 	int		i;
 
-	args->p_count = 0;
 	i = 0;
+	args->p_count = 0;
 	args->argv = words;
 	while (str[i])
 	{
@@ -123,13 +138,12 @@ static void	run_pipex(t_args *args, char **words, char *str)
 	args->hd_count = count_heredoc((const char **)words);
 	if (pipex(args) == 1)
 	{
-		print_error_msg("failed: Resource temporarily unavailable\n", \
-			"fork");
+		print_error_msg("failed: Resource temporarily unavailable", "fork");
 		kill_processes(args->pids);
-		args->exit_code = 1;
+		g_exit_status = 1;
 	}
 	else
-		get_exit_status(args);
+		get_exit_status(args->pids);
 	free_arr(args->argv);
 	ft_lstclear(&args->pids, free);
 }

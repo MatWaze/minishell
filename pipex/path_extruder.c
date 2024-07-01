@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   path_extruder.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
+/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:01 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/05 13:03:53 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/20 16:39:58 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdio.h>
 
 #include "export/t_export.h"
 #include "libft/libft.h"
@@ -25,9 +26,14 @@ char	*search_path(char *cmd, t_export **env)
 	char	*strs1;
 	char	**strs2;
 
+	// if (!cmd)
+	// 	return (NULL);
 	strs1 = get_path(env);
-	if (!strs1)
+	if ((((ft_strnstr(cmd, "./", 2) || ft_strchr(cmd, '/')) \
+	&& access(cmd, F_OK) == 0)))
 		return (cmd);
+	if (!strs1)
+		return (NULL);
 	strs2 = ft_split(strs1, ':');
 	return (get_str(strs2, cmd));
 }
@@ -53,7 +59,7 @@ static char	*get_str(char **strs2, char *cmd)
 	}
 	free_arr(strs2);
 	free(s);
-	return (cmd);
+	return (NULL);
 }
 
 static char	*get_path(t_export **env)

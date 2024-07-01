@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 12:42:21 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/06 16:23:38 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/06/21 16:37:32 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,8 @@ int	export(t_args *args, char *s)
 	val = get_val(s);
 	val2 = get_val(s);
 	ans = 1;
-	if (key && (ft_isalpha(*key) == 1 || *key == '_'))
+	if (key && (ft_str_is_alpha(key) == 1 || (ft_isalpha(key[0]) && \
+	ft_str_not_alpha(&key[1]))))
 	{
 		ans = 0;
 		if (args->p_count == 0 && ((ft_strlen(key) >= 1 && \
@@ -45,7 +46,7 @@ int	export(t_args *args, char *s)
 			append_to_lists(val, val2, key, args);
 	}
 	else
-		print_error_msg("not a valid identifier\n", key);
+		print_error_msg("not a valid identifier", key);
 	free_values(val, val2, split);
 	return (ans);
 }

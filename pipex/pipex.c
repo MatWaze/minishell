@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/29 20:54:20 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/01 00:21:00 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,26 +48,22 @@ int	pipex(t_args *args)
 	ans = 0;
 	p.tempin = dup(0);
 	p.tempout = dup(1);
-	// Prime pipe
-	//pipe(p.fd);
-	//dup2(p.fd[1], 0);
-	//close(p.fd[1]);
-	p.fdin = 0;
+	p.fdin = dup(p.tempin);
 	j = 0;
 	while (!ans && j < args->p_count + 1)
 	{
-		p.rfd = -1;
-		p.wfd = -1;
 		av = remove_redirections(args->argv[j], &p, &args->export_list,
 				args->exit_code);
 		ans = !expand_list(av, &args->env_list, args->exit_code) * 2;
 		if (ans)
 			args->exit_code = 1;
 		if (p.rfd != -1)
-			p.fdin = p.rfd;
-		dup2(p.fdin, 0);
-		if (p.fdin)
+		{
 			close(p.fdin);
+			p.fdin = p.rfd;
+		}
+		dup2(p.fdin, 0);
+		close(p.fdin);
 		if (!ans && av[0])
 			ans = handle_pipe(j, args, &p, av);
 		j++;

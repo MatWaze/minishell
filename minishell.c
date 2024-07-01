@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/26 01:57:31 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/06/29 21:05:13 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ static int	main_loop(t_args *args)
 		if (args->exit_code)
 		{
 			qstr[0] = (char)args->exit_code;
-			print_error_msg("Unclosed quote\n", (char *)qstr);
+			print_error_msg("unclosed quote\n", (char *)qstr);
 			args->exit_code = 1;
 		}
 		else

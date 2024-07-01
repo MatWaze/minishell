@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 13:25:26 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/26 14:34:44 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/01 00:20:51 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,8 @@ const char			*append_to_file(const char *str, t_fd *fds, t_export **evl,
 
 static const char	*redirect(const char *str, t_fd *fds, t_export **evl,
 						int error);
-static void			initialize(char **cmd, char ***splitted_cmd, size_t *i);
+static void			initialize(char **cmd, char ***splitted_cmd, size_t *i,
+						t_fd *p);
 
 char	**remove_redirections(const char *str, t_fd *fds, t_export **evl,
 			int error)
@@ -42,7 +43,7 @@ char	**remove_redirections(const char *str, t_fd *fds, t_export **evl,
 	size_t	cmd_size;
 	size_t	i;
 
-	initialize(&cmd, &splitted_cmd, &i);
+	initialize(&cmd, &splitted_cmd, &i, fds);
 	if (!count_cmd_str(str, &cmd_size, evl))
 		cmd = (char *)malloc(sizeof(char) * (cmd_size + 1));
 	if (cmd)
@@ -63,12 +64,13 @@ char	**remove_redirections(const char *str, t_fd *fds, t_export **evl,
 	return (splitted_cmd);
 }
 
-static void	initialize(char **cmd, char ***splitted_cmd,
-				size_t *i)
+static void	initialize(char **cmd, char ***splitted_cmd, size_t *i, t_fd *p)
 {
 	*cmd = NULL;
 	*splitted_cmd = NULL;
 	*i = 0;
+	p->rfd = -1;
+	p->wfd = -1;
 }
 
 static const char	*redirect(const char *str, t_fd *fds, t_export **evl,

@@ -169,8 +169,7 @@ static void	run_external_command(t_args *args, t_fd *p, char **av, int *ans)
 	{
 		close(p->fdin);
 		close(p->fdout);
-		if ((ft_strchr(av[0], '/') || (ft_strnstr(av[0], "./", 2))) \
-		&& access(av[0], F_OK) != 0)
+		if ((ft_strchr(av[0], '/')) && access(av[0], F_OK) != 0)
 		{
 			print_error_msg("No such file or directory", av[0]);
 			exit(127);

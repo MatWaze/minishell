@@ -1,27 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstnew.c                                        :+:      :+:    :+:   */
+/*   t_fd.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/27 18:49:27 by zanikin           #+#    #+#             */
-/*   Updated: 2024/05/16 13:17:18 by mamazari         ###   ########.fr       */
+/*   Created: 2024/06/01 10:16:28 by zanikin           #+#    #+#             */
+/*   Updated: 2024/07/01 17:18:17 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-#include <stdlib.h>
+#ifndef T_FD_H
+# define T_FD_H
 
-t_list	*ft_lstnew(void *content)
+typedef struct s_fd
 {
-	t_list	*result;
-
-	result = (t_list *)malloc(sizeof(t_list));
-	if (result)
-	{
-		result->content = content;
-		result->next = NULL;
-	}
-	return (result);
-}
+	int	tempin;
+	int	tempout;
+	int	fdout;
+	int	fdin;
+	int	fd[2];
+	int	hdfd[2];
+	int	rfd;
+	int	wfd;
+}	t_fd;
+#endif

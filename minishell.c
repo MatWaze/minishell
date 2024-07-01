@@ -3,128 +3,133 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/05/04 18:28:52 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/07/01 21:30:19 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "incs/minishell.h"
+#include <sys/wait.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <readline/history.h>
+#include <readline/readline.h>
 
-// prompt; history; run executables; redirections; ' and ";
-// pipes; env vars; $? ; ctrl-C; ctrl-D; ctrl-\; built-ins
+#include "quotes/quotes.h"
+#include "pwd/pwd.h"
+#include "export/export.h"
+#include "pipex/pipex.h"
+#include "common/common.h"
+#include "redirection/redirection.h"
 
-int	is_builtin(char *str)
+static void	run_pipex(t_args *args, char **words, char *str);
+static void	init_minishell(char **envp, t_args *args);
+static int	main_loop(t_args *args);
+
+int	main2(int argc, char **argv, char **envp)
 {
-	int	i;
-	int	ans;
+	t_args	args;
+	int		running;
 
-	i = 0;
-	ans = 0;
-	char	*buf[] = {"echo", "cd", "pwd", "export", "unset", "env", "exit", NULL};
-	while (buf[i] != NULL)
-	{
-		if (ft_strncmp(str, buf[i], ft_strlen(buf[i])) == 0)
-			ans = 1;
-		i++;
-	}
-	return (ans);
-}
-
-int	is_cmd(char *str)
-{
-	int	i;
-	int	ans;
-
-	i = 0;
-	ans = 0;
-	if (access(str, F_OK | R_OK) == 0 || is_builtin(str) == 1)
-		ans = 1;
-	return (ans);
-}
-
-void	do_execve_red(char *strs, char **envp, int file)
-{
-	char	**av;
-	char	*command;
-
-	if (fork() == 0)
-	{
-		av = ft_split(strs, ' ');
-		command = search_path(av[0], envp);
-		dup2(file, 1);
-		if (execve(command, av, envp) == -1)
-		{
-			perror("execve");
-			exit(1);
-		}
-	}
-}
-
-int	create_fd(char *name)
-{
-	int	fd;
-
-	fd = open(name, O_RDWR | O_CREAT | O_TRUNC, 0644);
-	return (fd);
-}
-
-int	pipe_count(char *str)
-{
-	int	i;
-	int	c;
-
-	i = 0;
-	c = 0;
-	while (str[i])
-	{
-		if (str[i] == '|')
-			c++;
-		i++;
-	}
-	return (c);
+	(void)argc;
+	(void)argv;
+	init_minishell(envp, &args);
+	running = 1;
+	while (running)
+		running = main_loop(&args);
+	ft_lstclear((t_list **)&args.export_list, free_export_content);
+	ft_lstclear((t_list **)&args.env_list, free_export_content);
+	ft_lstclear(&args.pids, free);
+	free(args.pids);
+	return (args.exit_code);
 }
 
 int	main(int argc, char **argv, char **envp)
 {
-	char	*str;
-	char	**words1;
-	char	*command;
-	char	**splitted;
-	int		j;
-	int		i;
-	int		p_count;
-	t_args	args;
-	int		*fd;
+	main2(argc, argv, envp);
+	system("leaks minishell");
+	return (0);
+}
 
-	args.envp = envp;
-	while (1)
+static void	init_minishell(char **envp, t_args *args)
+{
+	t_export	*export_list;
+	t_export	*env_list;
+	char		**split;
+	int			i;
+
+	i = 0;
+	args->envp = envp;
+	export_list = NULL;
+	env_list = NULL;
+	while (envp[i] != NULL)
 	{
-		str = readline("minishell$ ");
-		if (ft_strlen(str) > 0)
-			add_history(str);
-		j = 0;
-		words1 = my_split(str, "|");
-		args.argv = words1;
-		p_count = pipe_count(str);
-		args.p_count = p_count;
-		if (args.p_count != 0)
-		{
-			fd = (int *) malloc(sizeof(int) * (p_count * 2));
-			j = 0;
-			i = 0;
-			while (i < p_count)
-			{
-				pipe(fd + i * 2);
-				i++;
-			}
-			pipex(args, fd);
-			close_all(fd, args.p_count);
-			leave_children();
-			free(fd);
-		}
-		free_arr(words1);
-		free(str);
+		split = ft_split(envp[i], '=');
+		populate(&export_list, split[0]);
+		populate(&env_list, split[0]);
+		free_arr(split);
+		i++;
 	}
+	args->env_list = env_list;
+	args->export_list = export_list;
+	args->pids = NULL;
+	args->exit_code = 0;
+	sort_list(&export_list);
+	set_pwds(args);
+}
+
+static int	main_loop(t_args *args)
+{
+	char		*str;
+	size_t		size;
+	static char	qstr[2] = {0};
+
+	str = readline("minishell$ ");
+	if (str)
+		size = ft_strlen(str);
+	else
+		size = 0;
+	if (size)
+	{
+		add_history(str);
+		args->exit_code = quotes_type(str, str + size);
+		if (args->exit_code)
+		{
+			qstr[0] = (char)args->exit_code;
+			print_error_msg("unclosed quote\n", (char *)qstr);
+			args->exit_code = 1;
+		}
+		else
+			run_pipex(args, quoted_split(str, "|"), str);
+	}
+	free(str);
+	return (str != NULL);
+}
+
+static void	run_pipex(t_args *args, char **words, char *str)
+{
+	int		i;
+
+	args->p_count = 0;
+	i = 0;
+	args->argv = words;
+	while (str[i])
+	{
+		if (str[i] == '|' && !quotes_type(str, str + i))
+			args->p_count++;
+		i++;
+	}
+	args->hd_count = count_heredoc((const char **)words);
+	if (pipex(args) == 1)
+	{
+		print_error_msg("failed: Resource temporarily unavailable\n", \
+			"fork");
+		kill_processes(args->pids);
+		args->exit_code = 1;
+	}
+	else
+		get_exit_status(args);
+	free_arr(args->argv);
+	ft_lstclear(&args->pids, free);
 }

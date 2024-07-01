@@ -1,27 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstnew.c                                        :+:      :+:    :+:   */
+/*   redirection.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/27 18:49:27 by zanikin           #+#    #+#             */
-/*   Updated: 2024/05/16 13:17:18 by mamazari         ###   ########.fr       */
+/*   Created: 2024/06/07 13:24:16 by zanikin           #+#    #+#             */
+/*   Updated: 2024/07/01 16:57:12 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-#include <stdlib.h>
+#ifndef REDIRECTION_H
+# define REDIRECTION_H
+# include "export/t_export.h"
+# include "t_fd.h"
 
-t_list	*ft_lstnew(void *content)
-{
-	t_list	*result;
-
-	result = (t_list *)malloc(sizeof(t_list));
-	if (result)
-	{
-		result->content = content;
-		result->next = NULL;
-	}
-	return (result);
-}
+char	**remove_redirections(const char *str, t_fd *fds, t_export **evl,
+			int error);
+int		count_heredoc(const char **pipes);
+#endif

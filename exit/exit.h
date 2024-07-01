@@ -1,27 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstnew.c                                        :+:      :+:    :+:   */
+/*   exit.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/27 18:49:27 by zanikin           #+#    #+#             */
-/*   Updated: 2024/05/16 13:17:18 by mamazari         ###   ########.fr       */
+/*   Created: 2024/06/03 19:09:29 by zanikin           #+#    #+#             */
+/*   Updated: 2024/06/06 08:56:36 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-#include <stdlib.h>
+#ifndef EXIT_H
+# define EXIT_H
 
-t_list	*ft_lstnew(void *content)
-{
-	t_list	*result;
-
-	result = (t_list *)malloc(sizeof(t_list));
-	if (result)
-	{
-		result->content = content;
-		result->next = NULL;
-	}
-	return (result);
-}
+void	shell_exit(char *num_str, t_args *args);
+#endif

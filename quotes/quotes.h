@@ -1,27 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstnew.c                                        :+:      :+:    :+:   */
+/*   quotes.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zanikin < zanikin@student.42yerevan.am>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/27 18:49:27 by zanikin           #+#    #+#             */
-/*   Updated: 2024/05/16 13:17:18 by mamazari         ###   ########.fr       */
+/*   Created: 2024/06/01 09:55:21 by zanikin           #+#    #+#             */
+/*   Updated: 2024/06/12 09:29:50 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-#include <stdlib.h>
+#ifndef QUOTES_H
+# define QUOTES_H
 
-t_list	*ft_lstnew(void *content)
-{
-	t_list	*result;
-
-	result = (t_list *)malloc(sizeof(t_list));
-	if (result)
-	{
-		result->content = content;
-		result->next = NULL;
-	}
-	return (result);
-}
+char	**quoted_split(char *str, char *set);
+char	quotes_type(const char *str, const char *const pc);
+char	track_quote(const char *str, char assumed_qtype, int stop);
+#endif

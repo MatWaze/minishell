@@ -1,27 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstnew.c                                        :+:      :+:    :+:   */
+/*   pwd.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/27 18:49:27 by zanikin           #+#    #+#             */
-/*   Updated: 2024/05/16 13:17:18 by mamazari         ###   ########.fr       */
+/*   Created: 2024/06/03 18:15:30 by zanikin           #+#    #+#             */
+/*   Updated: 2024/06/03 18:39:52 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-#include <stdlib.h>
+#ifndef PWD_H
+# define PWD_H
+# include "t_args.h"
 
-t_list	*ft_lstnew(void *content)
-{
-	t_list	*result;
-
-	result = (t_list *)malloc(sizeof(t_list));
-	if (result)
-	{
-		result->content = content;
-		result->next = NULL;
-	}
-	return (result);
-}
+char	*pwd(int i);
+void	set_pwds(t_args *args);
+void	update_pwd(t_args *args, char *prev_pwd, char *cur_pwd);
+#endif

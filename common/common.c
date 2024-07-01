@@ -1,0 +1,41 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   common.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/04 18:11:41 by zanikin           #+#    #+#             */
+/*   Updated: 2024/06/23 01:18:55 by zanikin          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include <stdlib.h>
+
+#include "libft/libft.h"
+
+void	print_error_msg(char *msg, char *cmd)
+{
+	ft_putstr_fd("minishell: ", 2);
+	ft_putstr_fd(cmd, 2);
+	ft_putstr_fd(": ", 2);
+	ft_putstr_fd(msg, 2);
+	if (msg[ft_strlen(msg) - 1] != '\n')
+		ft_putchar_fd('\n', 2);
+}
+
+void	free_arr(char **av)
+{
+	int	i;
+
+	i = 0;
+	if (av)
+	{
+		while (av[i])
+		{
+			free(av[i]);
+			i++;
+		}
+		free(av);
+	}
+}

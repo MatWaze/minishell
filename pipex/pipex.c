@@ -110,6 +110,7 @@ static int	handle_pipe(int j, t_args *args, t_fd *p, char **av)
 	close(p->fdout);
 	if (run_command_if_builtin(av, args, &error))
 	{
+		args->fds = *p;
 		pid = fork();
 		fork_conditions(pid, args, error, &ans);
 	}

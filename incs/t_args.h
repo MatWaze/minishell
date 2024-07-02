@@ -14,6 +14,7 @@
 # define T_ARGS_H
 # include "export/t_export.h"
 # include "libft/libft.h"
+# include "t_fd.h"
 
 typedef struct s_args
 {
@@ -26,6 +27,7 @@ typedef struct s_args
 	int			quotes_closed;
 	int			exit_code;
 	t_list		*pids;
+	t_fd		fds;
 	t_export	*export_list;
 	t_export	*env_list;
 }		t_args;

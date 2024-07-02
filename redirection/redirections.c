@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/17 10:03:46 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/02 16:53:08 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/02 20:49:30 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,16 @@
 #include <stdlib.h>
 #include <stddef.h>
 
+#include "expansion/expansion.h"
+#include "libft/libft.h"
 #include "export/t_export.h"
 #include "common/common.h"
 #include "t_fd.h"
 
 char		*get_redir_arg(const char **str, t_export **evl, int error,
 				int mask);
+void		pass_spaces(const char **str);
+void		pass_until_arg_end(const char **str);
 
 static int	rw(const char *str, int *fd, char *arg, int flags);
 
@@ -81,4 +85,25 @@ static int	rw(const char *str, int *fd, char *arg, int flags)
 		free(arg);
 	}
 	return (nfd == -1);
+}
+
+char	*get_redir_arg(const char **str, t_export **evl, int error, int mask)
+{
+	const char	*tstr;
+	char		*arg;
+	size_t		arg_size;
+
+	pass_spaces(str);
+	tstr = *str;
+	pass_until_arg_end(str);
+	arg_size = *str - tstr;
+	arg = (char *)malloc(sizeof(char) * (arg_size + 1));
+	if (arg)
+	{
+		ft_strlcpy(arg, tstr, arg_size + 1);
+		tstr = expand(arg, evl, error, mask);
+		free(arg);
+		arg = (char *)tstr;
+	}
+	return (arg);
 }

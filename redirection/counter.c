@@ -6,23 +6,23 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 12:00:36 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/02 16:46:42 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/02 20:55:38 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 
 #include "export/export.h"
-#include "expansion/expansion.h"
 #include "libft/libft.h"
 #include "quotes/quotes.h"
 #include "common/common.h"
 
 char		*extract_ev(const char **pstr);
+void		pass_spaces(const char **str);
+void		pass_until_arg_end(const char **str);
 
 static int	validate_arg(const char **str, t_export **evl);
-static void	pass_spaces(const char **str);
-static void	pass_until_arg_end(const char **str);
+static void	set_prefix(char red_sign[3], const char **pstr);
 
 int	count_cmd_str(const char *str, size_t *size, t_export **evl)
 {
@@ -36,15 +36,7 @@ int	count_cmd_str(const char *str, size_t *size, t_export **evl)
 	{
 		if (!track_quote(NULL, '\0', 0) && (*str == '<' || *str == '>'))
 		{
-			red_sign[0] = *str;
-			if ((*str == '<' && str[1] == '<')
-				|| (*str == '>' && str[1] == '>'))
-			{
-				str++;
-				red_sign[1] = *str;
-			}
-			else
-				red_sign[1] = '\0';
+			set_prefix(red_sign, (const char **)&str);
 			track_quote(++str, '\0', 0);
 			pass_spaces(&str);
 			if (!*str || *str == '<' || *str == '>')
@@ -58,6 +50,19 @@ int	count_cmd_str(const char *str, size_t *size, t_export **evl)
 		*size += 1;
 	}
 	return (error);
+}
+
+static void	set_prefix(char red_sign[3], const char **pstr)
+{
+	red_sign[0] = **pstr;
+	if ((**pstr == '<' && pstr[0][1] == '<')
+		|| (**pstr == '>' && pstr[0][1] == '>'))
+	{
+		pstr[0]++;
+		red_sign[1] = **pstr;
+	}
+	else
+		red_sign[1] = '\0';
 }
 
 static int	validate_arg(const char **str, t_export **evl)
@@ -88,7 +93,7 @@ static int	validate_arg(const char **str, t_export **evl)
 	return (error);
 }
 
-static void	pass_until_arg_end(const char **str)
+void	pass_until_arg_end(const char **str)
 {
 	while (str[0][0] && (track_quote(NULL, '\0', 1)
 			|| !ft_strchr("\t\n\v\f\r <>", str[0][0])))
@@ -98,7 +103,7 @@ static void	pass_until_arg_end(const char **str)
 	}
 }
 
-static void	pass_spaces(const char **str)
+void	pass_spaces(const char **str)
 {
 	while (str[0][0] && !track_quote(NULL, '\0', 1)
 			&& ft_strchr("\t\n\v\f\r ", str[0][0]))
@@ -106,25 +111,4 @@ static void	pass_spaces(const char **str)
 		str[0]++;
 		track_quote(NULL, '\0', 0);
 	}
-}
-
-char	*get_redir_arg(const char **str, t_export **evl, int error, int mask)
-{
-	const char	*tstr;
-	char		*arg;
-	size_t		arg_size;
-
-	pass_spaces(str);
-	tstr = *str;
-	pass_until_arg_end(str);
-	arg_size = *str - tstr;
-	arg = (char *)malloc(sizeof(char) * (arg_size + 1));
-	if (arg)
-	{
-		ft_strlcpy(arg, tstr, arg_size + 1);
-		tstr = expand(arg, evl, error, mask);
-		free(arg);
-		arg = (char *)tstr;
-	}
-	return (arg);
 }

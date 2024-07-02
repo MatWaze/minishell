@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:49:32 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/02 17:09:17 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/02 21:03:27 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,10 +67,10 @@ char	*expand(const char *str, t_export **evlist, int error, int mask)
 			&& (!str[1] || str[1] == '/'))
 		{
 			expand_loop(str + 1, exp_str + ft_strlcpy(exp_str, home,
-					ft_strlen(home) + 1), evlist, error);
+					ft_strlen(home) + 1), evlist, ((long)mask << 32) | error);
 		}
 		else
-			expand_loop(str, exp_str, evlist, error);
+			expand_loop(str, exp_str, evlist, ((long)mask << 32) | error);
 	}
 	return (exp_str);
 }

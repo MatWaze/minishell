@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 15:17:03 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/01 17:44:40 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/02 20:35:54 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,12 +68,10 @@ int	heredoc(char *del, t_fd *fds)
 		ft_putstr_fd("> ", fds->tempout);
 		line = get_next_line(fds->tempin);
 		if (line)
-		{
 			error = heredoc_line(line, del, &ended, fd);
-			free(line);
-		}
 		else
 			error = 1;
+		free(line);
 	}
 	write(fds->hdfd[1], "a", 1);
 	free(del);

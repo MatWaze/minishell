@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/07/02 18:55:50 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/02 19:33:58 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,8 +137,8 @@ static int	run_command_if_builtin(char **av, t_args *args, int *code)
 		*code = handle_cd(args, av);
 	else if (ft_strlen(av[0]) == 4 && ft_strncmp("exit", av[0], 4) == 0)
 	{
-		if (exit_too_many_arguments(av, code) == 0)
-			*code = shell_exit(av[1], args, &exit_status);
+		if (exit_no_arguments(av[1], args) == 0)
+			*code = shell_exit(av, &exit_status, args->p_count);
 	}
 	else
 		ans = 0;
@@ -183,7 +183,6 @@ static void	run_external_command(t_args *args, t_fd *p, char **av, int *ans)
 	pid = fork();
 	if (pid == 0)
 	{
-
 		close(p->fdin);
 		close(p->fdout);
 		close(p->hdfd[1]);

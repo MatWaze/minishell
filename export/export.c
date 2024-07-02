@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 12:42:21 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/21 16:37:32 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/07/02 15:21:09 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,11 +89,11 @@ static int	is_inside(char *s, char *key, t_export **l)
 			count = ft_strlen(key);
 		if (ft_strncmp(key, temp->pair->key, count) == 0)
 		{
-			free(temp->pair->val);
 			if (s)
+			{
+				free(temp->pair->val);
 				temp->pair->val = ft_strdup(s);
-			else
-				temp->pair->val = NULL;
+			}
 			ans = 1;
 		}
 		temp = temp->next;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion_counter.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
+/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 21:06:16 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/20 18:55:41 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/07/01 23:35:11 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,11 @@ char			*extract_ev(const char **str);
 int				is_inside_quotes(char type, char *qtype);
 int				digits_count(int n);
 
-static size_t	ev_size(const char **str, t_export **ev, int error);
+static size_t	ev_size(const char **str, t_export **ev, int error, int mask);
 static size_t	count_evv_size(const char **str, t_export **evlist);
 
-size_t	count_expanded_string(const char *str, t_export **ev, int error)
+size_t	count_expanded_string(const char *str, t_export **ev, int error,
+			int mask)
 {
 	size_t	esize;
 	char	qtype;
@@ -40,7 +41,7 @@ size_t	count_expanded_string(const char *str, t_export **ev, int error)
 		if (*str == '\'' || *str == '"')
 			esize += is_inside_quotes(*str, &qtype);
 		else if (*str == '$' && (!qtype || qtype == '"'))
-			esize += ev_size(&str, ev, error);
+			esize += ev_size(&str, ev, error, mask);
 		else
 			esize++;
 		str++;
@@ -67,7 +68,7 @@ int	is_inside_quotes(char type, char *qtype)
 	return (is);
 }
 
-static size_t	ev_size(const char **str, t_export **ev, int error)
+static size_t	ev_size(const char **str, t_export **ev, int error, int mask)
 {
 	size_t	size;
 	char	type;

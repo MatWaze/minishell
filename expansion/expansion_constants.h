@@ -1,20 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expansion.h                                        :+:      :+:    :+:   */
+/*   expansion_constants.h                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zanikin < zanikin@student.42yerevan.am>    +#+  +:+       +#+        */
+/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/26 15:12:50 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/01 23:35:38 by zanikin          ###   ########.fr       */
+/*   Created: 2024/07/01 23:37:27 by zanikin           #+#    #+#             */
+/*   Updated: 2024/07/01 23:58:25 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef EXPANSION_H
-# define EXPANSION_H
-# include "export/t_export.h"
-
-char	*expand(const char *str, t_export **evlist, int error);
-int		expand_list(char **strs, t_export **evlist, int error);
-int		is_inside_quotes(char type, char *qtype);
+#ifndef EXPANSION_CONSTANTS_H
+# define EXPANSION_CONSTANTS_H
+# define TILDA_MASK 0X00000001
+# define QUOTES_MASK 0X00000010
+# define ENV_QUOTES_MASK 0X00000100
 #endif

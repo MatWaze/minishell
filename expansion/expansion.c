@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:49:32 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/01 21:54:25 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/01 22:58:38 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,12 @@
 #include "export/export.h"
 
 size_t		count_expanded_string(const char *str, t_export **ev,
-				int error);
+				int error, int mask);
 int			is_inside_quotes(char type, char *qtype);
 char		*extract_ev(const char **pstr);
 void		insert_number(char *dst, int n);
 int			digits_count(int n);
-char		*expand(const char *str, t_export **evlist, int error);
+char		*expand(const char *str, t_export **evlist, int error, int mask);
 
 static void	expand_envvar(const char **pstr, char **exp_str,
 				t_export **evlist, int error);
@@ -29,7 +29,7 @@ static void	insert_envvar_val(const char **pstr, char **exp_str,
 static void	expand_loop(const char *str, char *exp_str, t_export **evlist,
 				int error);
 
-int	expand_list(char **strs, t_export **evlist, int error)
+int	expand_list(char **strs, t_export **evlist, int error, int mask)
 {
 	int		expanded;
 	size_t	i;
@@ -39,7 +39,7 @@ int	expand_list(char **strs, t_export **evlist, int error)
 	expanded = strs != NULL;
 	while (expanded && strs[i])
 	{
-		str = expand(strs[i], evlist, error);
+		str = expand(strs[i], evlist, error, mask);
 		if (str)
 		{
 			free(strs[i]);
@@ -51,13 +51,13 @@ int	expand_list(char **strs, t_export **evlist, int error)
 	return (expanded);
 }
 
-char	*expand(const char *str, t_export **evlist, int error)
+char	*expand(const char *str, t_export **evlist, int error, int mask)
 {
 	char	*exp_str;
 	char	*home;
 	size_t	exp_str_size;
 
-	exp_str_size = count_expanded_string(str, evlist, error);
+	exp_str_size = count_expanded_string(str, evlist, error, mask);
 	exp_str = (char *)malloc(sizeof(char) * (exp_str_size + 1));
 	if (exp_str)
 	{

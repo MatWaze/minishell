@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
+/*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/07/02 19:33:58 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/02 20:48:18 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ int			handle_cd(t_args *args, char **av);
 void		append_pid(int p, t_args *args);
 void		fork_conditions(int pid, t_args *args, int error, int *ans);
 void		restore_in_out(t_fd *p);
+void		close_fds(t_fd *p);
 
 static void	run_external_command(t_args *args, t_fd *p, char **av, int *ans);
 static int	handle_pipe(int j, t_args *args, t_fd *p, char **av);
@@ -76,6 +77,7 @@ int	pipex(t_args *args)
 		free_arr(av);
 	}
 	close(p.hdfd[0]);
+	close(p.hdfd[1]);
 	restore_in_out(&p);
 	return (ans);
 }
@@ -108,6 +110,7 @@ static int	handle_pipe(int j, t_args *args, t_fd *p, char **av)
 	close(p->fdout);
 	if (run_command_if_builtin(av, args, &error))
 	{
+		args->fds = *p;
 		pid = fork();
 		fork_conditions(pid, args, error, &ans);
 	}
@@ -183,9 +186,7 @@ static void	run_external_command(t_args *args, t_fd *p, char **av, int *ans)
 	pid = fork();
 	if (pid == 0)
 	{
-		close(p->fdin);
-		close(p->fdout);
-		close(p->hdfd[1]);
+		close_fds(p);
 		if (args->hd_count && args->j == 0)
 		{
 			while (args->hd_count--)
@@ -199,7 +200,7 @@ static void	run_external_command(t_args *args, t_fd *p, char **av, int *ans)
 		}
 		execute_command(av[0], av, args);
 	}
-	else if (pid == -1)
+	else if (pid == -1 && !close(p->fdin))
 		*ans = 1;
 	else if (pid > 0)
 		append_pid(pid, args);

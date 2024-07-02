@@ -50,7 +50,10 @@ void	fork_conditions(int pid, t_args *args, int error, int *ans)
 	if (pid == 0)
 		exit(error);
 	else if (pid == -1)
+	{
+		close(args->fds.fdin);
 		*ans = 1;
+	}
 	else
 		append_pid(pid, args);
 }

@@ -174,9 +174,6 @@ SIGNALS_OBJ=$(addprefix $(SIGNALS_BUILD_DIR)/, $(addsuffix .o, $(SIGNALS_MODULES
 $(SIGNALS_BUILD_DIR): | $(build_dir)
 	mkdir $@
 
-$(SIGNALS_BUILD_DIR): | $(build_dir)
-	mkdir $@
-
 #                      _                                    #
 #         _ __   __ _ (_) _ _                               #
 #        | '  \ / _` || || ' \                              #

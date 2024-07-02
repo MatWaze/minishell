@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:49:32 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/02 14:16:31 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/02 17:09:17 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ static void	expand_envvar(const char **pstr, char **exp_str,
 		insert_number(exp_str[0], (int)m_err);
 		exp_str[0] += digits_count((int)m_err);
 	}
-	else if (!((m_err >> 32) & ENV_EXP_MASK) || !pstr[0][1] || pstr[0][1] == ' '
+	else if (((m_err >> 32) & ENV_EXP_MASK) || !pstr[0][1] || pstr[0][1] == ' '
 				|| pstr[0][1] == '$')
 		exp_str[0]++[0] = '$';
 	else

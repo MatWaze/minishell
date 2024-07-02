@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 12:00:36 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/02 16:38:42 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/02 16:46:42 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int	count_cmd_str(const char *str, size_t *size, t_export **evl)
 			track_quote(++str, '\0', 0);
 			pass_spaces(&str);
 			if (!*str || *str == '<' || *str == '>')
-				print_error_msg("operator has no argument\n", red_sign);
+				print_error_msg("operator has no argument", red_sign);
 			error = !*str || *str == '<' || *str == '>'
 				|| (!red_sign[1] && validate_arg(&str, evl));
 			*size -= 1;
@@ -79,7 +79,7 @@ static int	validate_arg(const char **str, t_export **evl)
 	{
 		error_msg = ft_strjoin("$", var);
 		if (error_msg)
-			print_error_msg("ambiguous redirect\n", error_msg);
+			print_error_msg("ambiguous redirect", error_msg);
 		free(error_msg);
 	}
 	else

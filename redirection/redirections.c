@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/17 10:03:46 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/02 14:00:10 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/02 16:53:08 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ const char	*append_to_file(const char *str, t_fd *fds, t_export **evl,
 	char	*arg;
 
 	arg = get_redir_arg(&str, evl, error, 0);
-	if (rw(str, &fds->wfd, arg, O_APPEND | O_CREAT))
+	if (rw(str, &fds->wfd, arg, O_APPEND | O_CREAT | O_WRONLY))
 		str = NULL;
 	return (str);
 }

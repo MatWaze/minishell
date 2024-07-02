@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 13:25:26 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/02 14:04:01 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/02 17:22:45 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ char	**remove_redirections(const char *str, t_fd *fds, t_export **evl,
 	size_t	i;
 
 	initialize(&cmd, &splitted_cmd, &i, fds);
-	if (!count_cmd_str(str, &cmd_size, evl))
+	if (str && !count_cmd_str(str, &cmd_size, evl))
 		cmd = (char *)malloc(sizeof(char) * (cmd_size + 1));
 	if (cmd)
 	{

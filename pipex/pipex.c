@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:23 by mamazari          #+#    #+#             */
-/*   Updated: 2024/07/02 14:00:36 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/02 18:55:50 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,11 +57,12 @@ int	pipex(t_args *args)
 	args->j = 0;
 	while (!ans && args->j < args->p_count + 1)
 	{
-		av = remove_redirections(args->argv[args->j], &p, &args->export_list,
-				g_exit_status);
-		ans = !expand_list(av, &args->env_list, g_exit_status, 0) * 2;
+		ans = (args->argv[args->j] == NULL) * 2;
 		if (ans)
-			g_exit_status = 1;
+			print_error_msg("syntax error", "");
+		av = remove_redirections(args->argv[args->j], &p,
+				&args->export_list, g_exit_status);
+		ans = !expand_list(av, &args->env_list, g_exit_status, 0) * 2;
 		if (p.rfd != -1)
 		{
 			close(p.fdin);

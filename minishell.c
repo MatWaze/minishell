@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/07/02 16:41:47 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/02 18:51:49 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ int	main2(int argc, char **argv, char **envp)
 int	main(int argc, char **argv, char **envp)
 {
 	main2(argc, argv, envp);
-	system("leaks minishell");
+	//system("leaks minishell");
 	return (g_exit_status);
 }
 
@@ -123,7 +123,8 @@ static int	main_loop(t_args *args)
 
 static void	run_pipex(t_args *args, char **words, char *str)
 {
-	int		i;
+	int	i;
+	int	error;
 
 	i = 0;
 	args->p_count = 0;
@@ -135,13 +136,14 @@ static void	run_pipex(t_args *args, char **words, char *str)
 		i++;
 	}
 	args->hd_count = count_heredoc((const char **)words);
-	if (pipex(args) == 1)
+	error = pipex(args);
+	g_exit_status = error != 0;
+	if (error == 1)
 	{
 		print_error_msg("failed: Resource temporarily unavailable", "fork");
 		kill_processes(args->pids);
-		g_exit_status = 1;
 	}
-	else
+	else if (error == 0)
 		get_exit_status(args->pids);
 	free_arr(args->argv);
 	ft_lstclear(&args->pids, free);

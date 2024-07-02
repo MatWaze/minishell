@@ -28,10 +28,11 @@
 int	g_exit_status = 0;
 
 static void	run_pipex(t_args *args, char **words, char *str);
+static void	set_size(size_t *size, char *str);
 static void	init_minishell(char **envp, t_args *args);
 static int	main_loop(t_args *args);
 
-int	main2(int argc, char **argv, char **envp)
+int	main(int argc, char **argv, char **envp)
 {
 	t_args				args;
 	int					running;
@@ -53,13 +54,6 @@ int	main2(int argc, char **argv, char **envp)
 	free(args.pids);
 	rl_clear_history();
 	ft_putstr_fd("exit\n", 1);
-	return (g_exit_status);
-}
-
-int	main(int argc, char **argv, char **envp)
-{
-	main2(argc, argv, envp);
-	//system("leaks minishell");
 	return (g_exit_status);
 }
 
@@ -100,10 +94,7 @@ static int	main_loop(t_args *args)
 	init_signals(0);
 	str = readline("minishell$ ");
 	init_signals(1);
-	if (str)
-		size = ft_strlen(str);
-	else
-		size = 0;
+	set_size(&size, str);
 	if (size)
 	{
 		add_history(str);
@@ -119,6 +110,14 @@ static int	main_loop(t_args *args)
 	}
 	free(str);
 	return (str != NULL);
+}
+
+static void	set_size(size_t *size, char *str)
+{
+	if (str)
+		*size = ft_strlen(str);
+	else
+		*size = 0;
 }
 
 static void	run_pipex(t_args *args, char **words, char *str)

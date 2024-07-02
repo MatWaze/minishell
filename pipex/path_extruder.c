@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 15:21:01 by mamazari          #+#    #+#             */
-/*   Updated: 2024/06/20 16:39:58 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/07/02 17:19:07 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,6 @@ char	*search_path(char *cmd, t_export **env)
 	char	*strs1;
 	char	**strs2;
 
-	// if (!cmd)
-	// 	return (NULL);
 	strs1 = get_path(env);
 	if ((((ft_strnstr(cmd, "./", 2) || ft_strchr(cmd, '/')) \
 	&& access(cmd, F_OK) == 0)))

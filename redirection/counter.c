@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 12:00:36 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/23 00:34:27 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/02 16:38:42 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int	count_cmd_str(const char *str, size_t *size, t_export **evl)
 			if (!*str || *str == '<' || *str == '>')
 				print_error_msg("operator has no argument\n", red_sign);
 			error = !*str || *str == '<' || *str == '>'
-				|| validate_arg(&str, evl);
+				|| (!red_sign[1] && validate_arg(&str, evl));
 			*size -= 1;
 		}
 		else
@@ -90,8 +90,8 @@ static int	validate_arg(const char **str, t_export **evl)
 
 static void	pass_until_arg_end(const char **str)
 {
-	while (str[0][0] && !track_quote(NULL, '\0', 1)
-			&& !ft_strchr("\t\n\v\f\r <>", str[0][0]))
+	while (str[0][0] && (track_quote(NULL, '\0', 1)
+			|| !ft_strchr("\t\n\v\f\r <>", str[0][0])))
 	{
 		str[0]++;
 		track_quote(NULL, '\0', 0);
@@ -100,7 +100,7 @@ static void	pass_until_arg_end(const char **str)
 
 static void	pass_spaces(const char **str)
 {
-	while (str[0][0] &&!track_quote(NULL, '\0', 1)
+	while (str[0][0] && !track_quote(NULL, '\0', 1)
 			&& ft_strchr("\t\n\v\f\r ", str[0][0]))
 	{
 		str[0]++;
@@ -108,7 +108,7 @@ static void	pass_spaces(const char **str)
 	}
 }
 
-char	*get_redir_arg(const char **str, t_export **evl, int error)
+char	*get_redir_arg(const char **str, t_export **evl, int error, int mask)
 {
 	const char	*tstr;
 	char		*arg;
@@ -122,7 +122,7 @@ char	*get_redir_arg(const char **str, t_export **evl, int error)
 	if (arg)
 	{
 		ft_strlcpy(arg, tstr, arg_size + 1);
-		tstr = expand(arg, evl, error);
+		tstr = expand(arg, evl, error, mask);
 		free(arg);
 		arg = (char *)tstr;
 	}

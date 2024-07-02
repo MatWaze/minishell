@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/17 10:03:46 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/29 07:53:49 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/02 14:00:10 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@
 #include "common/common.h"
 #include "t_fd.h"
 
-char		*get_redir_arg(const char **str, t_export **evl, int error);
+char		*get_redir_arg(const char **str, t_export **evl, int error,
+				int mask);
 
 static int	rw(const char *str, int *fd, char *arg, int flags);
 
@@ -30,7 +31,7 @@ const char	*read_from_file(const char *str, t_fd *fds, t_export **evl,
 {
 	char	*arg;
 
-	arg = get_redir_arg(&str, evl, error);
+	arg = get_redir_arg(&str, evl, error, 0);
 	if (rw(str, &fds->rfd, arg, O_RDONLY))
 		str = NULL;
 	return (str);
@@ -41,7 +42,7 @@ const char	*write_to_file(const char *str, t_fd *fds, t_export **evl,
 {
 	char	*arg;
 
-	arg = get_redir_arg(&str, evl, error);
+	arg = get_redir_arg(&str, evl, error, 0);
 	if (rw(str, &fds->wfd, arg, O_WRONLY | O_CREAT | O_TRUNC))
 		str = NULL;
 	return (str);
@@ -52,7 +53,7 @@ const char	*append_to_file(const char *str, t_fd *fds, t_export **evl,
 {
 	char	*arg;
 
-	arg = get_redir_arg(&str, evl, error);
+	arg = get_redir_arg(&str, evl, error, 0);
 	if (rw(str, &fds->wfd, arg, O_APPEND | O_CREAT))
 		str = NULL;
 	return (str);

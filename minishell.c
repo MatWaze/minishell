@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/07/01 22:03:26 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/02 16:41:47 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ int	main2(int argc, char **argv, char **envp)
 int	main(int argc, char **argv, char **envp)
 {
 	main2(argc, argv, envp);
-	// system("leaks minishell");
+	system("leaks minishell");
 	return (g_exit_status);
 }
 
@@ -110,8 +110,7 @@ static int	main_loop(t_args *args)
 		args->quotes_closed = quotes_type(str, str + size);
 		if (args->quotes_closed)
 		{
-			qstr[0] = (char)g_exit_status;
-			qstr[1] = '\0';
+			qstr[0] = args->quotes_closed;
 			print_error_msg("unclosed quote", (char *)qstr);
 			g_exit_status = 1;
 		}

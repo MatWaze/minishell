@@ -6,13 +6,14 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:49:32 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/01 22:58:38 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/02 14:16:31 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 
 #include "export/export.h"
+#include "expansion_constants.h"
 
 size_t		count_expanded_string(const char *str, t_export **ev,
 				int error, int mask);
@@ -23,11 +24,11 @@ int			digits_count(int n);
 char		*expand(const char *str, t_export **evlist, int error, int mask);
 
 static void	expand_envvar(const char **pstr, char **exp_str,
-				t_export **evlist, int error);
+				t_export **evlist, long m_err);
 static void	insert_envvar_val(const char **pstr, char **exp_str,
 				t_export **evlist);
 static void	expand_loop(const char *str, char *exp_str, t_export **evlist,
-				int error);
+				long m_err);
 
 int	expand_list(char **strs, t_export **evlist, int error, int mask)
 {
@@ -62,7 +63,8 @@ char	*expand(const char *str, t_export **evlist, int error, int mask)
 	if (exp_str)
 	{
 		home = get_value_from_key(evlist, "HOME");
-		if (*str == '~' && home && (!str[1] || str[1] == '/'))
+		if (!(mask & TILDA_MASK) && *str == '~' && home
+			&& (!str[1] || str[1] == '/'))
 		{
 			expand_loop(str + 1, exp_str + ft_strlcpy(exp_str, home,
 					ft_strlen(home) + 1), evlist, error);
@@ -74,20 +76,20 @@ char	*expand(const char *str, t_export **evlist, int error, int mask)
 }
 
 static void	expand_loop(const char *str, char *exp_str, t_export **evlist,
-				int error)
+				long m_err)
 {
 	char	qtype;
 
 	qtype = 0;
 	while (*str)
 	{
-		if (*str == '\'' || *str == '"')
+		if (!((m_err >> 32) & QUOTES_MASK) && (*str == '\'' || *str == '"'))
 		{
 			if (is_inside_quotes(*str, &qtype))
 				*exp_str++ = *str;
 		}
 		else if (*str == '$' && (!qtype || qtype == '"'))
-			expand_envvar(&str, &exp_str, evlist, error);
+			expand_envvar(&str, &exp_str, evlist, m_err);
 		else
 			*exp_str++ = *str;
 		str++;
@@ -96,23 +98,25 @@ static void	expand_loop(const char *str, char *exp_str, t_export **evlist,
 }
 
 static void	expand_envvar(const char **pstr, char **exp_str,
-					t_export **evlist, int error)
+					t_export **evlist, long m_err)
 {
 	char	type;
 
-	if (pstr[0][1] == '\'' || pstr[0][1] == '"')
+	if (!((m_err >> 32) & ENV_QUOTES_MASK)
+		&& (pstr[0][1] == '\'' || pstr[0][1] == '"'))
 	{
 		type = (++pstr[0])[0];
 		while ((++pstr[0])[0] != type)
 			exp_str[0]++[0] = pstr[0][0];
 	}
-	else if (pstr[0][1] == '?')
+	else if (!((m_err >> 32) & ENV_ERR_MASK) && pstr[0][1] == '?')
 	{
 		pstr[0]++;
-		insert_number(exp_str[0], error);
-		exp_str[0] += digits_count(error);
+		insert_number(exp_str[0], (int)m_err);
+		exp_str[0] += digits_count((int)m_err);
 	}
-	else if (!pstr[0][1] || pstr[0][1] == ' ' || pstr[0][1] == '$')
+	else if (!((m_err >> 32) & ENV_EXP_MASK) || !pstr[0][1] || pstr[0][1] == ' '
+				|| pstr[0][1] == '$')
 		exp_str[0]++[0] = '$';
 	else
 		insert_envvar_val(pstr, exp_str, evlist);

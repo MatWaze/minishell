@@ -6,13 +6,14 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 21:06:16 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/01 23:35:11 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/02 14:15:33 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 
 #include "export/export.h"
+#include "expansion_constants.h"
 
 char			*extract_ev(const char **str);
 int				is_inside_quotes(char type, char *qtype);
@@ -31,14 +32,15 @@ size_t	count_expanded_string(const char *str, t_export **ev, int error,
 	esize = 0;
 	qtype = 0;
 	tmp = get_value_from_key(ev, "HOME");
-	if (*str == '~' && tmp && (!str[1] || str[1] == '/'))
+	if (!(mask & TILDA_MASK) && *str == '~' && tmp
+		&& (!str[1] || str[1] == '/'))
 	{
 		esize += ft_strlen(tmp);
 		str++;
 	}
 	while (*str)
 	{
-		if (*str == '\'' || *str == '"')
+		if (!(mask & QUOTES_MASK) && (*str == '\'' || *str == '"'))
 			esize += is_inside_quotes(*str, &qtype);
 		else if (*str == '$' && (!qtype || qtype == '"'))
 			esize += ev_size(&str, ev, error, mask);
@@ -73,19 +75,20 @@ static size_t	ev_size(const char **str, t_export **ev, int error, int mask)
 	size_t	size;
 	char	type;
 
-	if (str[0][1] == '\'' || str[0][1] == '"')
+	if (!(mask & ENV_QUOTES_MASK) && (str[0][1] == '\'' || str[0][1] == '"'))
 	{
 		size = 0;
 		type = (++str[0])[0];
 		while ((++str[0])[0] != type)
 			size++;
 	}
-	else if (str[0][1] == '?')
+	else if (!(mask & ENV_ERR_MASK) && str[0][1] == '?')
 	{
 		str[0]++;
 		size = digits_count(error);
 	}
-	else if (!str[0][1] || str[0][1] == ' ' || str[0][1] == '$')
+	else if (mask & ENV_EXP_MASK || !str[0][1] || str[0][1] == ' '
+				|| str[0][1] == '$')
 		size = 1;
 	else
 		size = count_evv_size(str, ev);

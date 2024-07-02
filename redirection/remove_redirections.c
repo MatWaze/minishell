@@ -6,20 +6,22 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 13:25:26 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/01 00:20:51 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/02 14:04:01 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <fcntl.h>
 #include <stdlib.h>
 
+#include "expansion/expansion_constants.h"
 #include "export/t_export.h"
 #include "libft/libft.h"
 #include "t_fd.h"
 #include "quotes/quotes.h"
 
 int					heredoc(char *del, t_fd *fds);
-char				*get_redir_arg(const char **str, t_export **evl, int error);
+char				*get_redir_arg(const char **str, t_export **evl, int error,
+						int mask);
 int					count_cmd_str(const char *str, size_t *size,
 						t_export **evl);
 
@@ -79,7 +81,8 @@ static const char	*redirect(const char *str, t_fd *fds, t_export **evl,
 	if (*str == '<' && str[1] == '<')
 	{
 		str += 2;
-		if (heredoc(get_redir_arg(&str, evl, error), fds))
+		if (heredoc(get_redir_arg(&str, evl, error,
+					TILDA_MASK | ENV_ERR_MASK | ENV_EXP_MASK), fds))
 			str = NULL;
 	}
 	else if (*str == '<')

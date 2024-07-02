@@ -112,7 +112,7 @@ $(EXPORT_BUILD_DIR): | $(build_dir)
 #        | .__/|_|| .__/\___|/_\_\                          #
 #        |_|      |_|                                       #
 
-PIPEX_MODULES=fd handlers heredoc new_envp path_extruder pid pipex pipex_common
+PIPEX_MODULES=fd handlers heredoc new_envp path_extruder pid pipex pipex_common command_runners
 PIPEX_OBJ=$(addprefix $(PIPEX_BUILD_DIR)/, $(addsuffix .o, $(PIPEX_MODULES)))
 $(PIPEX_BUILD_DIR): | $(build_dir)
 	mkdir $@
@@ -164,7 +164,7 @@ DEPFLAGS = -MT $@ -MMD -MP -MF $(build_dir)/$*.d
 #       .__                     .__
 #  _____|__| ____   ____ _____  |  |   ______
 # /  ___/  |/ ___\ /    \\__  \ |  |  /  ___/
-# \___ \|  / /_/  >   |  \/ __ \|  |__\____ 
+# \___ \|  / /_/  >   |  \/ __ \|  |__\____
 #/____  >__\___  /|___|  (____  /____/____  >
 #     \/  /_____/      \/     \/          \/
 

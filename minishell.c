@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 10:55:29 by mamazari          #+#    #+#             */
-/*   Updated: 2024/07/02 19:34:20 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/02 21:42:06 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,7 @@ static void	run_pipex(t_args *args, char **words, char *str)
 		i++;
 	}
 	args->hd_count = count_heredoc((const char **)words);
-	error = pipex(args);
+	error = pipex(args, 0);
 	g_exit_status = error != 0;
 	if (error == 1)
 	{

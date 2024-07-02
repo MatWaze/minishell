@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 19:01:53 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/02 18:56:32 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/02 21:32:01 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	fork_conditions(int pid, t_args *args, int error, int *ans)
 		exit(error);
 	else if (pid == -1)
 	{
-		close(args->fds.fdin);
+		close(args->p.fdin);
 		*ans = 1;
 	}
 	else

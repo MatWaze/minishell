@@ -6,7 +6,7 @@
 /*   By: zanikin <zanikin@student.42yerevan.am>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 21:06:16 by zanikin           #+#    #+#             */
-/*   Updated: 2024/07/02 14:15:33 by zanikin          ###   ########.fr       */
+/*   Updated: 2024/07/02 19:09:49 by zanikin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ char	*extract_ev(const char **pstr)
 
 	size = 0;
 	str = pstr[0] + 1;
-	while (*str && *str != '\'' && *str != '"' && *str != ' ' && *str != '$')
+	while (*str && !ft_strchr("'\" $/", *str))
 	{
 		size++;
 		str++;

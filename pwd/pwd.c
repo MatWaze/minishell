@@ -6,7 +6,7 @@
 /*   By: mamazari <mamazari@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/03 18:18:12 by zanikin           #+#    #+#             */
-/*   Updated: 2024/06/21 16:56:38 by mamazari         ###   ########.fr       */
+/*   Updated: 2024/08/18 13:21:51 by mamazari         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,17 @@ char	*pwd(int i)
 	if (buf)
 	{
 		res = getcwd(buf, 1024);
-		res[1024] = '\0';
-		if (i == 1)
+		if (res)
 		{
-			ft_putstr_fd(res, 1);
-			ft_putchar_fd('\n', 1);
+			res[1024] = '\0';
+			if (i == 1)
+			{
+				ft_putstr_fd(res, 1);
+				ft_putchar_fd('\n', 1);
+			}
 		}
+		else
+			free(buf);
 	}
 	return (res);
 }
